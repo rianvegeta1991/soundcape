@@ -97,6 +97,47 @@ header{padding:16px 2px 14px;display:flex;align-items:center;gap:12px}
 .k-proz{font-size:10px;color:var(--dim2);width:30px;text-align:right;font-variant-numeric:tabular-nums;flex:none}
 .kachel.an .k-proz{color:rgba(var(--k-rgb),.95)}
 
+/* Kachel, die die Bibliothek öffnet */
+.kachel-plus{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+  border-style:dashed;color:var(--dim2);font-family:inherit;font-size:11.5px;
+  text-align:center;line-height:1.3;min-height:103px;
+}
+.kachel-plus svg{width:26px;height:26px}
+.kachel-plus:active{transform:scale(.97)}
+
+/* Bibliothek */
+.bib-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.bib-zahl{font-size:11.5px;color:var(--dim2);white-space:nowrap}
+.bib-zeile{
+  width:100%;display:flex;align-items:center;gap:12px;text-align:left;
+  background:transparent;border:0;border-bottom:1px solid var(--line);
+  padding:11px 2px;color:var(--text);font-family:inherit;cursor:pointer;
+}
+.bib-zeile:active{background:rgba(255,255,255,.04)}
+.bib-ikon{width:28px;height:28px;flex:none;color:var(--dim2);transition:color .25s}
+.bib-zeile.drin .bib-ikon{color:rgb(var(--k-rgb))}
+.bib-text{display:flex;flex-direction:column;flex:1;min-width:0}
+.bib-name{font-size:14px;line-height:1.25}
+.bib-unter{font-size:11.5px;color:var(--dim2);line-height:1.3;margin-top:1px}
+.bib-schalter{
+  width:26px;height:26px;flex:none;border-radius:50%;position:relative;
+  border:1.5px solid var(--line);transition:background .2s,border-color .2s;
+}
+/* nicht im Pult: ein Plus */
+.bib-schalter::before,.bib-schalter::after{
+  content:'';position:absolute;background:var(--dim);border-radius:2px;
+}
+.bib-schalter::before{left:6.5px;right:6.5px;top:11px;height:2px}
+.bib-schalter::after{top:6.5px;bottom:6.5px;left:11px;width:2px}
+/* im Pult: gefüllter Kreis mit Häkchen */
+.bib-zeile.drin .bib-schalter{background:rgb(var(--k-rgb));border-color:transparent}
+.bib-zeile.drin .bib-schalter::before{display:none}
+.bib-zeile.drin .bib-schalter::after{
+  top:4.5px;left:9px;width:6px;height:11px;background:none;border-radius:0;
+  border:solid #08111f;border-width:0 2.2px 2.2px 0;transform:rotate(45deg);
+}
+
 /* Schieberegler */
 input[type=range]{
   -webkit-appearance:none;appearance:none;width:100%;height:24px;background:transparent;margin:0;cursor:pointer;
@@ -259,6 +300,12 @@ input[type=number]{width:90px}
       </div>
     </div>
     <div class="chip-reihe">
+      <button class="chip" id="chip-bib">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M12 6v12M6 12h12"/>
+        </svg>
+        <span>Kulissen</span>
+      </button>
       <button class="chip" id="chip-timer">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.6 1.7M9 2.5h6"/>
@@ -273,6 +320,21 @@ input[type=number]{width:90px}
         <span id="chip-mix-txt">Alles aus</span>
       </button>
     </div>
+  </div>
+</div>
+
+<!-- Bibliothek -->
+<div class="blende" id="bl-bib">
+  <div class="blatt">
+    <div class="griff"></div>
+    <div class="bib-kopf">
+      <h2>Kulissen</h2>
+      <span class="bib-zahl" id="bib-zahl"></span>
+    </div>
+    <p class="hinweis">Tippe an, was auf dem Pult liegen soll. Alles Ausgewählte erscheint
+      als Kachel auf dem Hauptbildschirm und lässt sich dort einzeln zuschalten und mischen.</p>
+    <div id="bib-liste"></div>
+    <button class="btn haupt" id="bib-fertig">Fertig</button>
   </div>
 </div>
 
@@ -346,6 +408,11 @@ input[type=number]{width:90px}
     </div>
     <p class="hinweis">Klangänderungen greifen, sobald eine Kulisse neu gestartet wird.</p>
 
+    <h3>Pult</h3>
+    <button class="btn" id="pult-zuruecksetzen">Auf die Standardauswahl zurücksetzen</button>
+    <p class="hinweis">Legt wieder Regen, Strand, Lagerfeuer, Grillen, Wind und heimische Vögel
+      aufs Pult. Deine Lautstärken bleiben erhalten.</p>
+
     <button class="btn haupt" id="einst-fertig">Fertig</button>
     <div class="fuss-version" id="version"></div>
   </div>
@@ -368,10 +435,17 @@ input[type=number]{width:90px}
       Bluetooth-Box. Da der Klang im Audio-Prozess erzeugt wird und nicht per Zeitgeber im Vordergrund,
       bleibt er auch dann vollständig, wenn das Handy schläft.
     </p>
+    <h3>Pult und Bibliothek</h3>
+    <p class="hinweis">
+      Die Bibliothek kennt alle Kulissen, nach Kategorien sortiert. Was du dort auswählst, landet als
+      Kachel auf dem Pult – dem Hauptbildschirm. So bleibt die Ansicht übersichtlich, egal wie viele
+      Kulissen dazukommen.
+    </p>
     <h3>Mischen</h3>
     <p class="hinweis">
-      Du kannst mehrere Kulissen gleichzeitig laufen lassen und einzeln in der Lautstärke einstellen –
-      etwa Regen mit Lagerfeuer oder Wind über Wellen.
+      Mehrere Kulissen können gleichzeitig laufen, jede mit eigener Lautstärke – etwa Regen mit
+      Lagerfeuer, Donnergrollen über Regen oder Wind über Wellen. Deshalb ist jede Kulisse für sich
+      aufgenommen: hinter den Grillen liegt kein Rauschen, hinter dem Donner kein Regen.
     </p>
     <h3>Als App installieren</h3>
     <p class="hinweis">

@@ -1,70 +1,127 @@
 /* Soundcape – Bedienung, Wiedergabe, Timer
  * Die Klangerzeugung selbst steht in sound.js.
+ *
+ * Zwei Ebenen: die **Bibliothek** kennt alle Kulissen nach Kategorien,
+ * das **Pult** ist die Auswahl, die auf dem Bildschirm liegt. Nur was im
+ * Pult liegt, kann klingen – so bleibt die Ansicht übersichtlich, auch
+ * wenn die Bibliothek weiter wächst.
  */
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.0';
+  var APP_VERSION = '1.1';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
-   * Die Kulissen (Anzeige – die Klangbauteile stehen in sound.js)
+   * Bibliothek
    * ================================================================== */
+  var KATEGORIEN = [
+    { id: 'wasser', name: 'Wasser' },
+    { id: 'feuer', name: 'Feuer' },
+    { id: 'luft', name: 'Wind & Wetter' },
+    { id: 'tiere', name: 'Tiere' },
+    { id: 'welt', name: 'Menschenwelt' },
+    { id: 'rauschen', name: 'Rauschen' }
+  ];
+
   var KULISSEN = [
-    {
-      id: 'regen', name: 'Regen', unter: 'Gleichmäßiger Landregen', rgb: '110,168,255',
+    /* --- Wasser --- */
+    { id: 'regen', kat: 'wasser', name: 'Regen', unter: 'Gleichmäßiger Landregen', rgb: '110,168,255',
       ikon: '<path d="M12 20a6 6 0 0 1 1.4-11.8A7.5 7.5 0 0 1 27.6 11 5 5 0 0 1 27 20z"/>' +
-            '<path d="M13 25l-1.6 5M20 25l-1.6 5M27 25l-1.6 5"/>'
-    },
-    {
-      id: 'gewitter', name: 'Regen & Donner', unter: 'Mit fernem Grollen', rgb: '150,140,240',
-      ikon: '<path d="M12 19a6 6 0 0 1 1.4-11.8A7.5 7.5 0 0 1 27.6 10 5 5 0 0 1 27 19z"/>' +
-            '<path d="M12.5 24l-1.4 4.5M27.5 24l-1.4 4.5"/>' +
-            '<path d="M21 22.5l-4.5 6h4l-2 5.5 6-7.5h-4z" stroke-linejoin="round"/>'
-    },
-    {
-      id: 'strand', name: 'Strand', unter: 'Wellen und Brandung', rgb: '84,198,214',
+            '<path d="M13 25l-1.6 5M20 25l-1.6 5M27 25l-1.6 5"/>' },
+    { id: 'strand', kat: 'wasser', name: 'Strand', unter: 'Wellen und Brandung', rgb: '84,198,214',
       ikon: '<circle cx="27.5" cy="11" r="4"/>' +
             '<path d="M5 24c3.2 0 3.2-2.6 6.4-2.6S14.6 24 17.8 24s3.2-2.6 6.4-2.6S27.4 24 30.6 24 34 21.4 35 21.4"/>' +
-            '<path d="M5 31c3.2 0 3.2-2.6 6.4-2.6S14.6 31 17.8 31s3.2-2.6 6.4-2.6S27.4 31 30.6 31 34 28.4 35 28.4"/>'
-    },
-    {
-      id: 'fluss', name: 'Fluss', unter: 'Über Wasser', rgb: '92,204,152',
+            '<path d="M5 31c3.2 0 3.2-2.6 6.4-2.6S14.6 31 17.8 31s3.2-2.6 6.4-2.6S27.4 31 30.6 31 34 28.4 35 28.4"/>' },
+    { id: 'fluss', kat: 'wasser', name: 'Fluss', unter: 'Über Wasser', rgb: '92,204,152',
       ikon: '<path d="M9 5c0 8 6 10 6 16s-5 8-5 14M31 5c0 8-6 10-6 16s5 8 5 14"/>' +
-            '<path d="M15.5 14c1.6 0 1.6 1.6 3.2 1.6s1.6-1.6 3.2-1.6M14 26c1.8 0 1.8 1.6 3.6 1.6S19.4 26 21.2 26"/>'
-    },
-    {
-      id: 'unterwasser', name: 'Unter Wasser', unter: 'Dumpf, mit Blasen', rgb: '74,146,214',
+            '<path d="M15.5 14c1.6 0 1.6 1.6 3.2 1.6s1.6-1.6 3.2-1.6M14 26c1.8 0 1.8 1.6 3.6 1.6S19.4 26 21.2 26"/>' },
+    { id: 'unterwasser', kat: 'wasser', name: 'Unter Wasser', unter: 'Dumpf, mit Strömung', rgb: '74,146,214',
       ikon: '<path d="M4 9c3.2 0 3.2-2.4 6.4-2.4S13.6 9 16.8 9s3.2-2.4 6.4-2.4S26.4 9 29.6 9 33 6.6 36 6.6"/>' +
-            '<circle cx="13" cy="27" r="4.5"/><circle cx="24.5" cy="19.5" r="3"/><circle cx="27" cy="30" r="2"/>'
-    },
-    {
-      id: 'wind', name: 'Wind', unter: 'Böen und Säuseln', rgb: '162,180,204',
+            '<circle cx="13" cy="27" r="4.5"/><circle cx="24.5" cy="19.5" r="3"/><circle cx="27" cy="30" r="2"/>' },
+    { id: 'blasen', kat: 'wasser', name: 'Blubberblasen', unter: 'Aufsteigende Blasen', rgb: '96,186,230',
+      ikon: '<circle cx="14" cy="28" r="6"/><circle cx="26" cy="17" r="4"/>' +
+            '<circle cx="17" cy="9" r="2.6"/><circle cx="29" cy="30" r="2.2"/>' },
+
+    /* --- Feuer --- */
+    { id: 'feuer', kat: 'feuer', name: 'Lagerfeuer', unter: 'Knistern und Glut', rgb: '245,150,78',
+      ikon: '<path d="M20 4c1 6-5 7.5-5 13a5 5 0 0 0 10 0c0-2-1-3.2-1-3.2 3.5 2.2 6 5.6 6 9.7a10 10 0 1 1-20 0C10 15 20 13 20 4z" stroke-linejoin="round"/>' },
+    { id: 'feuerstark', kat: 'feuer', name: 'Feuer, stark', unter: 'Kräftiges Knistern', rgb: '250,120,60',
+      ikon: '<path d="M20 6c.8 5-4 6.4-4 11a4 4 0 0 0 8 0c0-1.7-.8-2.7-.8-2.7 3 1.9 5 4.8 5 8.3a8.2 8.2 0 1 1-16.4 0C11.8 14.6 20 13 20 6z" stroke-linejoin="round"/>' +
+            '<path d="M6 12l3 1.6M34 12l-3 1.6M5 24l3.4.6M35 24l-3.4.6M9 5l1.6 2.8M31 5l-1.6 2.8"/>' },
+
+    /* --- Wind & Wetter --- */
+    { id: 'wind', kat: 'luft', name: 'Wind', unter: 'Böen und Säuseln', rgb: '162,180,204',
       ikon: '<path d="M4 13h17a4.5 4.5 0 1 0-4.5-4.5"/>' +
             '<path d="M4 21h22a5 5 0 1 1-5 5"/>' +
-            '<path d="M4 29h11.5a3.6 3.6 0 1 1-3.6 3.6"/>'
-    },
-    {
-      id: 'feuer', name: 'Lagerfeuer', unter: 'Knistern und Glut', rgb: '245,150,78',
-      ikon: '<path d="M20 4c1 6-5 7.5-5 13a5 5 0 0 0 10 0c0-2-1-3.2-1-3.2 3.5 2.2 6 5.6 6 9.7a10 10 0 1 1-20 0C10 15 20 13 20 4z" stroke-linejoin="round"/>'
-    },
-    {
-      id: 'grillen', name: 'Grillen', unter: 'Sommernacht', rgb: '196,206,112',
+            '<path d="M4 29h11.5a3.6 3.6 0 1 1-3.6 3.6"/>' },
+    { id: 'donner', kat: 'luft', name: 'Donnergrollen', unter: 'Fern, ohne Regen', rgb: '150,140,240',
+      ikon: '<path d="M12 19a6 6 0 0 1 1.4-11.8A7.5 7.5 0 0 1 27.6 10 5 5 0 0 1 27 19z"/>' +
+            '<path d="M21 21l-5 7h4.4l-2.2 6.5 7-8.5h-4.6z" stroke-linejoin="round"/>' },
+    { id: 'wipfel', kat: 'luft', name: 'Baumwipfel', unter: 'Rascheln im Laub', rgb: '124,196,124',
+      ikon: '<path d="M20 34V21"/>' +
+            '<path d="M20 5c5.5 0 9 3.6 9 8 3 1 4.6 3.4 4.6 6 0 3.6-3 6-7 6H13.4c-4 0-7-2.4-7-6 0-2.6 1.6-5 4.6-6 0-4.4 3.5-8 9-8z" stroke-linejoin="round"/>' },
+
+    /* --- Tiere --- */
+    { id: 'grillen', kat: 'tiere', name: 'Grillen', unter: 'Sommernacht', rgb: '196,206,112',
       ikon: '<path d="M26 5a12 12 0 1 0 9.5 14.6A9.5 9.5 0 0 1 26 5z" stroke-linejoin="round"/>' +
-            '<path d="M8 30c1.5-1.6 1.5-4.4 0-6M12.5 31.5c2.4-2.4 2.4-7.6 0-10"/>'
-    }
+            '<path d="M8 30c1.5-1.6 1.5-4.4 0-6M12.5 31.5c2.4-2.4 2.4-7.6 0-10"/>' },
+    { id: 'vogelDe', kat: 'tiere', name: 'Vögel, heimisch', unter: 'Amsel, Meise, Fink', rgb: '146,196,150',
+      ikon: '<path d="M13 12a4 4 0 1 1 8 0c0 5 5 5 8 9 2.6 3.4 1 10-6 10-6.5 0-11-4.6-11-11 0-3.4 1-5.6 1-8z" stroke-linejoin="round"/>' +
+            '<path d="M15.5 11.2h.1M13 14l-6-2.4 5-1.6M4 34c5-1.4 9-4 11-8"/>' },
+    { id: 'vogelTropen', kat: 'tiere', name: 'Vögel, Tropen', unter: 'Papageien im Regenwald', rgb: '86,206,178',
+      ikon: '<path d="M15 13a4.2 4.2 0 1 1 8.4 0c0 4.6 4.6 5.4 6.6 9.6 1.8 3.8-.8 9.4-7 9.4-6 0-10.4-4.4-10.4-10.4 0-3.4 2.4-5 2.4-8.6z" stroke-linejoin="round"/>' +
+            '<path d="M17.4 12.2h.1M15 15l-7-1.6 5.6-2.6M22 32c2.6 2 5 2.6 8 2.4"/>' },
+    { id: 'vogelAfrika', kat: 'tiere', name: 'Vögel, Afrika', unter: 'Savanne am Morgen', rgb: '226,178,96',
+      ikon: '<circle cx="29" cy="10" r="5"/>' +
+            '<path d="M6 30h28M10 30c0-5 4-8 9-8s9 3 9 8"/>' +
+            '<path d="M14 22l-3-4 5 .6"/>' },
+    { id: 'wal', kat: 'tiere', name: 'Walgesang', unter: 'Tiefe, lange Rufe', rgb: '106,142,220',
+      ikon: '<path d="M4 26c6 0 9-3 13-3s5 3 5 6" />' +
+            '<path d="M22 29c4-1 8-4 10-9 1.4 4 3.4 6 4 10-4.6 1.6-9.6 1.4-14-1z" stroke-linejoin="round"/>' +
+            '<path d="M8 14c1.6-3 4-4.6 7-4.6"/>' },
+    { id: 'delfin', kat: 'tiere', name: 'Delfingesang', unter: 'Pfiffe und Klicks', rgb: '96,204,224',
+      ikon: '<path d="M5 12c8-1 13 3 16 8 2-3 5-4 8-3.6-2 2-2.6 4.6-2 7 2.6.6 4.6 2.6 5 5-6 1.4-11-1-14-5-3.4 3.6-8 4.6-13 3 3.6-2 5-5 4-8-2-1.6-3.4-4-4-6.4z" stroke-linejoin="round"/>' },
+    { id: 'katze', kat: 'tiere', name: 'Katzenschnurren', unter: 'Ruhiges Brummen', rgb: '212,160,196',
+      ikon: '<path d="M10 16 8.6 6.6 15 11.4a13 13 0 0 1 10 0L31.4 6.6 30 16" stroke-linejoin="round"/>' +
+            '<path d="M20 12c6.6 0 11 4.6 11 10.4S26.6 33 20 33 9 28.2 9 22.4 13.4 12 20 12z"/>' +
+            '<path d="M16 21h.1M24 21h.1M20 25v1.6M20 26.6c-1.4 1.4-3.4 1.2-4.4-.4M20 26.6c1.4 1.4 3.4 1.2 4.4-.4"/>' },
+
+    /* --- Menschenwelt --- */
+    { id: 'schnarchen', kat: 'welt', name: 'Leises Schnarchen', unter: 'Ruhiger Atem', rgb: '176,168,214',
+      ikon: '<path d="M4 28h12a6 6 0 0 0 6-6v-4a6 6 0 0 1 6-6h4"/>' +
+            '<path d="M24 6h7l-7 7h7M28 18h5l-5 5h5"/>' },
+    { id: 'zug', kat: 'welt', name: 'Zug in der Ferne', unter: 'Rollen und Stöße', rgb: '150,166,190',
+      ikon: '<rect x="9" y="7" width="22" height="19" rx="4"/>' +
+            '<path d="M13 13h14M12 33l3.5-5M28 33l-3.5-5"/>' +
+            '<circle cx="15" cy="21" r="1.6" fill="currentColor" stroke="none"/>' +
+            '<circle cx="25" cy="21" r="1.6" fill="currentColor" stroke="none"/>' },
+    { id: 'strasse', kat: 'welt', name: 'Straßengeräusche', unter: 'Vorbeifahrende Autos', rgb: '168,172,180',
+      ikon: '<path d="M6 34 15 6M34 34 25 6M20 9v4M20 17v4M20 25v4"/>' },
+
+    /* --- Rauschen --- */
+    { id: 'weiss', kat: 'rauschen', name: 'White Noise', unter: 'Volles Spektrum', rgb: '226,232,242',
+      ikon: '<path d="M4 20h2l2-9 2.4 15 2.6-19 2.4 23 2.6-17 2.4 13 2.6-16 2.4 19 2.6-14 2.4 9 2.6-6H36"/>' },
+    { id: 'rosa', kat: 'rauschen', name: 'Pink Noise', unter: 'Ausgewogen, sanfter', rgb: '240,168,196',
+      ikon: '<path d="M4 20h3l3-7 3.5 12 3.5-16 3.5 18 3.5-11 3.5 8 3.5-6H36"/>' },
+    { id: 'braun', kat: 'rauschen', name: 'Brown Noise', unter: 'Dunkel und tief', rgb: '206,164,124',
+      ikon: '<path d="M4 20c4 0 4-8 8-8s4 16 8 16 4-14 8-14 4 6 8 6"/>' }
   ];
+
   var NACH_ID = {};
   KULISSEN.forEach(function (k) { NACH_ID[k.id] = k; });
+
+  var PULT_STANDARD = ['regen', 'strand', 'feuer', 'grillen', 'wind', 'vogelDe'];
 
   /* ==================================================================
    * Zustand
    * ================================================================== */
   var st = {
     master: 70,
-    vol: {},              // id -> 0..100
-    an: {},               // id -> true
-    fadeMin: 1,           // Ausblenden am Timer-Ende, in Minuten
+    pult: PULT_STANDARD.slice(),
+    vol: {},
+    an: {},
+    fadeMin: 1,
     wach: false,
     einblenden: true,
     stereo: true
@@ -78,13 +135,30 @@
       var g = JSON.parse(roh);
       if (typeof g.master === 'number') st.master = g.master;
       if (g.vol) for (var id in g.vol) if (NACH_ID[id]) st.vol[id] = g.vol[id];
-      if (g.an) for (var id2 in g.an) if (NACH_ID[id2] && g.an[id2]) st.an[id2] = true;
       if (typeof g.fadeMin === 'number') st.fadeMin = g.fadeMin;
       if (typeof g.wach === 'boolean') st.wach = g.wach;
       if (typeof g.einblenden === 'boolean') st.einblenden = g.einblenden;
       if (typeof g.stereo === 'boolean') st.stereo = g.stereo;
+
+      // "gewitter" gibt es nicht mehr – der Donner steht jetzt für sich
+      function umbenennen(x) { return x === 'gewitter' ? 'donner' : x; }
+
+      if (g.pult && g.pult.length) {
+        st.pult = g.pult.map(umbenennen).filter(function (x) { return !!NACH_ID[x]; });
+      } else if (g.an) {
+        // Stand aus Version 1.0: was damals gewählt war, kommt ins Pult
+        var alt = Object.keys(g.an).map(umbenennen).filter(function (x) { return !!NACH_ID[x]; });
+        if (alt.length) st.pult = alt;
+      }
+      if (!st.pult.length) st.pult = PULT_STANDARD.slice();
+
+      if (g.an) for (var id2 in g.an) {
+        var neu = umbenennen(id2);
+        if (g.an[id2] && NACH_ID[neu] && st.pult.indexOf(neu) >= 0) st.an[neu] = true;
+      }
     } catch (e) { }
   }
+
   var speicherWartet = 0;
   function speichern() {
     clearTimeout(speicherWartet);
@@ -98,12 +172,12 @@
    * ================================================================== */
   var ctx = null, bus = null, vol = null, fade = null, limit = null;
   var streamZiel = null, audioEl = null, direkt = false;
-  var szenen = {};          // id -> {b, g}
+  var szenen = {};
   var laeuft = false;
-  var wl = null;            // Wake Lock
+  var wl = null;
 
   function aktiveIds() {
-    return KULISSEN.filter(function (k) { return st.an[k.id]; }).map(function (k) { return k.id; });
+    return st.pult.filter(function (id) { return st.an[id]; });
   }
   function pegel(id) {
     return (st.vol[id] / 100) * (Klang.ausgleich[id] || 1);
@@ -123,7 +197,6 @@
     vol = ctx.createGain(); vol.gain.value = masterWert();
     fade = ctx.createGain(); fade.gain.value = 1;
 
-    // Bremse gegen Übersteuern, wenn mehrere Kulissen zugleich laufen
     limit = ctx.createDynamicsCompressor();
     limit.threshold.value = -5;
     limit.knee.value = 12;
@@ -155,9 +228,6 @@
     }
   }
 
-  // Falls der Stream-Weg nicht anspringt (kommt auf manchen Geräten vor):
-  // direkt ausgeben und das <audio>-Element mit einer stillen Schleife als
-  // Anker für die Medien-Session behalten.
   function aufDirektUmstellen() {
     if (direkt) return;
     direkt = true;
@@ -182,7 +252,7 @@
     dv.setUint32(24, sr, true); dv.setUint32(28, sr * 2, true);
     dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
     txt(36, 'data'); dv.setUint32(40, n * 2, true);
-    for (var i = 0; i < n; i++) dv.setInt16(44 + i * 2, (i % 2) ? 1 : -1, true);  // knapp über null
+    for (var i = 0; i < n; i++) dv.setInt16(44 + i * 2, (i % 2) ? 1 : -1, true);
     return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
   }
 
@@ -217,7 +287,12 @@
 
   function starten() {
     if (!audioAufbau()) { setStatus('Dieser Browser beherrscht kein Web Audio.'); return; }
-    if (!aktiveIds().length) { st.an['regen'] = true; kachelnAktualisieren(); speichern(); }
+    if (!aktiveIds().length) {
+      var erste = st.pult[0];
+      if (!erste) { blattAuf('bl-bib'); return; }   // leeres Pult: Bibliothek zeigen
+      st.an[erste] = true;
+      pultAktualisieren(); speichern();
+    }
 
     if (ctx.resume) ctx.resume();
     if (audioEl) { var p = audioEl.play(); if (p && p['catch']) p['catch'](function () { }); }
@@ -248,13 +323,19 @@
     if (!ok) aufDirektUmstellen();
   }
 
+  function namenKurz() {
+    var namen = aktiveIds().map(function (id) { return NACH_ID[id].name; });
+    if (!namen.length) return '';
+    if (namen.length <= 2) return namen.join(' + ');
+    return namen.length + ' Kulissen';
+  }
+
   function sessionSetzen() {
     if (!('mediaSession' in navigator)) return;
     try {
-      var namen = aktiveIds().map(function (id) { return NACH_ID[id].name; });
       if (window.MediaMetadata) {
         navigator.mediaSession.metadata = new MediaMetadata({
-          title: namen.length ? namen.join(' + ') : 'Soundcape',
+          title: namenKurz() || 'Soundcape',
           artist: 'Soundcape',
           album: timer.ziel ? 'Timer bis ' + uhrzeit(timer.ziel) : 'Endlos',
           artwork: [
@@ -331,10 +412,19 @@
    * ================================================================== */
   var $ = function (id) { return document.getElementById(id); };
 
-  function kachelnBauen() {
+  function ikonSvg(k, klasse) {
+    return '<svg class="' + klasse + '" viewBox="0 0 40 40" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round">' + k.ikon + '</svg>';
+  }
+
+  /* ---- Das Pult: die Kacheln auf dem Bildschirm ---- */
+  function pultBauen() {
     var raster = $('raster');
     raster.innerHTML = '';
-    KULISSEN.forEach(function (k) {
+
+    st.pult.forEach(function (id) {
+      var k = NACH_ID[id];
+      if (!k) return;
       var el = document.createElement('div');
       el.className = 'kachel';
       el.dataset.id = k.id;
@@ -343,9 +433,7 @@
       el.setAttribute('tabindex', '0');
       el.setAttribute('aria-label', k.name + ' – ' + k.unter);
       el.innerHTML =
-        '<div class="k-kopf">' +
-          '<svg class="k-ikon" viewBox="0 0 40 40" fill="none" stroke="currentColor" ' +
-          'stroke-width="2" stroke-linecap="round">' + k.ikon + '</svg>' +
+        '<div class="k-kopf">' + ikonSvg(k, 'k-ikon') +
           '<div><div class="k-name">' + k.name + '</div>' +
           '<div class="k-unter">' + k.unter + '</div></div>' +
         '</div>' +
@@ -377,7 +465,31 @@
 
       raster.appendChild(el);
     });
-    kachelnAktualisieren();
+
+    // Kachel zum Öffnen der Bibliothek
+    var plus = document.createElement('button');
+    plus.className = 'kachel kachel-plus';
+    plus.id = 'kachel-plus';
+    plus.setAttribute('aria-label', 'Kulissen hinzufügen oder entfernen');
+    plus.innerHTML =
+      '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">' +
+      '<path d="M20 12v16M12 20h16"/></svg>' +
+      '<span>Kulissen<br>hinzufügen</span>';
+    plus.addEventListener('click', function () { blattAuf('bl-bib'); });
+    raster.appendChild(plus);
+
+    pultAktualisieren();
+  }
+
+  function pultAktualisieren() {
+    var kacheln = document.querySelectorAll('.kachel[data-id]');
+    for (var i = 0; i < kacheln.length; i++) {
+      var el = kacheln[i];
+      var an = !!st.an[el.dataset.id];
+      el.classList.toggle('an', an);
+      el.setAttribute('aria-pressed', an ? 'true' : 'false');
+    }
+    farbeSetzen();
   }
 
   function umschalten(id) {
@@ -390,21 +502,72 @@
       if (!laeuft) starten();
       else szeneAn(id);
     }
-    kachelnAktualisieren();
+    pultAktualisieren();
     speichern();
     ui();
     sessionSetzen();
   }
 
-  function kachelnAktualisieren() {
-    var kacheln = document.querySelectorAll('.kachel');
-    for (var i = 0; i < kacheln.length; i++) {
-      var el = kacheln[i];
-      var an = !!st.an[el.dataset.id];
-      el.classList.toggle('an', an);
-      el.setAttribute('aria-pressed', an ? 'true' : 'false');
+  /* ---- Die Bibliothek: alle Kulissen nach Kategorien ---- */
+  function bibliothekBauen() {
+    var box = $('bib-liste');
+    box.innerHTML = '';
+
+    KATEGORIEN.forEach(function (kat) {
+      var drin = KULISSEN.filter(function (k) { return k.kat === kat.id; });
+      if (!drin.length) return;
+
+      var h = document.createElement('h3');
+      h.textContent = kat.name;
+      box.appendChild(h);
+
+      drin.forEach(function (k) {
+        var z = document.createElement('button');
+        z.className = 'bib-zeile';
+        z.dataset.id = k.id;
+        z.style.setProperty('--k-rgb', k.rgb);
+        z.innerHTML =
+          ikonSvg(k, 'bib-ikon') +
+          '<span class="bib-text"><span class="bib-name">' + k.name + '</span>' +
+          '<span class="bib-unter">' + k.unter + '</span></span>' +
+          '<span class="bib-schalter" aria-hidden="true"></span>';
+        z.addEventListener('click', function () { pultUm(k.id); });
+        box.appendChild(z);
+      });
+    });
+    bibliothekAktualisieren();
+  }
+
+  function bibliothekAktualisieren() {
+    var zeilen = document.querySelectorAll('.bib-zeile');
+    for (var i = 0; i < zeilen.length; i++) {
+      var z = zeilen[i];
+      var drin = st.pult.indexOf(z.dataset.id) >= 0;
+      z.classList.toggle('drin', drin);
+      z.setAttribute('aria-pressed', drin ? 'true' : 'false');
     }
-    farbeSetzen();
+    $('bib-zahl').textContent = st.pult.length === 1
+      ? '1 Kulisse im Pult'
+      : st.pult.length + ' Kulissen im Pult';
+  }
+
+  // Kulisse ins Pult legen oder herausnehmen
+  function pultUm(id) {
+    var i = st.pult.indexOf(id);
+    if (i >= 0) {
+      st.pult.splice(i, 1);
+      if (st.an[id]) {                    // lief sie noch, wird sie mit ausgeschaltet
+        delete st.an[id];
+        szeneAus(id);
+        if (!aktiveIds().length && laeuft) stoppen();
+      }
+    } else {
+      st.pult.push(id);
+    }
+    pultBauen();
+    bibliothekAktualisieren();
+    speichern();
+    ui();
   }
 
   // Der Hintergrund nimmt die Farbe der lautesten aktiven Kulisse an.
@@ -420,7 +583,6 @@
   function setStatus(t) { $('status').innerHTML = t; }
 
   function ui() {
-    // Play-Knopf
     var btn = $('btn-play');
     btn.classList.toggle('laeuft', laeuft);
     btn.setAttribute('aria-label', laeuft ? 'Pause' : 'Abspielen');
@@ -428,22 +590,17 @@
       ? '<path d="M8 5h3.4v14H8zM12.6 5H16v14h-3.4z"/>'
       : '<path d="M8 5.5v13l11-6.5z"/>';
 
-    // Status
-    var namen = aktiveIds().map(function (id) { return NACH_ID[id].name; });
-    if (!namen.length) setStatus('Wähle eine Kulisse.');
-    else if (laeuft) setStatus('<b>' + namen.join(' + ') + '</b> läuft' +
-      (timer.ziel ? ' · noch ' + restText() : ''));
-    else setStatus('<b>' + namen.join(' + ') + '</b> · pausiert');
+    var kurz = namenKurz();
+    if (!kurz) setStatus(st.pult.length ? 'Wähle eine Kulisse.' : 'Das Pult ist leer – füge Kulissen hinzu.');
+    else if (laeuft) setStatus('<b>' + kurz + '</b> läuft' + (timer.ziel ? ' · noch ' + restText() : ''));
+    else setStatus('<b>' + kurz + '</b> · pausiert');
 
-    // Timer-Chip
     $('chip-timer').classList.toggle('aktiv', !!timer.ziel);
     $('chip-timer-txt').textContent = timer.ziel ? restText() : 'Timer';
 
-    // Master
     $('master').value = st.master;
     $('master-proz').textContent = st.master + ' %';
 
-    // Timer-Blatt
     $('timer-lage').textContent = timer.ziel
       ? 'Der Ton endet um ' + uhrzeit(timer.ziel) + ' Uhr.'
       : 'Der Ton läuft, bis du ihn beendest.';
@@ -478,7 +635,8 @@
    * ================================================================== */
   function init() {
     laden();
-    kachelnBauen();
+    pultBauen();
+    bibliothekBauen();
     ui();
 
     $('version').textContent = 'Soundcape ' + APP_VERSION;
@@ -501,8 +659,14 @@
         welche.forEach(function (id) { delete st.an[id]; szeneAus(id); });
         if (laeuft) stoppen();
       }
-      kachelnAktualisieren(); speichern(); ui();
+      pultAktualisieren(); speichern(); ui();
     });
+
+    $('chip-bib').addEventListener('click', function () { blattAuf('bl-bib'); });
+
+    /* ---- Bibliothek ---- */
+    $('bib-fertig').addEventListener('click', function () { blattZu('bl-bib'); });
+    blattVerdrahten('bl-bib');
 
     /* ---- Timer-Blatt ---- */
     $('chip-timer').addEventListener('click', function () { ui(); blattAuf('bl-timer'); });
@@ -568,9 +732,16 @@
       speichern(); ui();
     });
 
+    $('pult-zuruecksetzen').addEventListener('click', function () {
+      st.pult = PULT_STANDARD.slice();
+      Object.keys(st.an).forEach(function (id) {
+        if (st.pult.indexOf(id) < 0) { delete st.an[id]; szeneAus(id); }
+      });
+      pultBauen(); bibliothekAktualisieren(); speichern(); ui();
+    });
+
     if (st.wach) wachSetzen(true);
 
-    /* ---- Sekundentakt für die Anzeige ---- */
     setInterval(function () {
       if (timer.ziel) {
         if (timer.ziel - Date.now() <= 0) timerEnde();
@@ -578,7 +749,6 @@
       }
     }, 1000);
 
-    /* ---- Rückkehr aus dem Hintergrund ---- */
     document.addEventListener('visibilitychange', function () {
       if (document.visibilityState !== 'visible') return;
       if (st.wach && !wl) wachSetzen(true);
@@ -587,13 +757,10 @@
       ui();
     });
 
-    /* ---- Hinweis, solange der Ton noch gesperrt ist ---- */
     var hinweis = $('tonhinweis');
-    function tonPruefen() {
-      var gesperrt = ctx && ctx.state === 'suspended' && laeuft;
-      hinweis.style.display = gesperrt ? 'block' : 'none';
-    }
-    setInterval(tonPruefen, 1200);
+    setInterval(function () {
+      hinweis.style.display = (ctx && ctx.state === 'suspended' && laeuft) ? 'block' : 'none';
+    }, 1200);
     document.addEventListener('pointerdown', function () {
       if (ctx && ctx.state === 'suspended' && laeuft) {
         ctx.resume();
@@ -601,19 +768,19 @@
       }
     });
 
-    /* ---- Service Worker ---- */
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('sw.js')['catch'](function () { });
       });
     }
 
-    // Für Messungen aus der Konsole (Pegelabgleich der Kulissen)
+    // Für Messungen aus der Konsole
     window.__sc = {
-      st: st, KULISSEN: KULISSEN,
+      st: st, KULISSEN: KULISSEN, KATEGORIEN: KATEGORIEN,
       zustand: function () {
         return {
           laeuft: laeuft, ctx: ctx && ctx.state, direkt: direkt,
+          pult: st.pult.slice(),   // Kopie: sonst zeigen alte Messwerte den Endstand
           aktiv: aktiveIds(), szenen: Object.keys(szenen),
           timer: timer.ziel ? restText() : null,
           audioEl: audioEl ? { paused: audioEl.paused, t: audioEl.currentTime } : null

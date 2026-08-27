@@ -1,6 +1,6 @@
 /* Soundcape – Service Worker (Offline-Cache)
  * Bei Dateiänderungen die Versionsnummer hochzählen. */
-const CACHE = 'soundcape-v1';
+const CACHE = 'soundcape-v2';
 const ASSETS = [
   './',
   './index.html',

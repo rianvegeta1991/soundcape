@@ -24,6 +24,9 @@ Steuerkurven erzeugt (Web Audio). Das ist kein Selbstzweck:
 - **Keine Wiederholung.** Statt eines 60–90-s-Loops, dessen Naht man irgendwann hört, steuern
   Summen von Sinuskurven mit gegeneinander verstimmten Frequenzen den Klang. Ihre Perioden passen
   nicht zusammen, das Gesamtbild kehrt praktisch nie wieder.
+- **Kulissen sind isoliert.** Hinter den Grillen liegt kein Rauschteppich, hinter dem Donner kein
+  Regen. Nur wo das Rauschen selbst die Quelle ist (Regen, Brandung, Wind), gehört es dazu.
+  Gemischt wird im Pult – deshalb darf keine Kulisse ihren eigenen Hintergrund mitbringen.
 - **Läuft im Schlaf weiter.** JS-Zeitgeber (`setTimeout`/`setInterval`) werden gedrosselt, sobald
   das Handy den Bildschirm sperrt – der Audiograph nicht. Deshalb steht in `sound.js` **kein
   einziger Zeitgeber**: alles, was sich über die Zeit ändert, ist als Signal im Graphen gebaut.
@@ -57,16 +60,26 @@ für den sauberen Abbau (`abbau()`). Die tragenden Bausteine:
   **Das ist der Kern der Endlosigkeit.**
 - `selten(tempo, schwelle, exp)` – dasselbe über einen Waveshaper geschwellt: unregelmäßige
   Ereignisbögen für Donner, Wellenkämme, Windpfeifen.
+- `takt(hz, breite, exp)` – **gleichmäßiger** Puls, wo Regelmäßigkeit dazugehört:
+  Schienenstöße, Schnurren (25 Hz), Schnarchen (38 Hz), Delfinklicks.
 - `funken(bw, verst, schw)` – tiefpassgefiltertes Rauschen über eine hohe Schwelle ergibt kurze
   Anregungsimpulse. Die Bandbreite bestimmt die Rate. Die Verstärkung ist **auf 48 kHz normiert**,
   sonst knisterte es auf einem 44,1-kHz-Gerät anders.
+- `torLang(bw, schw)` – dasselbe für **lange, seltene** Ereignisse (Tierrufe, Walgesang).
+  Hier normiert die Funktion zusätzlich auf die Bandbreite. **Das ist der Grund für ihre Existenz:**
+  `funken` ist auf Bandbreiten um 900 Hz kalibriert; bei den 0,5–40 Hz eines Rufs ist die
+  Amplitude hinter dem Tiefpass so klein, dass die Schwelle nie erreicht wird – die Vogelstimmen
+  waren damit zunächst vollständig stumm (gemessen: RMS 0).
 - `knister(...)` – Rauschen, von `funken` aufgetort, durch einen resonanten Bandpass: Knistern,
   Tropfen, Blasen, Kies.
+- `ruf({f, hub, tempo, laenge, dichte, phrase, rau, triller, pegel, pan, ziel})` – eine Tierstimme:
+  Ton mit gleitender Tonhöhe, von `torLang` zu Rufen zerteilt und von `selten` zu Phrasen gruppiert.
+  `rau` schaltet von reinem Ton auf schmalbandiges Rauschen um (Papagei statt Meise).
 - `atem(node, mitte, tiefe, tempo)` – Lautstärke, die langsam um einen Mittelwert schwankt.
 - `raus(node, pegel, pan)` – Schicht an den Ausgang hängen.
 
-Acht Kulissen: `regen`, `gewitter`, `strand`, `fluss`, `unterwasser`, `wind`, `feuer`, `grillen`.
-Regen und Gewitter teilen sich `regenSchichten()`.
+23 Kulissen in sechs Kategorien (siehe `KATEGORIEN`/`KULISSEN` in app.js). Die Zuordnung
+id → Baufunktion steht in `Klang.szenen`; **beide Listen müssen deckungsgleich bleiben.**
 
 ### Pegel
 

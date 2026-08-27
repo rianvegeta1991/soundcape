@@ -10,10 +10,23 @@ Adresse oben (`github.io/…`).
 Geräuschkulissen als endlose Hintergrundbeschallung – ein angenehmer Klangteppich, der
 störende Umgebungsgeräusche überdeckt, etwa über eine Bluetooth-Box.
 
-**Acht Kulissen:** Regen · Regen mit fernem Donnergrollen · Strand · Fluss (über Wasser) ·
-Fluss (unter Wasser) · Wind · Lagerfeuer · Grillenzirpen.
-Beliebig mischbar, jede mit eigenem Regler. Dazu Timer nach Dauer oder Enduhrzeit,
-mit sanftem Ausblenden.
+**23 Kulissen in sechs Kategorien**, beliebig mischbar und jede mit eigenem Regler:
+
+| Kategorie | Kulissen |
+|---|---|
+| Wasser | Regen · Strand · Fluss · Unter Wasser · Blubberblasen |
+| Feuer | Lagerfeuer · Feuer (stark knisternd) |
+| Wind & Wetter | Wind · Donnergrollen · Baumwipfel |
+| Tiere | Grillen · Vögel heimisch · Vögel Tropen · Vögel Afrika · Walgesang · Delfingesang · Katzenschnurren |
+| Menschenwelt | Leises Schnarchen · Zug in der Ferne · Straßengeräusche |
+| Rauschen | White Noise · Pink Noise · Brown Noise |
+
+Aus der **Bibliothek** wählst du aus, was auf dem **Pult** liegen soll – dem Hauptbildschirm.
+So bleibt die Ansicht übersichtlich, egal wie viele Kulissen dazukommen.
+Dazu Timer nach Dauer oder Enduhrzeit, mit sanftem Ausblenden.
+
+Jede Kulisse ist für sich allein aufgebaut: hinter den Grillen liegt kein Rauschteppich,
+hinter dem Donner kein Regen. Wer beides will, mischt es selbst.
 
 ## Aufs Handy holen
 
