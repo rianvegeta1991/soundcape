@@ -4,6 +4,18 @@ Browser-App (PWA): wählbare Geräuschkulissen als endlose Hintergrundbeschallun
 Gedacht als angenehmer Klangteppich, der störende Umgebungsgeräusche überdeckt – oft an einer
 Bluetooth-Box. **Deutsch ist die Quellsprache** (Code, Kommentare, Oberfläche).
 
+## Live
+
+- **Gehört wird hier:** https://rianvegeta1991.github.io/soundcape/
+- **Repo:** https://github.com/rianvegeta1991/soundcape
+- Deploy = `git push origin main` → Workflow `.github/workflows/pages.yml`
+  („Seite veroeffentlichen"), typisch in ~25 Sekunden. Von Hand: `gh workflow run pages.yml`.
+- Pages läuft über **GitHub Actions** (`build_type=workflow`), nicht über „Deploy from a branch" –
+  siehe Fallstricke im Schwesterprojekt `rule-detection`.
+- **Auf dem Handy:** Seite im Browser öffnen → „Zum Startbildschirm hinzufügen". Danach eigenes
+  Icon, Vollbild, offline. HTTPS ist dafür Pflicht – über `serve-lan.ps1` im WLAN funktioniert
+  zwar der Ton, aber weder Service Worker noch Installation (kein sicherer Kontext).
+
 ## Der eine wichtige Grundsatz
 
 **Es gibt keine Audiodateien.** Jede Kulisse wird live im Browser aus Rauschen, Filtern und
@@ -102,9 +114,21 @@ So sind die Fehler „Grillen zu leise/mono" und „Unter Wasser doppelt so laut
 
 Lokaler Server: `.claude/launch.json`, Eintrag `soundcape` auf **Port 8794**.
 
+## Fallstricke
+
+- **Pages muss im frischen Repo einmal aktiviert werden.** Der erste Deploy scheiterte an
+  „Get Pages site failed", der zweite mit `enablement: true` an „Resource not accessible by
+  integration": das GITHUB_TOKEN darf eine Pages-Site nicht *anlegen*, solange die
+  Workflow-Rechte des Repos auf `read` stehen (`gh api repos/OWNER/REPO/actions/permissions/workflow`).
+  Gelöst mit `gh api -X POST repos/OWNER/REPO/pages -f build_type=workflow`. Zum reinen
+  *Deployen* reicht das Token danach.
+- Screenshots der laufenden App laufen in einen Timeout (Dauer-Animationen) – per DOM auslesen.
+
 ## Was bewusst offen ist
 
 - Nur Deutsch – die Zweisprachigkeit des Regel-Detektivs ist hier nicht nachgebaut.
-- Kein Deploy eingerichtet (kein GitHub-Repo, keine Pages-Veröffentlichung).
+- Kein APK. Eine TWA/Capacitor-Hülle wäre nur ein Browser-Wrapper um denselben Code und
+  brächte fürs Hintergrund-Audio nichts; falls Android die Wiedergabe doch mal abwürgt, ließe
+  sich über pwabuilder.com aus der Pages-URL eine installierbare APK erzeugen.
 - Die Kulissen sind austauschbar gedacht: eine neue kommt als Eintrag in `Klang.szenen`
   plus Metadaten in `KULISSEN` (app.js) dazu.
