@@ -592,6 +592,9 @@
 
     var kurz = namenKurz();
     if (!kurz) setStatus(st.pult.length ? 'Wähle eine Kulisse.' : 'Das Pult ist leer – füge Kulissen hinzu.');
+    else if (laeuft && st.master === 0)
+      // sonst steht hier "läuft", während nichts zu hören ist
+      setStatus('<b>' + kurz + '</b> läuft · Gesamtlautstärke steht auf 0 %');
     else if (laeuft) setStatus('<b>' + kurz + '</b> läuft' + (timer.ziel ? ' · noch ' + restText() : ''));
     else setStatus('<b>' + kurz + '</b> · pausiert');
 
@@ -650,6 +653,7 @@
       st.master = +$('master').value;
       $('master-proz').textContent = st.master + ' %';
       if (ctx) rampe(vol.gain, masterWert(), 0.1);
+      if (laeuft && (st.master === 0 || st.master === 1)) ui();   // Hinweis auf Stummstellung
       speichern();
     });
 
