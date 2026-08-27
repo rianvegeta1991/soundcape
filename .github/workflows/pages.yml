@@ -30,6 +30,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+        with:
+          # schaltet Pages beim ersten Lauf selbst ein – sonst scheitert der
+          # Deploy mit "Get Pages site failed", solange niemand es von Hand aktiviert
+          enablement: true
       - name: Ordner als Artefakt packen
         uses: actions/upload-pages-artifact@v3
         with:
