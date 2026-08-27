@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soundcape</title>
+<meta name="description" content="Geräuschkulissen als endlose Hintergrundklänge – Regen, Wellen, Feuer, Grillen. Ohne hörbare Wiederholung, mit Timer.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#080d18">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Soundcape">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+:root{
+  --bg:#080d18;
+  --bg2:#0d1526;
+  --panel:rgba(255,255,255,.055);
+  --panel2:rgba(255,255,255,.09);
+  --line:rgba(255,255,255,.10);
+  --text:#e8eef8;
+  --dim:#93a3bd;
+  --dim2:#66768f;
+  --akzent-rgb:110,168,255;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  overscroll-behavior-y:none;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Hintergrundschleier – die Farbe kommt von der lautesten aktiven Kulisse */
+#himmel{
+  position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(120% 80% at 15% 0%, rgba(var(--akzent-rgb),.20), transparent 60%),
+    radial-gradient(110% 70% at 85% 100%, rgba(var(--akzent-rgb),.13), transparent 62%),
+    linear-gradient(180deg,var(--bg2),var(--bg) 60%);
+  transition:background 1.4s ease;
+}
+#himmel::after{
+  content:'';position:absolute;inset:-25%;
+  background:radial-gradient(closest-side, rgba(var(--akzent-rgb),.10), transparent 70%);
+  animation:driften 52s ease-in-out infinite alternate;
+}
+@keyframes driften{
+  from{transform:translate3d(-8%,-6%,0) scale(1)}
+  to{transform:translate3d(10%,8%,0) scale(1.25)}
+}
+
+.wrap{max-width:660px;margin:0 auto;padding:0 14px calc(196px + var(--safe-b))}
+
+/* ---------- Kopf ---------- */
+header{padding:16px 2px 14px;display:flex;align-items:center;gap:12px}
+.logo{width:38px;height:38px;flex:none;opacity:.95}
+.titel{font-size:23px;font-weight:650;letter-spacing:.4px;margin:0;line-height:1.1}
+.tagline{margin:3px 0 0;font-size:12px;color:var(--dim2)}
+.kopf-tools{margin-left:auto;display:flex;gap:8px}
+.ikon-btn{
+  width:40px;height:40px;border-radius:13px;border:1px solid var(--line);
+  background:var(--panel);color:var(--text);display:grid;place-items:center;cursor:pointer;
+  transition:transform .12s;
+}
+.ikon-btn:active{transform:scale(.93)}
+.ikon-btn svg{width:20px;height:20px}
+
+/* ---------- Kacheln ---------- */
+.raster{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+@media (min-width:560px){.raster{grid-template-columns:1fr 1fr 1fr}}
+.kachel{
+  position:relative;border:1px solid var(--line);border-radius:20px;
+  background:var(--panel);padding:13px 13px 9px;cursor:pointer;
+  transition:border-color .3s,background .3s,transform .12s;
+  overflow:hidden;
+}
+.kachel::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(95% 75% at 50% -12%, rgba(var(--k-rgb),.32), transparent 72%);
+  opacity:0;transition:opacity .5s;pointer-events:none;
+}
+.kachel:active{transform:scale(.975)}
+.kachel.an{border-color:rgba(var(--k-rgb),.55);background:rgba(var(--k-rgb),.10)}
+.kachel.an::before{opacity:1}
+.k-kopf{display:flex;align-items:center;gap:9px;position:relative;min-height:36px}
+.k-ikon{width:34px;height:34px;flex:none;color:var(--dim);transition:color .35s}
+.kachel.an .k-ikon{color:rgb(var(--k-rgb))}
+.k-name{font-size:13.5px;font-weight:600;line-height:1.15}
+.k-unter{font-size:10.5px;color:var(--dim2);margin-top:2px;line-height:1.2}
+.k-regler{margin-top:9px;position:relative;display:flex;align-items:center;gap:7px}
+.k-proz{font-size:10px;color:var(--dim2);width:30px;text-align:right;font-variant-numeric:tabular-nums;flex:none}
+.kachel.an .k-proz{color:rgba(var(--k-rgb),.95)}
+
+/* Schieberegler */
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:24px;background:transparent;margin:0;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:99px;background:rgba(255,255,255,.14)}
+input[type=range]::-moz-range-track{height:5px;border-radius:99px;background:rgba(255,255,255,.14)}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;margin-top:-6px;
+  background:var(--text);border:0;box-shadow:0 1px 5px rgba(0,0,0,.5);
+}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:var(--text);border:0}
+.kachel.an input[type=range]::-webkit-slider-thumb{background:rgb(var(--k-rgb))}
+.kachel.an input[type=range]::-moz-range-thumb{background:rgb(var(--k-rgb))}
+
+/* ---------- Fußleiste ---------- */
+.fuss{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  padding:14px 14px calc(12px + var(--safe-b));
+  background:linear-gradient(180deg,rgba(8,13,24,0) 0%,rgba(8,13,24,.86) 24%,rgba(8,13,24,.985) 58%);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.fuss-innen{max-width:660px;margin:0 auto;display:flex;flex-direction:column;gap:11px}
+.zeile{display:flex;align-items:center;gap:13px}
+.play{
+  width:60px;height:60px;flex:none;border-radius:50%;border:0;cursor:pointer;
+  background:linear-gradient(160deg,rgb(var(--akzent-rgb)),rgba(var(--akzent-rgb),.7));
+  color:#04101f;display:grid;place-items:center;box-shadow:0 6px 22px rgba(var(--akzent-rgb),.32);
+  transition:transform .12s,background .8s;
+}
+.play:active{transform:scale(.93)}
+.play svg{width:26px;height:26px}
+.play.laeuft{animation:puls 3.6s ease-out infinite}
+@keyframes puls{
+  0%{box-shadow:0 0 0 0 rgba(var(--akzent-rgb),.40)}
+  70%{box-shadow:0 0 0 22px rgba(var(--akzent-rgb),0)}
+  100%{box-shadow:0 0 0 0 rgba(var(--akzent-rgb),0)}
+}
+.master{flex:1;min-width:0}
+.master-kopf{display:flex;justify-content:space-between;font-size:11px;color:var(--dim2);margin-bottom:-3px}
+.status{font-size:11.5px;color:var(--dim);min-height:15px;line-height:1.3}
+.status b{color:var(--text);font-weight:600}
+
+.chip-reihe{display:flex;gap:8px;flex-wrap:wrap}
+.chip{
+  border:1px solid var(--line);background:var(--panel);color:var(--dim);
+  border-radius:99px;padding:7px 13px;font-size:12px;cursor:pointer;font-family:inherit;
+  display:inline-flex;align-items:center;gap:6px;transition:transform .12s;
+}
+.chip svg{width:14px;height:14px;flex:none}
+.chip:active{transform:scale(.96)}
+.chip.aktiv{border-color:rgba(var(--akzent-rgb),.6);background:rgba(var(--akzent-rgb),.15);color:var(--text)}
+
+/* ---------- Blätter (Timer / Einstellungen) ---------- */
+.blende{
+  position:fixed;inset:0;z-index:40;background:rgba(4,7,14,.66);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  display:none;align-items:flex-end;justify-content:center;
+}
+.blende.offen{display:flex}
+.blatt{
+  width:100%;max-width:660px;max-height:88vh;overflow-y:auto;
+  background:linear-gradient(180deg,#141d31,#0c1322);
+  border:1px solid var(--line);border-bottom:0;
+  border-radius:26px 26px 0 0;padding:8px 18px calc(26px + var(--safe-b));
+  animation:hoch .28s cubic-bezier(.2,.9,.3,1);
+}
+@keyframes hoch{from{transform:translateY(34px);opacity:.3}to{transform:none;opacity:1}}
+.griff{width:42px;height:4px;border-radius:99px;background:rgba(255,255,255,.22);margin:8px auto 15px}
+.blatt h2{font-size:17px;margin:0 0 2px;font-weight:650}
+.blatt h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.9px;color:var(--dim2);margin:22px 0 9px;font-weight:600}
+.blatt p.hinweis{font-size:12px;color:var(--dim2);line-height:1.55;margin:9px 0 0}
+.feld{display:flex;align-items:center;gap:10px;margin-top:11px;flex-wrap:wrap}
+.feld label{font-size:13px;color:var(--dim)}
+input[type=time],input[type=number]{
+  background:var(--panel2);border:1px solid var(--line);color:var(--text);
+  border-radius:12px;padding:9px 11px;font-size:15px;font-family:inherit;color-scheme:dark;
+}
+input[type=number]{width:90px}
+.schalter{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:13px 0;border-bottom:1px solid var(--line);
+}
+.schalter:last-of-type{border-bottom:0}
+.schalter .txt{font-size:14px}
+.schalter .sub{font-size:11.5px;color:var(--dim2);margin-top:3px;line-height:1.45}
+.knebel{
+  width:48px;height:28px;border-radius:99px;background:rgba(255,255,255,.14);
+  border:0;position:relative;flex:none;cursor:pointer;transition:background .2s;
+}
+.knebel::after{
+  content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;
+  background:#fff;transition:transform .2s;
+}
+.knebel.an{background:rgba(var(--akzent-rgb),.85)}
+.knebel.an::after{transform:translateX(20px)}
+.btn{
+  width:100%;border:1px solid var(--line);background:var(--panel);color:var(--text);
+  border-radius:15px;padding:13px;font-size:14.5px;font-family:inherit;cursor:pointer;margin-top:10px;
+  transition:transform .12s;
+}
+.btn.haupt{background:rgba(var(--akzent-rgb),.92);color:#04101f;border-color:transparent;font-weight:600}
+.btn:active{transform:scale(.985)}
+.uhr-gross{
+  font-size:36px;font-weight:300;font-variant-numeric:tabular-nums;text-align:center;
+  padding:8px 0 0;letter-spacing:1px;
+}
+.uhr-unter{text-align:center;font-size:11.5px;color:var(--dim2);margin-bottom:4px}
+.fuss-version{font-size:10.5px;color:var(--dim2);text-align:center;margin-top:14px}
+
+#tonhinweis{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(206px + var(--safe-b));z-index:30;
+  background:rgba(var(--akzent-rgb),.16);border:1px solid rgba(var(--akzent-rgb),.42);
+  color:var(--text);border-radius:99px;padding:8px 16px;font-size:12.5px;display:none;
+}
+.verstecken{display:none !important}
+</style>
+</head>
+<body>
+<div id="himmel"></div>
+
+<div class="wrap">
+  <header>
+    <svg class="logo" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+      <path d="M6 24h4l4-9 5 20 5-26 5 32 4-17h9" opacity=".92"/>
+    </svg>
+    <div>
+      <h1 class="titel">Soundcape</h1>
+      <p class="tagline">Geräuschkulissen ohne Ende</p>
+    </div>
+    <div class="kopf-tools">
+      <button class="ikon-btn" id="btn-info" aria-label="Über Soundcape">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.6"/>
+        </svg>
+      </button>
+      <button class="ikon-btn" id="btn-einst" aria-label="Einstellungen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="3.2"/>
+          <path d="M12 3v2.2M12 18.8V21M21 12h-2.2M5.2 12H3M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6M18.4 18.4l-1.6-1.6M7.2 7.2 5.6 5.6"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="raster" id="raster"></div>
+</div>
+
+<div id="tonhinweis">Zum Aktivieren des Tons antippen</div>
+
+<div class="fuss">
+  <div class="fuss-innen">
+    <div class="status" id="status">Wähle eine Kulisse.</div>
+    <div class="zeile">
+      <button class="play" id="btn-play" aria-label="Abspielen">
+        <svg id="play-ikon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
+      </button>
+      <div class="master">
+        <div class="master-kopf"><span>Gesamtlautstärke</span><span id="master-proz">70 %</span></div>
+        <input type="range" id="master" min="0" max="100" value="70" aria-label="Gesamtlautstärke">
+      </div>
+    </div>
+    <div class="chip-reihe">
+      <button class="chip" id="chip-timer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.6 1.7M9 2.5h6"/>
+        </svg>
+        <span id="chip-timer-txt">Timer</span>
+      </button>
+      <button class="chip" id="chip-mix">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2.1" fill="currentColor" stroke="none"/>
+          <circle cx="15" cy="12" r="2.1" fill="currentColor" stroke="none"/><circle cx="7" cy="18" r="2.1" fill="currentColor" stroke="none"/>
+        </svg>
+        <span id="chip-mix-txt">Alles aus</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Timer -->
+<div class="blende" id="bl-timer">
+  <div class="blatt">
+    <div class="griff"></div>
+    <h2>Timer</h2>
+    <p class="hinweis" id="timer-lage">Der Ton läuft, bis du ihn beendest.</p>
+
+    <div class="uhr-gross" id="timer-uhr"></div>
+    <div class="uhr-unter" id="timer-uhr-unter"></div>
+
+    <h3>Laufzeit</h3>
+    <div class="chip-reihe" id="timer-chips"></div>
+
+    <div class="feld">
+      <label for="timer-min">Eigene Dauer</label>
+      <input type="number" id="timer-min" min="1" max="1440" step="1" placeholder="Min.">
+      <button class="chip" id="timer-min-ok">Übernehmen</button>
+    </div>
+
+    <h3>Oder bis zu einer Uhrzeit</h3>
+    <div class="feld">
+      <input type="time" id="timer-zeit">
+      <button class="chip" id="timer-zeit-ok">Übernehmen</button>
+    </div>
+
+    <button class="btn" id="timer-aus">Timer löschen</button>
+    <button class="btn haupt" id="timer-fertig">Fertig</button>
+  </div>
+</div>
+
+<!-- Einstellungen -->
+<div class="blende" id="bl-einst">
+  <div class="blatt">
+    <div class="griff"></div>
+    <h2>Einstellungen</h2>
+
+    <h3>Wiedergabe</h3>
+    <div class="schalter">
+      <div>
+        <div class="txt">Bildschirm wach halten</div>
+        <div class="sub">Verhindert das Ausgehen des Displays. Der Ton läuft auch ohne das im Hintergrund weiter – das kostet nur Akku.</div>
+      </div>
+      <button class="knebel" id="sw-wach" role="switch" aria-checked="false" aria-label="Bildschirm wach halten"></button>
+    </div>
+    <div class="schalter">
+      <div>
+        <div class="txt">Sanft einblenden</div>
+        <div class="sub">Beim Start über acht Sekunden hochfahren statt sofort voller Pegel.</div>
+      </div>
+      <button class="knebel" id="sw-einblenden" role="switch" aria-checked="true" aria-label="Sanft einblenden"></button>
+    </div>
+
+    <h3>Ausblenden am Timer-Ende</h3>
+    <div class="feld">
+      <label for="fade-min">Über</label>
+      <input type="number" id="fade-min" min="0" max="30" step="1">
+      <label for="fade-min">Minuten leiser werden</label>
+    </div>
+    <p class="hinweis">0 heißt: am Ende einfach aus. Das Ausblenden ist fest im Tonpfad geplant und läuft auch bei gesperrtem Bildschirm exakt.</p>
+
+    <h3>Klangbild</h3>
+    <div class="schalter">
+      <div>
+        <div class="txt">Breites Stereo</div>
+        <div class="sub">Verteilt die Klangschichten nach links und rechts. Für Kopfhörer schön, an einer Mono-Box egal.</div>
+      </div>
+      <button class="knebel" id="sw-stereo" role="switch" aria-checked="true" aria-label="Breites Stereo"></button>
+    </div>
+    <p class="hinweis">Klangänderungen greifen, sobald eine Kulisse neu gestartet wird.</p>
+
+    <button class="btn haupt" id="einst-fertig">Fertig</button>
+    <div class="fuss-version" id="version"></div>
+  </div>
+</div>
+
+<!-- Info -->
+<div class="blende" id="bl-info">
+  <div class="blatt">
+    <div class="griff"></div>
+    <h2>Über Soundcape</h2>
+    <p class="hinweis">
+      Alle Geräusche entstehen live im Browser – es wird keine einzige Tonaufnahme geladen.
+      Jede Kulisse ist aus Rauschen, Filtern und sehr langsamen Steuerkurven gebaut, deren Perioden
+      nicht zueinander passen. Dadurch gibt es keine Schleife, die sich wiederholen könnte:
+      Was du hörst, ist jede Sekunde neu.
+    </p>
+    <h3>Im Hintergrund</h3>
+    <p class="hinweis">
+      Der Ton läuft über eine Medien-Session weiter, wenn der Bildschirm ausgeht – auch an einer
+      Bluetooth-Box. Da der Klang im Audio-Prozess erzeugt wird und nicht per Zeitgeber im Vordergrund,
+      bleibt er auch dann vollständig, wenn das Handy schläft.
+    </p>
+    <h3>Mischen</h3>
+    <p class="hinweis">
+      Du kannst mehrere Kulissen gleichzeitig laufen lassen und einzeln in der Lautstärke einstellen –
+      etwa Regen mit Lagerfeuer oder Wind über Wellen.
+    </p>
+    <h3>Als App installieren</h3>
+    <p class="hinweis">
+      Über das Browser-Menü „Zum Startbildschirm hinzufügen“ läuft Soundcape wie eine App und
+      funktioniert danach auch ohne Internet.
+    </p>
+    <button class="btn haupt" id="info-fertig">Schließen</button>
+    <div class="fuss-version" id="version2"></div>
+  </div>
+</div>
+
+<script src="sound.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
