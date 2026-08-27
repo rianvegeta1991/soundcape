@@ -84,12 +84,32 @@ id → Baufunktion steht in `Klang.szenen`; **beide Listen müssen deckungsgleic
 ### Pegel
 
 `Klang.ausgleich` gleicht die Kulissen auf ähnliche Lautheit an. Die Werte sind **gemessen**, nicht
-geschätzt – nach jeder Klangänderung neu messen (siehe „Testen"). Zielgröße: RMS um 0,09 bei
-Vollpegel, Spitzen unter 0,7.
+geschätzt – nach jeder Klangänderung neu messen (siehe „Testen"). Die Regel lautet
+
+```
+ausgleich = min(0,09 / rms,  0,72 / peak)
+```
+
+also: auf RMS 0,09 zielen, aber nie so weit, dass die Spitzen 0,72 reißen. Der zweite Teil ist
+nötig, weil die stark schwankenden Kulissen (Donner, Grillen, Tierrufe) bei reiner RMS-Normierung
+übersteuern – sie sind die meiste Zeit still und dann sehr laut.
 
 Achtung bei schmalbandigen Schichten (Grillen): zwei Bandpässe mit hohem Q lassen nur einen
 Bruchteil der Rauschenergie durch. Ein scheinbar hoher Pegel (1,3) ist dort richtig – das war
 schon einmal ein Fehler, die Grillen waren dadurch fast unhörbar und praktisch mono.
+
+## Pult und Bibliothek (`app.js`)
+
+Zwei Ebenen: `KULISSEN` ist die **Bibliothek** (alle 23, mit Kategorie, Farbe und Icon),
+`st.pult` die **Auswahl auf dem Bildschirm**. Nur was im Pult liegt, kann klingen.
+
+- `pultBauen()` zeichnet die Kacheln plus die gestrichelte „+"-Kachel, `bibliothekBauen()` die
+  Liste im Blatt `#bl-bib`.
+- `pultUm(id)` legt eine Kulisse aufs Pult oder nimmt sie herunter – läuft sie dabei noch,
+  wird sie mit ausgeschaltet.
+- `umschalten(id)` ist das An/Aus **innerhalb** des Pults.
+- Gespeichert wird `pult` mit; alte Stände aus Version 1.0 (nur `an`) werden beim Laden
+  übernommen, `gewitter` wird dabei zu `donner`.
 
 ## Wiedergabe im Hintergrund (`app.js`)
 
