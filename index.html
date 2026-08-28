@@ -93,6 +93,9 @@ header{padding:16px 2px 14px;display:flex;align-items:center;gap:12px}
 .kachel.an .k-ikon{color:rgb(var(--k-rgb))}
 .k-name{font-size:13.5px;font-weight:600;line-height:1.15}
 .k-unter{font-size:10.5px;color:var(--dim2);margin-top:2px;line-height:1.2}
+.kachel.laedt .k-unter::after{content:' · lädt …';color:rgb(var(--k-rgb))}
+.kachel.laedt .k-ikon{animation:blinken 1.1s ease-in-out infinite}
+@keyframes blinken{0%,100%{opacity:1}50%{opacity:.35}}
 .k-regler{margin-top:9px;position:relative;display:flex;align-items:center;gap:7px}
 .k-proz{font-size:10px;color:var(--dim2);width:30px;text-align:right;font-variant-numeric:tabular-nums;flex:none}
 .kachel.an .k-proz{color:rgba(var(--k-rgb),.95)}
@@ -424,10 +427,18 @@ input[type=number]{width:90px}
     <div class="griff"></div>
     <h2>Über Soundcape</h2>
     <p class="hinweis">
-      Alle Geräusche entstehen live im Browser – es wird keine einzige Tonaufnahme geladen.
-      Jede Kulisse ist aus Rauschen, Filtern und sehr langsamen Steuerkurven gebaut, deren Perioden
-      nicht zueinander passen. Dadurch gibt es keine Schleife, die sich wiederholen könnte:
+      Regen, Wind, Feuer, Wasser und die Rauscharten entstehen <b>live im Browser</b> – ganz ohne
+      Tonaufnahme, aus Rauschen, Filtern und sehr langsamen Steuerkurven, deren Perioden nicht
+      zueinander passen. Dadurch gibt es keine Schleife, die sich wiederholen könnte:
       Was du hörst, ist jede Sekunde neu.
+    </p>
+    <h3>Tierstimmen</h3>
+    <p class="hinweis">
+      Tierstimmen lassen sich so nicht überzeugend nachbauen – sie sind keine Rauschprozesse.
+      Dafür liegen <b>gemeinfreie Aufnahmen</b> bei (Wikimedia Commons, Public Domain und CC0).
+      Auch die laufen nicht als Schleife: Aus jeder Aufnahme sind die einzelnen Rufe vermessen,
+      und abgespielt werden sie in zufälliger Reihenfolge mit zufälligen Pausen, Lautstärken und
+      Positionen. Die Nachweise stehen im Projektordner unter <i>audio/QUELLEN.md</i>.
     </p>
     <h3>Im Hintergrund</h3>
     <p class="hinweis">

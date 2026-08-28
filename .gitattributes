@@ -1,1 +1,6 @@
 * text=auto eol=lf
+
+# Aufnahmen niemals als Text behandeln - Zeilenenden-Normalisierung
+# wuerde die Dateien beschaedigen.
+*.mp3 binary
+*.png binary

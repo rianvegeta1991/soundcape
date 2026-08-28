@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.1';
+  var APP_VERSION = '1.2';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -173,6 +173,7 @@
   var ctx = null, bus = null, vol = null, fade = null, limit = null;
   var streamZiel = null, audioEl = null, direkt = false;
   var szenen = {};
+  var laedt = {};       // Kulissen, deren Aufnahmen gerade geholt werden
   var laeuft = false;
   var wl = null;
 
@@ -264,8 +265,27 @@
     param.linearRampToValueAtTime(ziel, t + Math.max(0.02, sek));
   }
 
+  // Kulissen mit Tierstimmen brauchen ihre Aufnahmen, bevor sie gebaut werden
+  // können. Beim ersten Mal wird geladen, danach liegen sie im Speicher.
   function szeneAn(id) {
-    if (szenen[id] || !ctx) return;
+    if (szenen[id] || laedt[id] || !ctx) return;
+
+    if (!Klang.bereit(ctx, id)) {
+      laedt[id] = true;
+      pultAktualisieren();
+      Klang.laden(ctx, id).then(function () {
+        delete laedt[id];
+        pultAktualisieren();
+        if (st.an[id] && laeuft) szeneAn(id);
+      })['catch'](function (e) {
+        delete laedt[id];
+        delete st.an[id];
+        pultAktualisieren();
+        setStatus('Aufnahme für <b>' + NACH_ID[id].name + '</b> lädt nicht – bist du offline?');
+      });
+      return;
+    }
+
     var g = ctx.createGain();
     g.gain.value = 0;
     g.connect(bus);
@@ -275,6 +295,7 @@
   }
 
   function szeneAus(id) {
+    delete laedt[id];
     var s = szenen[id];
     if (!s) return;
     delete szenen[id];
@@ -487,6 +508,7 @@
       var el = kacheln[i];
       var an = !!st.an[el.dataset.id];
       el.classList.toggle('an', an);
+      el.classList.toggle('laedt', !!laedt[el.dataset.id]);
       el.setAttribute('aria-pressed', an ? 'true' : 'false');
     }
     farbeSetzen();

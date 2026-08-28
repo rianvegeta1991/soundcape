@@ -76,6 +76,120 @@ const Klang = (function () {
     return buf;
   }
 
+  /* ==================================================================
+   * Aufnahmen
+   *
+   * Tierstimmen lassen sich nicht überzeugend synthetisieren: sie sind keine
+   * Rauschprozesse, sondern hochstrukturierte Signale. Für sie liegen deshalb
+   * **gemeinfreie Aufnahmen** bei (Wikimedia Commons, Public Domain / CC0 –
+   * Nachweise in audio/QUELLEN.md).
+   *
+   * Damit trotzdem keine Schleife hörbar wird, liegen die Dateien nicht als
+   * fertige Loops vor: Aus jeder Aufnahme sind die brauchbaren Rufe als
+   * Zeitmarken vermessen (Start, Dauer). Abgespielt werden immer nur einzelne
+   * Rufe, in zufälliger Reihenfolge, mit zufälliger Pause, Lautstärke,
+   * Stereoposition und leicht zufälliger Tonhöhe. Die Aufnahme selbst wird
+   * dabei nicht verändert – gespielt wird über start(zeit, offset, dauer).
+   * ================================================================== */
+  var PROBEN = {
+    amsel: { datei: 'audio/amsel.mp3', segmente: [
+      [1.27, 0.71], [1.87, 0.51], [2.42, 0.36], [2.77, 0.56], [6.67, 1.31],
+      [7.92, 0.61], [8.57, 0.66], [13.67, 2.36], [21.57, 1.91]] },
+    gartenvoegel: { datei: 'audio/gartenvoegel.mp3', segmente: [
+      [2.85, 1.65], [4.85, 1.40], [18.80, 1.15], [20.00, 0.95], [21.70, 1.30],
+      [30.10, 0.40], [31.55, 1.05], [33.00, 1.25], [43.40, 0.75], [45.00, 1.40]] },
+    tukane: { datei: 'audio/tukane.mp3', segmente: [
+      [0.67, 0.31], [0.97, 0.61], [1.72, 0.31], [2.17, 0.36], [2.62, 0.46],
+      [3.22, 0.31], [4.22, 0.36], [4.52, 0.56], [5.27, 0.31], [5.82, 0.31],
+      [6.27, 0.56], [6.82, 0.36], [8.97, 0.46], [9.77, 0.31], [10.57, 0.41],
+      [12.47, 0.46], [12.97, 0.31], [14.07, 0.36], [14.57, 0.36], [14.82, 0.56],
+      [16.77, 0.31], [16.97, 0.66], [17.77, 0.36], [18.27, 0.36], [18.77, 0.36],
+      [19.02, 0.61], [20.32, 0.36], [20.77, 0.36], [21.12, 0.56], [22.37, 0.31],
+      [22.62, 0.56], [23.67, 0.36], [24.17, 1.06], [25.12, 0.31], [25.62, 0.31],
+      [26.12, 0.51], [26.62, 0.31], [27.12, 0.31], [28.07, 0.31], [28.57, 0.31]] },
+    blauwal1: { datei: 'audio/blauwal1.mp3', segmente: [
+      [7.35, 2.85], [10.25, 8.95], [18.65, 2.15], [20.35, 2.25], [51.40, 16.45],
+      [100.95, 15.50], [148.40, 14.85], [196.85, 15.25]] },
+    blauwal2: { datei: 'audio/blauwal2.mp3', segmente: [
+      [12.95, 5.45], [18.15, 1.40], [31.75, 1.80], [93.15, 6.30], [111.50, 2.05],
+      [168.70, 1.70], [170.20, 6.00], [188.40, 1.75]] },
+    buckelwal: { datei: 'audio/buckelwal.mp3', segmente: [
+      [0.65, 1.20], [8.30, 0.55], [24.85, 1.30]] },
+    delfine: { datei: 'audio/delfine.mp3', segmente: [
+      [2.34, 0.42], [3.29, 0.22], [3.79, 0.22], [6.79, 0.22], [7.84, 0.22],
+      [8.44, 0.22], [8.84, 0.22], [8.99, 0.32], [10.74, 0.22], [12.04, 1.37],
+      [15.54, 0.22], [16.24, 0.27], [16.54, 0.22], [16.79, 0.32], [17.54, 0.27],
+      [19.44, 0.27], [23.19, 0.27], [26.69, 0.22], [27.94, 0.32], [28.19, 0.32],
+      [28.74, 0.22], [31.84, 0.32], [32.69, 0.22], [35.54, 0.62], [36.89, 0.37],
+      [37.34, 0.22], [38.54, 0.57], [39.14, 0.22], [39.29, 0.47], [40.34, 0.32]] },
+    grille: { datei: 'audio/grille.mp3', segmente: [[0.27, 0.16], [0.42, 0.21]] },
+    schnurren1: { datei: 'audio/schnurren1.mp3', segmente: [[0.5, 8.5]] },
+    schnurren2: { datei: 'audio/schnurren2.mp3', segmente: [[0.3, 8.0]] }
+  };
+
+  // Welche Aufnahmen eine Kulisse braucht
+  var BRAUCHT = {
+    vogelDe: ['amsel', 'gartenvoegel'],
+    vogelTropen: ['tukane'],
+    wal: ['blauwal1', 'blauwal2', 'buckelwal'],
+    delfin: ['delfine'],
+    grillen: ['grille'],
+    katze: ['schnurren1', 'schnurren2']
+  };
+
+  /* Der Cache-Schlüssel enthält die Abtastrate: decodeAudioData rechnet die
+   * Aufnahme auf die Rate des Kontexts um. Ein Puffer aus einem 48-kHz-Kontext
+   * würde in einem 44,1-kHz-Kontext zu schnell und zu hoch abgespielt. */
+  var puffercache = {};    // "name@rate" -> AudioBuffer
+  var laeuftGerade = {};   // "name@rate" -> Promise
+
+  function schluessel(ctx, name) { return name + '@' + ctx.sampleRate; }
+
+  function probeLaden(ctx, name) {
+    var k = schluessel(ctx, name);
+    if (puffercache[k]) return Promise.resolve(puffercache[k]);
+    if (laeuftGerade[k]) return laeuftGerade[k];
+    var p = PROBEN[name];
+    if (!p) return Promise.reject(new Error('Unbekannte Aufnahme: ' + name));
+    laeuftGerade[k] = fetch(p.datei)
+      .then(function (r) {
+        if (!r.ok) throw new Error(p.datei + ': HTTP ' + r.status);
+        return r.arrayBuffer();
+      })
+      .then(function (ab) {
+        return new Promise(function (ok, fehl) {
+          // ältere Safari-Fassungen kennen nur die Rückruf-Form
+          var ergebnis = ctx.decodeAudioData(ab, ok, fehl);
+          if (ergebnis && ergebnis.then) ergebnis.then(ok, fehl);
+        });
+      })
+      .then(function (buf) {
+        puffercache[k] = buf;
+        delete laeuftGerade[k];
+        return buf;
+      })
+      .catch(function (e) {
+        delete laeuftGerade[k];
+        throw e;
+      });
+    return laeuftGerade[k];
+  }
+
+  // Lädt alles, was eine Kulisse braucht. Kulissen ohne Aufnahmen sind sofort fertig.
+  function laden(ctx, id) {
+    var noetig = BRAUCHT[id] || [];
+    if (!noetig.length) return Promise.resolve();
+    return Promise.all(noetig.map(function (n) { return probeLaden(ctx, n); }));
+  }
+
+  function bereit(ctx, id) {
+    var noetig = BRAUCHT[id] || [];
+    for (var i = 0; i < noetig.length; i++) {
+      if (!puffercache[schluessel(ctx, noetig[i])]) return false;
+    }
+    return true;
+  }
+
   /* ------------------------------------------------------------------
    * Bauer: die Werkzeugkiste, die jede Kulisse benutzt.
    * Merkt sich alle erzeugten Knoten, damit sie sauber abgebaut werden.
@@ -84,6 +198,8 @@ const Klang = (function () {
     opt = opt || {};
     var ctx = ziel.context;
     var teile = [];
+    var takte = [];      // Zeitgeber der Ruf-Vorausplanung
+    var geplante = [];   // Listen bereits eingeplanter Rufe, für den Abbau
     var stereo = opt.stereo !== false && !!ctx.createStereoPanner;
 
     var api = {
@@ -356,7 +472,117 @@ const Klang = (function () {
         return g;
       },
 
+      /* --- Aufnahmen abspielen ---
+       * o: {probe, pegel, pause:[min,max], rate:[min,max], breite, ziel, hallAnteil}
+       *
+       * Einzelne Rufe in zufälliger Folge. Geplant wird weit im Voraus über
+       * start(zeitpunkt): Web Audio hält die Zeitpunkte exakt ein, auch wenn
+       * das Handy die JS-Zeitgeber längst eingefroren hat. Der Vorlauf von
+       * zwei Minuten überlebt selbst harte Drosselung – deshalb ist der
+       * Zeitgeber hier unbedenklich, anders als einer im Klangpfad.
+       */
+      rufe: function (o) {
+        var probe = PROBEN[o.probe];
+        var puffer = puffercache[schluessel(ctx, o.probe)];
+        if (!probe || !puffer) return null;
+
+        var summe = api.v(o.pegel === undefined ? 1 : o.pegel);
+        summe.connect(ziel);
+        if (o.ziel) summe.connect(o.ziel);
+
+        var pause = o.pause || [1.5, 6];
+        var rate = o.rate || [0.94, 1.06];
+        var breite = o.breite === undefined ? 0.7 : o.breite;
+        var naechste = ctx.currentTime + 0.4 + Math.random() * (o.start || 2);
+        var offen = [];
+
+        function planen() {
+          var horizont = ctx.currentTime + 120;
+          var wache = 0;
+          while (naechste < horizont && wache++ < 400) {
+            var seg = probe.segmente[Math.floor(Math.random() * probe.segmente.length)];
+            var r = rate[0] + Math.random() * (rate[1] - rate[0]);
+            var dauer = seg[1] / r;
+            var t = naechste;
+
+            var q = ctx.createBufferSource();
+            q.buffer = puffer;
+            q.playbackRate.value = r;
+            var g = ctx.createGain();
+            var lautstaerke = 0.65 + Math.random() * 0.35;
+            // kurze Ein- und Ausblendung: sonst knackt jede Schnittkante
+            var an = Math.min(0.03, dauer * 0.2);
+            g.gain.setValueAtTime(0, t);
+            g.gain.linearRampToValueAtTime(lautstaerke, t + an);
+            g.gain.setValueAtTime(lautstaerke, t + dauer - an);
+            g.gain.linearRampToValueAtTime(0, t + dauer);
+            q.connect(g);
+            if (stereo && breite) {
+              var p = ctx.createStereoPanner();
+              p.pan.value = (Math.random() * 2 - 1) * breite;
+              g.connect(p); p.connect(summe);
+            } else {
+              g.connect(summe);
+            }
+            q.start(t, seg[0], seg[1]);
+            offen.push(q);
+            q.onended = function () {
+              try { this.disconnect(); } catch (e) { }
+              var i = offen.indexOf(this);
+              if (i >= 0) offen.splice(i, 1);
+            };
+            naechste = t + dauer + pause[0] + Math.random() * (pause[1] - pause[0]);
+          }
+        }
+        planen();
+        var taktId = setInterval(planen, 30000);
+        takte.push(taktId);
+        geplante.push(offen);
+        return summe;
+      },
+
+      /* Dauerhafte Aufnahme als Schleife (Schnurren, Zirpen). Zwei Quellen mit
+       * leicht verschiedener Geschwindigkeit laufen auseinander, dadurch bleibt
+       * die Wiederholung unauffällig. */
+      schleife: function (o) {
+        var probe = PROBEN[o.probe];
+        var puffer = puffercache[schluessel(ctx, o.probe)];
+        if (!probe || !puffer) return null;
+        var seg = probe.segmente[o.segment || 0];
+
+        var q = ctx.createBufferSource();
+        q.buffer = puffer;
+        q.loop = true;
+        q.loopStart = seg[0];
+        q.loopEnd = seg[0] + seg[1];
+        q.playbackRate.value = o.rate || 1;
+        q.start(ctx.currentTime, seg[0] + Math.random() * seg[1] * 0.5);
+        api.reg(q);
+
+        var g = api.v(o.pegel === undefined ? 1 : o.pegel);
+        q.connect(g);
+        if (stereo && o.pan) {
+          var p = api.reg(ctx.createStereoPanner());
+          p.pan.value = o.pan;
+          g.connect(p); p.connect(ziel);
+        } else {
+          g.connect(ziel);
+        }
+        return g;
+      },
+
       abbau: function () {
+        for (var t = 0; t < takte.length; t++) clearInterval(takte[t]);
+        takte.length = 0;
+        for (var k = 0; k < geplante.length; k++) {
+          var liste = geplante[k];
+          for (var j = liste.length - 1; j >= 0; j--) {
+            try { liste[j].onended = null; liste[j].stop(0); } catch (e) { }
+            try { liste[j].disconnect(); } catch (e) { }
+          }
+          liste.length = 0;
+        }
+        geplante.length = 0;
         for (var i = 0; i < teile.length; i++) {
           var n = teile[i];
           try { if (n.stop) n.stop(0); } catch (e) { }
@@ -671,84 +897,51 @@ const Klang = (function () {
 
     /* ================= Tiere ================= */
 
-    /* ---- Grillenzirpen (isoliert, ohne Nachtluft) ---- */
+    /* ---- Grillenzirpen (Aufnahme) ----
+     * Ein einzelner Zirp als Schleife ergibt das gleichmäßige Zirpen einer
+     * Grille; fünf Stimmen mit verschiedener Geschwindigkeit und Position
+     * ergeben ein Feld. Die Phrasen (zirpen – Pause – zirpen) steuert eine
+     * synthetische Kurve, damit nichts im Takt läuft. */
     grillen: function (b) {
       var weite = b.hall(0.14, 0.42, 5200);
-      b.raus(weite.aus, 0.5, 0);
+      b.raus(weite.aus, 0.35, 0);
 
       for (var i = 0; i < 5; i++) {
-        var f = 3500 + Math.random() * 1700;
-        // schmalbandiges Rauschen klingt wie ein Zirpen – rauer als ein reiner Ton
-        var stimme = b.kette(b.rausch(), b.band(f, 24), b.band(f, 16));
-
-        var amTor = b.v(0);
-        stimme.connect(amTor);
-        b.kette(b.sinus(42 + Math.random() * 30), b.schwelle(0.0, 0.8)).connect(amTor.gain);
-
-        var phTor = b.v(0);
-        amTor.connect(phTor);
-        b.mod(phTor.gain, b.selten(11 + Math.random() * 7, 0.06, 1.3), 1.0);
-
-        // Die beiden schmalen Bandpässe lassen nur einen Bruchteil der
-        // Rauschenergie durch – deshalb der auf den ersten Blick hohe Pegel.
-        var pegel = 4.0 / (1 + i * 0.55);
-        b.raus(phTor, pegel, (Math.random() * 1.7 - 0.85));
-        if (i > 1) phTor.connect(weite.ein);
+        var g = b.schleife({
+          probe: 'grille',
+          segment: i % 2,
+          rate: 0.82 + Math.random() * 0.42,     // Tonhöhe und Zirptempo zugleich
+          pegel: 0,
+          pan: (Math.random() * 1.7 - 0.85)
+        });
+        if (!g) return;
+        // Phrasen: die Grille zirpt in Schüben und macht Pausen
+        b.mod(g.gain, b.selten(9 + Math.random() * 8, 0.02, 1.2), 0.85 / (1 + i * 0.45));
+        if (i > 1) g.connect(weite.ein);
       }
     },
 
-    /* ---- Vogelstimmen: Deutschland ---- */
+    /* ---- Vogelstimmen: Deutschland (Aufnahmen) ---- */
     vogelDe: function (b) {
       var weite = b.hall(0.13, 0.4, 4200);
-      b.raus(weite.aus, 0.45, 0);
-
-      // Amsel: melodische, absteigende Pfiffe
-      b.ruf({ f: 2400, hub: 900, tempo: 26, laenge: 7, dichte: 0.50, phrase: 6,
-              pegel: 0.30, pan: -0.5, ziel: weite.ein });
-      // Meise: hohe, kurze Doppelrufe mit Triller
-      b.ruf({ f: 4200, hub: 700, tempo: 55, laenge: 22, dichte: 0.52, triller: 17,
-              phrase: 9, pegel: 0.26, pan: 0.45, ziel: weite.ein });
-      // Rotkehlchen: feines, schnelles Perlen
-      b.ruf({ f: 5200, hub: 1400, tempo: 80, laenge: 30, dichte: 0.54, phrase: 13,
-              pegel: 0.16, pan: 0.15, ziel: weite.ein });
-      // Buchfink: kräftiger, mittlerer Ruf
-      b.ruf({ f: 3100, hub: 1100, tempo: 40, laenge: 14, dichte: 0.53, triller: 26,
-              phrase: 7, pegel: 0.20, pan: -0.25, ziel: weite.ein });
-      // Ringeltaube: tiefes, weiches Gurren weit hinten
-      b.ruf({ f: 480, hub: 90, tempo: 9, laenge: 3.5, dichte: 0.54, form: 'triangle',
-              phrase: 2.2, pegel: 0.22, pan: 0.6, ziel: weite.ein });
+      b.raus(weite.aus, 0.30, 0);
+      // Amsel: einzelne Strophen, ruhige Abstände
+      b.rufe({ probe: 'amsel', pegel: 0.85, pause: [2.5, 9], rate: [0.95, 1.05],
+               breite: 0.75, ziel: weite.ein, start: 3 });
+      // Gartenvögel: dichteres, gemischtes Zwitschern
+      b.rufe({ probe: 'gartenvoegel', pegel: 0.75, pause: [1.2, 5], rate: [0.93, 1.08],
+               breite: 0.8, ziel: weite.ein, start: 6 });
     },
 
-    /* ---- Vogelstimmen: Tropen ---- */
+    /* ---- Vogelstimmen: Tropen (Aufnahmen) ---- */
     vogelTropen: function (b) {
       var weite = b.hall(0.19, 0.5, 3200);
-      b.raus(weite.aus, 0.6, 0);
-
-      // Papageien: rau und krächzend
-      b.ruf({ f: 1400, hub: 700, tempo: 22, laenge: 6, dichte: 0.52, rau: 9,
-              phrase: 4, pegel: 1.9, pan: -0.45, ziel: weite.ein });
-      b.ruf({ f: 900, hub: 450, tempo: 16, laenge: 4.5, dichte: 0.54, rau: 7,
-              phrase: 3, pegel: 2.1, pan: 0.5, ziel: weite.ein });
-      // schrille Pfiffe mit weiten Sprüngen
-      b.ruf({ f: 3400, hub: 2200, tempo: 34, laenge: 9, dichte: 0.53,
-              phrase: 5, pegel: 0.24, pan: 0.2, ziel: weite.ein });
-      // schnelles, metallisches Ticken (Tukan-artig)
-      b.ruf({ f: 2000, hub: 300, tempo: 60, laenge: 40, dichte: 0.50, rau: 14,
-              triller: 11, phrase: 3.5, pegel: 2.4, pan: -0.2, ziel: weite.ein });
-      // tiefes Rufen aus der Ferne
-      b.ruf({ f: 620, hub: 260, tempo: 7, laenge: 2.6, dichte: 0.56, form: 'triangle',
-              phrase: 1.8, pegel: 0.26, pan: 0.65, ziel: weite.ein });
-      // Zikaden-Grundton des Regenwalds, schmalbandig statt Rauschteppich.
-      // Zwei leicht verschiedene Stimmen links und rechts – als einzelne
-      // Mittenstimme zog sie die ganze Kulisse nach Mono.
-      [[5200, 58, -0.55], [4700, 63, 0.5]].forEach(function (z) {
-        var zik = b.kette(b.rausch(), b.band(z[0], 14), b.band(z[0], 10));
-        var zTor = b.v(0);
-        zik.connect(zTor);
-        b.kette(b.sinus(z[1]), b.schwelle(0.1, 0.9)).connect(zTor.gain);
-        // leiser als die Rufe: die Zikaden sind Kulisse, nicht Hauptstimme
-        b.atem(b.raus(zTor, 0.6, z[2]), 0.6, 0.28, 1.2);
-      });
+      b.raus(weite.aus, 0.45, 0);
+      // Tukane im Amazonas: viele kurze Rufe dicht hintereinander
+      b.rufe({ probe: 'tukane', pegel: 0.7, pause: [0.25, 2.2], rate: [0.9, 1.1],
+               breite: 0.85, ziel: weite.ein, start: 2 });
+      b.rufe({ probe: 'tukane', pegel: 0.4, pause: [1.5, 6], rate: [0.72, 0.85],
+               breite: 0.6, ziel: weite.ein, start: 5 });   // tiefere, fernere Rufe
     },
 
     /* ---- Vogelstimmen: Afrika ---- */
@@ -773,120 +966,44 @@ const Klang = (function () {
               triller: 13, phrase: 2.2, pegel: 1.7, pan: 0.6, ziel: weite.ein });
     },
 
-    /* ---- Walgesang ---- */
+    /* ---- Walgesang (Aufnahmen) ----
+     * Blauwal-Rufe der NOAA, dazu ein Buckelwal. Die Rufe sind bis zu 16 s
+     * lang, entsprechend groß sind die Abstände. */
     wal: function (b) {
-      // Rückkopplung bewusst zurückhaltend: mit 0,72 schaukelten sich die drei
-      // Verzögerungen auf und die Kulisse übersteuerte (gemessen: Spitze 1,48).
-      var tiefe = b.hall(0.42, 0.52, 700);
-      b.raus(tiefe.aus, 0.7, 0);
-
-      // Lange, gleitende Rufe: der Ton wandert über Sekunden durch die Tonlage.
-      var stimmen = [
-        { f: 190, hub: 130, tempo: 3.0, laenge: 0.9, dichte: 0.42, pegel: 0.17, pan: -0.25 },
-        { f: 95, hub: 55, tempo: 2.0, laenge: 0.6, dichte: 0.46, pegel: 0.20, pan: 0.2 },
-        { f: 330, hub: 220, tempo: 4.5, laenge: 1.3, dichte: 0.50, pegel: 0.11, pan: 0.05 }
-      ];
-      for (var i = 0; i < stimmen.length; i++) {
-        var s = stimmen[i];
-        var osc = b.sinus(0, 'sine');
-        osc.frequency.value = 0;
-        b.mod(osc.frequency, b.steuer(s.f, s.hub, s.tempo));
-        // etwas Obertongehalt, damit der Ton nicht nach Prüfgerät klingt
-        var farbe = b.kette(osc, b.flt('peaking', s.f * 2, 1));
-        var tor = b.v(0);
-        farbe.connect(tor);
-        b.mod(tor.gain, b.torLang(s.laenge, s.dichte), 1.2);
-        b.raus(tor, s.pegel, s.pan);
-        tor.connect(tiefe.ein);
-      }
-
-      // fernes Stöhnen ganz unten
-      var sub = b.sinus(0, 'sine');
-      sub.frequency.value = 0;
-      b.mod(sub.frequency, b.steuer(48, 22, 1.2));
-      var subTor = b.v(0);
-      sub.connect(subTor);
-      b.mod(subTor.gain, b.torLang(0.5, 0.50), 1.0);
-      b.raus(subTor, 0.26, 0);
-      subTor.connect(tiefe.ein);
+      // Die NOAA-Aufnahmen sind bereits voll ausgesteuert; zusammen mit dem
+      // Hall riss die Kulisse sonst über die Vollaussteuerung (gemessen: 1,15).
+      var tiefe = b.hall(0.42, 0.5, 700);
+      b.raus(tiefe.aus, 0.32, 0);
+      b.rufe({ probe: 'blauwal1', pegel: 0.42, pause: [6, 22], rate: [0.97, 1.03],
+               breite: 0.35, ziel: tiefe.ein, start: 2 });
+      b.rufe({ probe: 'blauwal2', pegel: 0.35, pause: [10, 30], rate: [0.94, 1.06],
+               breite: 0.5, ziel: tiefe.ein, start: 12 });
+      b.rufe({ probe: 'buckelwal', pegel: 0.30, pause: [14, 40], rate: [0.9, 1.08],
+               breite: 0.6, ziel: tiefe.ein, start: 20 });
     },
 
-    /* ---- Delfingesang ---- */
+    /* ---- Delfingesang (Aufnahme) ---- */
     delfin: function (b) {
-      var raum = b.hall(0.11, 0.55, 6000);
-      b.raus(raum.aus, 0.55, 0);
-
-      // Pfiffe: schnelle, weite Sprünge in hoher Lage
-      var pfiffe = [
-        { f: 5200, hub: 3400, tempo: 90, laenge: 16, dichte: 0.64, pegel: 0.20, pan: -0.3 },
-        { f: 8000, hub: 4200, tempo: 130, laenge: 24, dichte: 0.68, pegel: 0.14, pan: 0.35 },
-        { f: 3400, hub: 2200, tempo: 60, laenge: 10, dichte: 0.66, pegel: 0.22, pan: 0.1 }
-      ];
-      for (var i = 0; i < pfiffe.length; i++) {
-        var p = pfiffe[i];
-        var osc = b.sinus(0, 'sine');
-        osc.frequency.value = 0;
-        b.mod(osc.frequency, b.steuer(p.f, p.hub, p.tempo));
-        var tor = b.v(0);
-        osc.connect(tor);
-        b.mod(tor.gain, b.torLang(p.laenge, p.dichte), 1.3);
-        b.raus(tor, p.pegel, p.pan);
-        tor.connect(raum.ein);
-      }
-
-      // Klickfolgen (Echoortung): schneller, regelmäßiger Takt in Serien
-      var klick = b.v(0);
-      b.rausch().connect(klick);
-      var klickTakt = b.v(0);
-      b.takt(38, 0.08, 0.6).connect(klickTakt);
-      b.mod(klickTakt.gain, b.selten(6, 0.30, 1.4), 1.0);   // nur schubweise
-      klickTakt.connect(klick.gain);
-      var kk = b.kette(klick, b.hoch(4000), b.band(7000, 2.5));
-      b.raus(kk, 1.4, -0.15);
-      kk.connect(raum.ein);
-
-      // zweite, langsamere Klickfolge
-      var klick2 = b.v(0);
-      b.rausch().connect(klick2);
-      var takt2 = b.v(0);
-      b.takt(13, 0.06, 0.6).connect(takt2);
-      b.mod(takt2.gain, b.selten(4, 0.40, 1.4), 1.0);
-      takt2.connect(klick2.gain);
-      b.raus(b.kette(klick2, b.hoch(3000), b.band(5200, 2)), 1.2, 0.25);
+      var raum = b.hall(0.11, 0.5, 6000);
+      b.raus(raum.aus, 0.4, 0);
+      // Pfiffe und Klicks kommen in Schüben
+      b.rufe({ probe: 'delfine', pegel: 0.9, pause: [0.25, 2.5], rate: [0.92, 1.1],
+               breite: 0.8, ziel: raum.ein, start: 1 });
+      b.rufe({ probe: 'delfine', pegel: 0.5, pause: [1.5, 6], rate: [0.8, 0.95],
+               breite: 0.5, ziel: raum.ein, start: 4 });    // entferntere Tiere
     },
 
-    /* ---- Katzenschnurren ---- */
+    /* ---- Katzenschnurren (Aufnahme) ----
+     * Schnurren läuft durchgehend, deshalb als Schleife. Zwei Aufnahmen mit
+     * leicht verschiedener Geschwindigkeit driften auseinander – dadurch
+     * entsteht kein hörbarer Takt. */
     katze: function (b) {
-      // Schnurren ist tiefes, rauhes Brummen mit etwa 25 Schlägen je Sekunde,
-      // moduliert vom Atemzyklus (ein- und ausatmen dauern zusammen ~3 s).
-      var atem = b.kette(b.sinus(0.34), b.schwelle(-0.75, 1.1));
-      var atemAus = b.verz(1.5);            // Ausatmen: derselbe Zyklus, halbe Periode später
-      atem.connect(atemAus);
-
-      function lage(f, q, taktHz, pegel, pan, quelleAtem) {
-        var grund = b.kette(b.rausch(true), b.tief(f, q));
-        var tor = b.v(0);
-        grund.connect(tor);
-        var schlag = b.v(0);
-        b.takt(taktHz, 0.5, 1.0).connect(schlag);
-        b.mod(schlag.gain, quelleAtem, 1.0);
-        schlag.connect(tor.gain);
-        b.raus(tor, pegel, pan);
-        return tor;
-      }
-
-      lage(170, 1.2, 25, 1.5, -0.12, atem);        // Einatmen: dichter, tiefer
-      lage(260, 1.0, 23.5, 0.9, 0.15, atemAus);    // Ausatmen: etwas heller, leiser
-
-      // der raue Anteil obendrauf, damit es nicht nach Motor klingt
-      var rau = b.kette(b.rausch(), b.band(620, 3.5));
-      var rTor = b.v(0);
-      rau.connect(rTor);
-      var rSchlag = b.v(0);
-      b.takt(25, 0.45, 1.2).connect(rSchlag);
-      b.mod(rSchlag.gain, atem, 1.0);
-      rSchlag.connect(rTor.gain);
-      b.raus(rTor, 0.5, 0);
+      var a = b.schleife({ probe: 'schnurren1', rate: 0.97, pegel: 0, pan: -0.12 });
+      var c = b.schleife({ probe: 'schnurren2', rate: 1.03, pegel: 0, pan: 0.15 });
+      if (!a || !c) return;
+      // ruhiges An- und Abschwellen, wie beim Atmen der Katze
+      b.atem(a, 0.85, 0.2, 0.5);
+      b.atem(c, 0.55, 0.18, 0.35);
     },
 
     /* ---- Leises Schnarchen ---- */
@@ -1037,8 +1154,8 @@ const Klang = (function () {
     regen: 0.82, strand: 1.22, fluss: 1.27, unterwasser: 1.10, blasen: 3.23,
     feuer: 2.30, feuerstark: 1.77,
     wind: 1.23, donner: 1.64, wipfel: 1.25,
-    grillen: 1.83, vogelDe: 4.68, vogelTropen: 1.87, vogelAfrika: 3.13,
-    wal: 2.33, delfin: 1.36, katze: 1.18,
+    grillen: 0.99, vogelDe: 1.08, vogelTropen: 1.40, vogelAfrika: 3.13,
+    wal: 1.41, delfin: 1.03, katze: 1.46,
     schnarchen: 1.02, zug: 0.77, strasse: 1.75,
     weiss: 0.66, rosa: 0.28, braun: 0.95
   };
@@ -1056,6 +1173,10 @@ const Klang = (function () {
     bauen: bauen,
     ausgleich: AUSGLEICH,
     pufferFuer: pufferFuer,
-    bauer: bauer      // für Messungen einzelner Schichten
+    bauer: bauer,     // für Messungen einzelner Schichten
+    laden: laden,     // Aufnahmen einer Kulisse holen (Promise)
+    bereit: bereit,   // liegen sie schon im Speicher?
+    braucht: BRAUCHT,
+    proben: PROBEN
   };
 })();

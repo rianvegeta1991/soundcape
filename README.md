@@ -40,9 +40,16 @@ sich anhalten und fortsetzen.
 
 ## Was daran besonders ist
 
-Es gibt **keine Audiodateien**. Jede Kulisse entsteht live im Browser aus Rauschen,
-Filtern und sehr langsamen Steuerkurven, deren Perioden nicht zueinander passen –
-deshalb gibt es keine Schleife, die sich wiederholen könnte. Nebeneffekt: Der Klang
-entsteht im Audio-Prozess und bleibt darum vollständig, auch wenn das Handy schläft.
+Regen, Wind, Feuer, Wasser und die Rauscharten entstehen **live im Browser**, ganz ohne
+Audiodatei: aus Rauschen, Filtern und sehr langsamen Steuerkurven, deren Perioden nicht
+zueinander passen – deshalb gibt es keine Schleife, die sich wiederholen könnte.
+Nebeneffekt: Der Klang entsteht im Audio-Prozess und bleibt darum vollständig, auch wenn
+das Handy schläft.
+
+Für **Tierstimmen** liegen gemeinfreie Aufnahmen bei (Public Domain und CC0 von Wikimedia
+Commons, Nachweise in [audio/QUELLEN.md](audio/QUELLEN.md)) – synthetisch klingen Vögel,
+Wale und Delfine nie echt. Auch die laufen nicht als Schleife: Aus jeder Aufnahme sind die
+einzelnen Rufe vermessen und werden in zufälliger Folge mit zufälligen Pausen, Lautstärken
+und Positionen abgespielt.
 
 Technische Einzelheiten stehen in [CLAUDE.md](CLAUDE.md).

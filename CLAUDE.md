@@ -18,8 +18,8 @@ Bluetooth-Box. **Deutsch ist die Quellsprache** (Code, Kommentare, Oberfläche).
 
 ## Der eine wichtige Grundsatz
 
-**Es gibt keine Audiodateien.** Jede Kulisse wird live im Browser aus Rauschen, Filtern und
-Steuerkurven erzeugt (Web Audio). Das ist kein Selbstzweck:
+**Alles außer den Tierstimmen wird live erzeugt** – aus Rauschen, Filtern und Steuerkurven
+(Web Audio), ohne Audiodateien. Das ist kein Selbstzweck:
 
 - **Keine Wiederholung.** Statt eines 60–90-s-Loops, dessen Naht man irgendwann hört, steuern
   Summen von Sinuskurven mit gegeneinander verstimmten Frequenzen den Klang. Ihre Perioden passen
@@ -33,6 +33,18 @@ Steuerkurven erzeugt (Web Audio). Das ist kein Selbstzweck:
   **Diese Regel nicht aufweichen** – ein setTimeout im Klangpfad bringt genau das Stottern
   zurück, das die Bauart vermeidet.
 - Winzig, offlinefähig, keine Urheberrechtsfrage.
+
+**Die Ausnahme: Tierstimmen.** Sie sind keine Rauschprozesse, sondern hochstrukturierte
+Signale – synthetisch klingen sie unweigerlich nach Pfeifton. Das war der Befund aus der
+Praxis, nicht aus der Theorie: Version 1.1 hatte alle sieben Tierkulissen synthetisch, und
+sie klangen durchweg unecht. Seit 1.2 liegen dafür **gemeinfreie Aufnahmen** bei
+(`audio/`, Public Domain und CC0, Nachweise in `audio/QUELLEN.md`).
+
+Damit trotzdem keine Schleife hörbar wird, sind die Dateien **keine fertigen Loops**: Aus
+jeder Aufnahme sind die brauchbaren Rufe als Zeitmarken vermessen (`PROBEN` in sound.js),
+abgespielt werden einzelne Rufe in zufälliger Folge mit zufälliger Pause, Lautstärke,
+Position und Tonhöhe. Die Dateien selbst bleiben unverändert – gelesen wird über
+`start(zeit, offset, dauer)`.
 
 ## Dateien
 
@@ -77,6 +89,23 @@ für den sauberen Abbau (`abbau()`). Die tragenden Bausteine:
   `rau` schaltet von reinem Ton auf schmalbandiges Rauschen um (Papagei statt Meise).
 - `atem(node, mitte, tiefe, tempo)` – Lautstärke, die langsam um einen Mittelwert schwankt.
 - `raus(node, pegel, pan)` – Schicht an den Ausgang hängen.
+
+### Aufnahmen abspielen
+
+- `rufe({probe, pegel, pause, rate, breite, ziel})` – einzelne Rufe in zufälliger Folge.
+  Geplant wird **zwei Minuten im Voraus** über `start(zeitpunkt)`; nachgelegt alle 30 s.
+  Der Zeitgeber ist hier unbedenklich, weil Web Audio die Zeitpunkte auch dann exakt
+  einhält, wenn das Handy die JS-Timer längst eingefroren hat – anders als ein Zeitgeber
+  *im* Klangpfad. **Diesen Vorlauf nicht verkleinern.**
+- `schleife({probe, segment, rate, pegel, pan})` – für Dauergeräusche (Schnurren, Zirpen).
+- `Klang.laden(ctx, id)` / `Klang.bereit(ctx, id)` – app.js holt die Aufnahmen, bevor eine
+  Kulisse gebaut wird; solange trägt die Kachel die Klasse `laedt`.
+- Der Puffercache ist **nach Abtastrate getrennt** (`name@48000`): `decodeAudioData` rechnet
+  auf die Rate des Kontexts um, ein Puffer aus einem 48-kHz-Kontext liefe in einem
+  44,1-kHz-Kontext zu schnell und zu hoch.
+- Die MP3s stehen **nicht** in der `ASSETS`-Liste des Service Workers – 9 MB beim Installieren
+  wären unhöflich. Der fetch-Handler legt sie beim ersten Abspielen in den Cache; offline
+  verfügbar sind also die Kulissen, die schon einmal liefen.
 
 23 Kulissen in sechs Kategorien (siehe `KATEGORIEN`/`KULISSEN` in app.js). Die Zuordnung
 id → Baufunktion steht in `Klang.szenen`; **beide Listen müssen deckungsgleich bleiben.**
