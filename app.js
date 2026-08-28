@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.2';
+  var APP_VERSION = '1.3';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -174,6 +174,7 @@
   var streamZiel = null, audioEl = null, direkt = false;
   var szenen = {};
   var laedt = {};       // Kulissen, deren Aufnahmen gerade geholt werden
+  var warStumm = false; // stand der Master beim letzten Reglerschritt auf null?
   var laeuft = false;
   var wl = null;
 
@@ -675,7 +676,11 @@
       st.master = +$('master').value;
       $('master-proz').textContent = st.master + ' %';
       if (ctx) rampe(vol.gain, masterWert(), 0.1);
-      if (laeuft && (st.master === 0 || st.master === 1)) ui();   // Hinweis auf Stummstellung
+      // Statuszeile auffrischen, wenn die Stummstellung beginnt *oder endet* –
+      // sonst bliebe der Hinweis nach dem Wiederaufdrehen stehen.
+      var stumm = (st.master === 0);
+      if (laeuft && (stumm || warStumm)) ui();
+      warStumm = stumm;
       speichern();
     });
 

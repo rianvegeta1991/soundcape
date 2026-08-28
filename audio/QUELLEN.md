@@ -1,15 +1,17 @@
 # Quellen der Aufnahmen
 
-Alle Dateien in diesem Ordner stammen von **Wikimedia Commons** und stehen unter
-**Public Domain** oder **CC0**. Damit bestehen keine Nennungs-, Weitergabe- oder
-Lizenzpflichten – die Urheber sind hier trotzdem genannt, weil es sich gehört.
+Alle Dateien stammen von **Wikimedia Commons**. Sie sind entweder gemeinfrei bzw. CC0
+(keine Auflagen) oder stehen unter **CC-BY / CC-BY-SA** – dann ist die Namensnennung
+Pflicht, die hier und im Info-Bereich der App erfolgt.
 
-Bearbeitung: Die Dateien wurden von Commons als MP3 bezogen (dortiger
-Transkodierungsdienst, weil Ogg auf iPhones nicht abspielbar ist). `tukane.mp3` ist
-auf die ersten 110 Sekunden gekürzt. Sonst ist nichts verändert – es wird beim
-Abspielen lediglich abschnittsweise daraus gelesen.
+**Bearbeitung:** Die Dateien wurden über den Transkodierungsdienst von Commons als MP3
+bezogen (Ogg spielt auf iPhones nicht). `tukane.mp3` ist auf die ersten 110 Sekunden
+gekürzt. Sonst ist nichts verändert; beim Abspielen wird lediglich abschnittsweise
+daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das Original.
 
-| Datei | Aufnahme auf Commons | Lizenz | Urheber |
+## Gemeinfrei / CC0 – keine Auflagen
+
+| Datei | Aufnahme | Lizenz | Urheber |
 |---|---|---|---|
 | `amsel.mp3` | [Turdus merula 2.ogg](https://commons.wikimedia.org/wiki/File:Turdus_merula_2.ogg) | Public Domain | Oona Räisänen (Mysid) |
 | `gartenvoegel.mp3` | [Birds singing in garden.ogg](https://commons.wikimedia.org/wiki/File:Birds_singing_in_garden.ogg) | Public Domain | ezwa |
@@ -22,18 +24,42 @@ Abspielen lediglich abschnittsweise daraus gelesen.
 | `schnurren2.mp3` | [Purring cat bertie.ogg](https://commons.wikimedia.org/wiki/File:Purring_cat_bertie.ogg) | Public Domain | jim_mowatt |
 | `grille.mp3` | [Jer-Cricket.ogg](https://commons.wikimedia.org/wiki/File:Jer-Cricket.ogg) | Public Domain | Man vyi |
 
+## CC-BY und CC-BY-SA – Namensnennung erforderlich
+
+| Datei | Aufnahme | Lizenz | Urheber |
+|---|---|---|---|
+| `rotkehlchen.mp3` | Erithacus rubecula – European Robin XC114615 | CC BY-SA 3.0 | Jonathon Jongsma |
+| `buchfink.mp3` | Fringilla coelebs – Common Chaffinch XC108344 | CC BY-SA 4.0 | Alexander Kurthy |
+| `meise.mp3` | Parus major – Great Tit XC165660 | CC BY-SA 3.0 | José Carlos Sires |
+| `grasmuecke.mp3` | Sylvia atricapilla – Eurasian Blackcap XC457403 | CC BY-SA 4.0 | Hannu Varkki |
+| `glanzstar.mp3` | Lamprotornis superbus – Superb Starling XC402690 | CC BY-SA 4.0 | Anne Ndung'u |
+| `hornvogel.mp3` | African Grey Hornbill (Tockus nasutus) | CC BY 4.0 | British Library |
+| `perlhuhn.mp3` | Numida meleagris – chant | CC BY-SA 4.0 | Litlok |
+| `palmtaube.mp3` | Laughing dove song, Dandoba hill, Sangli | CC BY-SA 4.0 | Sharadapte |
+| `buelbuel.mp3` | Pycnonotus tricolor, roep, Pretoria | CC BY-SA 4.0 | JMK |
+| `tukan2.mp3` | Keel Billed Toucan | CC BY 3.0 | soundbytez |
+| `tukan3.mp3` | Chesnut-mandibled toucan | CC BY 3.0 | soundbytez |
+| `donner1.mp3` | Thunder Claps | CC BY-SA 4.0 | Jonathan Hunt |
+| `donner2.mp3` | Booming Thunder 2023-10-09 | CC BY-SA 4.0 | KTerPalmers |
+| `donner3.mp3` | Thunder 01 | CC BY-SA 4.0 | Amuzujoe |
+
+Die Vogelaufnahmen mit „XC"-Nummer stammen ursprünglich von
+[xeno-canto.org](https://xeno-canto.org) und kamen über Commons hierher.
+
 ## Wie die Aufnahmen benutzt werden
 
-Nicht als Schleife. Aus jeder Datei sind die brauchbaren Rufe als Zeitmarken
-vermessen (Liste `PROBEN` in `sound.js`); abgespielt werden einzelne Rufe in
-zufälliger Reihenfolge, mit zufälliger Pause, Lautstärke, Stereoposition und
-leicht zufälliger Tonhöhe. Dauergeräusche (Schnurren, Grillenzirpen) laufen als
-Schleife über ein kurzes Segment, mit leicht unterschiedlicher Geschwindigkeit
-je Stimme, damit kein Takt entsteht.
+Nicht als Schleife. Aus jeder Datei sind die brauchbaren Rufe als Zeitmarken vermessen
+(Liste `PROBEN` in `sound.js`); abgespielt werden einzelne Rufe in zufälliger Reihenfolge,
+mit zufälliger Pause, Lautstärke, Stereoposition und leicht zufälliger Tonhöhe.
+Dauergeräusche (Schnurren, Grillenzirpen) laufen als Schleife über ein kurzes Segment,
+je Stimme mit anderer Geschwindigkeit, damit kein Takt entsteht.
 
-## Was noch fehlt
+Beim Donner nimmt ein Tiefpass den Aufnahmen die Höhen – das macht der Weg durch die Luft
+mit fernem Donner genauso, und erst dadurch klingt er nach „weit weg".
 
-Für **Vogelstimmen Afrika** gibt es auf Commons kein brauchbares gemeinfreies
-Material – die Suche findet dort nur Musikstücke und Wörterbuch-Aufnahmen.
-Diese Kulisse ist deshalb weiterhin synthetisch. Mit CC-BY-Lizenzen (Namensnennung)
-gäbe es Auswahl, etwa Hornvögel und Webervögel.
+## Was noch synthetisch ist
+
+Lagerfeuer und Blubberblasen. Für solche Umgebungsgeräusche ist Commons als
+Enzyklopädie-Mediathek eine schlechte Quelle – dort finden sich unter „Feuer" vor allem
+Klavierstücke und Feueralarm-Ansagen. Passendes Material gäbe es auf freesound.org (viel CC0),
+dessen Download aber einen kostenlosen API-Schlüssel braucht.

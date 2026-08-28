@@ -122,6 +122,57 @@ const Klang = (function () {
       [19.44, 0.27], [23.19, 0.27], [26.69, 0.22], [27.94, 0.32], [28.19, 0.32],
       [28.74, 0.22], [31.84, 0.32], [32.69, 0.22], [35.54, 0.62], [36.89, 0.37],
       [37.34, 0.22], [38.54, 0.57], [39.14, 0.22], [39.29, 0.47], [40.34, 0.32]] },
+    /* --- heimische Vögel (Xeno-canto über Commons, CC-BY-SA) --- */
+    rotkehlchen: { datei: 'audio/rotkehlchen.mp3', segmente: [
+      [1.27, 0.41], [17.92, 0.56], [22.02, 0.41], [24.62, 0.36], [26.02, 0.41], [31.82, 0.41]] },
+    buchfink: { datei: 'audio/buchfink.mp3', segmente: [
+      [2.52, 0.31], [2.97, 0.36], [6.07, 0.46], [6.47, 0.31], [8.07, 0.41], [8.92, 0.31],
+      [9.52, 0.31], [9.92, 0.31], [14.47, 0.31], [14.77, 0.41], [15.62, 0.41], [15.97, 0.36]] },
+    meise: { datei: 'audio/meise.mp3', segmente: [
+      [0.00, 0.86], [0.72, 0.81], [1.67, 0.51], [2.12, 0.31], [2.32, 0.56], [2.77, 0.31],
+      [23.67, 0.36], [24.07, 0.61], [31.12, 0.46], [31.47, 0.46], [31.87, 0.31]] },
+    grasmuecke: { datei: 'audio/grasmuecke.mp3', segmente: [
+      [3.32, 0.36], [7.57, 0.31], [8.77, 0.31], [8.97, 0.56], [9.42, 0.51], [9.82, 0.31],
+      [10.02, 0.71], [11.12, 0.31], [11.62, 0.31], [12.02, 0.36], [13.22, 0.36]] },
+
+    /* --- afrikanische Vögel --- */
+    glanzstar: { datei: 'audio/glanzstar.mp3', segmente: [
+      [0.00, 1.86], [1.67, 0.71], [2.32, 1.11], [3.62, 0.36], [7.22, 1.06], [8.17, 0.66],
+      [22.77, 0.36], [23.42, 0.41], [24.67, 0.46], [26.62, 0.41], [27.02, 0.36], [27.52, 0.36],
+      [28.12, 0.41], [29.47, 0.51], [30.17, 0.61], [33.82, 0.36], [40.37, 0.46], [42.02, 0.46],
+      [44.37, 0.36], [47.92, 0.46], [49.82, 0.61], [50.32, 0.36]] },
+    hornvogel: { datei: 'audio/hornvogel.mp3', segmente: [
+      [1.17, 0.36], [1.57, 0.36], [2.02, 0.31], [2.42, 0.36], [2.82, 0.36], [3.27, 0.31],
+      [3.67, 0.36], [4.12, 0.36], [4.52, 0.41], [4.87, 0.36], [5.37, 0.36], [5.82, 0.36],
+      [6.22, 0.36], [6.67, 0.36], [7.47, 0.36], [7.92, 0.36], [8.37, 0.36], [9.17, 0.36],
+      [9.62, 0.36], [10.42, 0.36], [10.87, 0.41], [11.32, 0.41]] },
+    perlhuhn: { datei: 'audio/perlhuhn.mp3', segmente: [
+      [0.07, 0.31], [0.87, 0.36], [1.52, 0.41], [2.97, 0.41], [6.87, 0.56], [7.37, 0.36], [7.72, 0.31]] },
+    palmtaube: { datei: 'audio/palmtaube.mp3', segmente: [
+      [0.62, 0.36], [0.87, 0.31], [1.07, 0.46], [2.52, 0.31], [2.72, 0.61], [3.77, 0.46],
+      [4.12, 0.31], [4.32, 0.36]] },
+    buelbuel: { datei: 'audio/buelbuel.mp3', segmente: [
+      [1.67, 0.36], [1.97, 0.76], [5.67, 0.41], [6.07, 0.41], [6.37, 0.51], [11.92, 0.31],
+      [12.22, 0.41], [12.52, 0.46], [15.22, 0.36]] },
+
+    /* --- weitere Tukane --- */
+    tukan2: { datei: 'audio/tukan2.mp3', segmente: [
+      [1.32, 0.36], [4.02, 0.31], [5.47, 0.46], [7.07, 0.51], [11.72, 0.36], [14.52, 0.36],
+      [15.62, 0.31], [16.42, 0.36], [17.92, 0.46], [18.57, 0.36], [18.92, 0.46], [20.62, 0.41],
+      [21.02, 0.36], [21.52, 0.46], [22.22, 0.36], [23.67, 0.31], [24.37, 0.31], [25.07, 0.46]] },
+    tukan3: { datei: 'audio/tukan3.mp3', segmente: [
+      [0.42, 0.36], [1.02, 0.36], [2.52, 0.41], [3.07, 0.31], [5.07, 0.56], [5.82, 0.36],
+      [7.77, 0.41], [8.37, 0.36], [9.82, 0.41], [10.32, 0.31], [12.07, 0.46], [12.72, 0.41],
+      [14.67, 0.51], [15.42, 0.36], [17.32, 0.46], [18.07, 0.31], [19.67, 0.36], [20.27, 0.31],
+      [21.57, 0.36], [24.27, 0.46], [24.97, 0.36], [26.57, 0.51], [27.27, 0.41], [28.92, 0.41]] },
+
+    /* --- Donner --- */
+    donner1: { datei: 'audio/donner1.mp3', segmente: [
+      [3.35, 3.95], [6.75, 2.35], [8.45, 2.00], [11.10, 2.65], [16.85, 2.15], [22.50, 1.90]] },
+    donner2: { datei: 'audio/donner2.mp3', segmente: [
+      [10.50, 6.00], [16.85, 2.20], [19.00, 1.75], [21.45, 4.75]] },
+    donner3: { datei: 'audio/donner3.mp3', segmente: [[0.10, 3.65]] },
+
     grille: { datei: 'audio/grille.mp3', segmente: [[0.27, 0.16], [0.42, 0.21]] },
     schnurren1: { datei: 'audio/schnurren1.mp3', segmente: [[0.5, 8.5]] },
     schnurren2: { datei: 'audio/schnurren2.mp3', segmente: [[0.3, 8.0]] }
@@ -129,10 +180,12 @@ const Klang = (function () {
 
   // Welche Aufnahmen eine Kulisse braucht
   var BRAUCHT = {
-    vogelDe: ['amsel', 'gartenvoegel'],
-    vogelTropen: ['tukane'],
+    vogelDe: ['amsel', 'gartenvoegel', 'rotkehlchen', 'buchfink', 'meise', 'grasmuecke'],
+    vogelTropen: ['tukane', 'tukan2', 'tukan3'],
+    vogelAfrika: ['glanzstar', 'hornvogel', 'perlhuhn', 'palmtaube', 'buelbuel'],
     wal: ['blauwal1', 'blauwal2', 'buckelwal'],
     delfin: ['delfine'],
+    donner: ['donner1', 'donner2', 'donner3'],
     grillen: ['grille'],
     katze: ['schnurren1', 'schnurren2']
   };
@@ -487,7 +540,10 @@ const Klang = (function () {
         if (!probe || !puffer) return null;
 
         var summe = api.v(o.pegel === undefined ? 1 : o.pegel);
-        summe.connect(ziel);
+        // "roh" liefert den Knoten unverbunden zurück – dann kann der Aufrufer
+        // noch etwas dazwischenhängen (beim Donner ein Tiefpass, der die
+        // Aufnahme in die Ferne rückt).
+        if (!o.roh) summe.connect(ziel);
         if (o.ziel) summe.connect(o.ziel);
 
         var pause = o.pause || [1.5, 6];
@@ -832,35 +888,36 @@ const Klang = (function () {
       b.raus(basis, 0.28, 0);
     },
 
-    /* ---- Fernes Donnergrollen (isoliert, ohne Regen) ---- */
+    /* ---- Fernes Donnergrollen (Aufnahmen, isoliert ohne Regen) ----
+     * Die Aufnahmen sind teils nahe Schläge. Ein Tiefpass nimmt ihnen die
+     * Höhen – genau das macht der Weg durch die Luft mit entferntem Donner,
+     * und erst dadurch klingt er nach "weit weg" statt nach "direkt daneben".
+     * Ein langer Hall setzt das Grollen in die Landschaft. */
     donner: function (b) {
-      var weite = b.hall(0.23, 0.66, 620);
-      b.raus(weite.aus, 0.9, 0);
+      var weite = b.hall(0.31, 0.62, 520);
+      b.raus(weite.aus, 0.5, 0);
 
-      // Die Steuerkurve muss vergleichsweise flott laufen: sie wird hoch
-      // geschwellt, damit nur die Spitzen durchkommen. Zu langsam gewählt
-      // wird daraus ein minutenlanges Anschwellen statt eines Grollens.
-      var rumpeln = b.kette(b.rausch(true), b.tief(140, 1.2));
-      var tor = b.v(0);
-      rumpeln.connect(tor);
-      b.mod(tor.gain, b.selten(1.5, 0.52, 2.6), 1.5);
-      tor.connect(weite.ein);
-      b.raus(tor, 0.8, 0);
+      function ferne(probe, pegel, pause, tiefpass, start, breite) {
+        var s = b.rufe({ probe: probe, pegel: pegel, pause: pause, rate: [0.85, 1.0],
+                         breite: breite, start: start, roh: true });
+        if (!s) return;
+        var gedaempft = b.kette(s, b.tief(tiefpass, 0.8), b.tief(tiefpass * 2.2, 0.6));
+        // zurückhaltend: drei Donnerlagen plus Hall rissen sonst über die
+        // Vollaussteuerung (gemessen: Spitze 1,13)
+        b.raus(gedaempft, 0.5, 0);
+        gedaempft.connect(weite.ein);
+      }
 
-      // zweite Lage mit etwas mehr Kante – das Krachen weit weg
-      var kante = b.kette(b.rausch(true), b.band(310, 0.9));
-      var tor2 = b.v(0);
-      kante.connect(tor2);
-      b.mod(tor2.gain, b.selten(1.1, 0.66, 3.2), 1.4);
-      tor2.connect(weite.ein);
-      b.raus(tor2, 0.45, 0.15);
+      ferne('donner1', 0.85, [14, 45], 300, 3, 0.4);
+      ferne('donner2', 0.80, [22, 70], 240, 18, 0.3);
+      ferne('donner3', 0.70, [30, 90], 350, 40, 0.5);
 
-      // ganz tiefes Nachrollen
+      // ganz tiefes Nachrollen, synthetisch: verlängert die Aufnahmen nach unten
       var sub = b.kette(b.rausch(true), b.tief(55, 1.4));
       var tor3 = b.v(0);
       sub.connect(tor3);
-      b.mod(tor3.gain, b.selten(0.9, 0.58, 3.0), 1.6);
-      b.raus(tor3, 0.8, 0);
+      b.mod(tor3.gain, b.selten(0.9, 0.60, 3.0), 1.2);
+      b.raus(tor3, 0.5, 0);
     },
 
     /* ---- Baumwipfel-Rascheln ---- */
@@ -921,27 +978,61 @@ const Klang = (function () {
       }
     },
 
-    /* ---- Vogelstimmen: Deutschland (Aufnahmen) ---- */
+    /* ---- Vogelstimmen: Deutschland (Aufnahmen) ----
+     * Sechs Stimmen, jede mit eigenem Rhythmus – so entsteht ein Garten und
+     * nicht ein einzelner Vogel. Verrauschtere Aufnahmen laufen leiser. */
     vogelDe: function (b) {
       var weite = b.hall(0.13, 0.4, 4200);
-      b.raus(weite.aus, 0.30, 0);
-      // Amsel: einzelne Strophen, ruhige Abstände
-      b.rufe({ probe: 'amsel', pegel: 0.85, pause: [2.5, 9], rate: [0.95, 1.05],
+      b.raus(weite.aus, 0.28, 0);
+      b.rufe({ probe: 'amsel', pegel: 0.80, pause: [3, 11], rate: [0.95, 1.05],
                breite: 0.75, ziel: weite.ein, start: 3 });
-      // Gartenvögel: dichteres, gemischtes Zwitschern
-      b.rufe({ probe: 'gartenvoegel', pegel: 0.75, pause: [1.2, 5], rate: [0.93, 1.08],
+      b.rufe({ probe: 'gartenvoegel', pegel: 0.55, pause: [2.5, 9], rate: [0.93, 1.08],
                breite: 0.8, ziel: weite.ein, start: 6 });
+      b.rufe({ probe: 'rotkehlchen', pegel: 0.55, pause: [3, 12], rate: [0.96, 1.06],
+               breite: 0.7, ziel: weite.ein, start: 9 });
+      b.rufe({ probe: 'buchfink', pegel: 0.50, pause: [2, 8], rate: [0.94, 1.06],
+               breite: 0.75, ziel: weite.ein, start: 5 });
+      b.rufe({ probe: 'meise', pegel: 0.45, pause: [4, 14], rate: [0.96, 1.05],
+               breite: 0.7, ziel: weite.ein, start: 13 });
+      b.rufe({ probe: 'grasmuecke', pegel: 0.50, pause: [3, 11], rate: [0.95, 1.06],
+               breite: 0.65, ziel: weite.ein, start: 17 });
     },
 
     /* ---- Vogelstimmen: Tropen (Aufnahmen) ---- */
     vogelTropen: function (b) {
       var weite = b.hall(0.19, 0.5, 3200);
-      b.raus(weite.aus, 0.45, 0);
+      b.raus(weite.aus, 0.42, 0);
       // Tukane im Amazonas: viele kurze Rufe dicht hintereinander
-      b.rufe({ probe: 'tukane', pegel: 0.7, pause: [0.25, 2.2], rate: [0.9, 1.1],
+      b.rufe({ probe: 'tukane', pegel: 0.60, pause: [0.4, 2.6], rate: [0.9, 1.1],
                breite: 0.85, ziel: weite.ein, start: 2 });
-      b.rufe({ probe: 'tukane', pegel: 0.4, pause: [1.5, 6], rate: [0.72, 0.85],
-               breite: 0.6, ziel: weite.ein, start: 5 });   // tiefere, fernere Rufe
+      b.rufe({ probe: 'tukan3', pegel: 0.55, pause: [0.8, 4], rate: [0.92, 1.08],
+               breite: 0.8, ziel: weite.ein, start: 4 });
+      b.rufe({ probe: 'tukan2', pegel: 0.45, pause: [1.5, 6], rate: [0.88, 1.04],
+               breite: 0.7, ziel: weite.ein, start: 7 });
+      // tiefere, fernere Rufe derselben Aufnahmen
+      b.rufe({ probe: 'tukane', pegel: 0.30, pause: [2, 8], rate: [0.72, 0.85],
+               breite: 0.6, ziel: weite.ein, start: 11 });
+    },
+
+    /* ---- Vogelstimmen: Afrika (Aufnahmen) ---- */
+    vogelAfrika: function (b) {
+      var weite = b.hall(0.22, 0.5, 2800);
+      b.raus(weite.aus, 0.45, 0);
+      // Glanzstar: helles, geschwätziges Rufen
+      b.rufe({ probe: 'glanzstar', pegel: 0.70, pause: [1.5, 7], rate: [0.95, 1.07],
+               breite: 0.8, ziel: weite.ein, start: 2 });
+      // Hornvogel: gleichmäßige Rufserien
+      b.rufe({ probe: 'hornvogel', pegel: 0.55, pause: [0.5, 3.5], rate: [0.94, 1.06],
+               breite: 0.7, ziel: weite.ein, start: 5 });
+      // Bülbül
+      b.rufe({ probe: 'buelbuel', pegel: 0.60, pause: [3, 10], rate: [0.95, 1.06],
+               breite: 0.75, ziel: weite.ein, start: 8 });
+      // Palmtaube: ruhiges Gurren im Hintergrund
+      b.rufe({ probe: 'palmtaube', pegel: 0.50, pause: [4, 13], rate: [0.93, 1.03],
+               breite: 0.55, ziel: weite.ein, start: 12 });
+      // Perlhuhn: gelegentliches Rufen weiter weg
+      b.rufe({ probe: 'perlhuhn', pegel: 0.40, pause: [6, 18], rate: [0.9, 1.05],
+               breite: 0.65, ziel: weite.ein, start: 16 });
     },
 
     /* ---- Vogelstimmen: Afrika ---- */
@@ -1153,8 +1244,8 @@ const Klang = (function () {
   var AUSGLEICH = {
     regen: 0.82, strand: 1.22, fluss: 1.27, unterwasser: 1.10, blasen: 3.23,
     feuer: 2.30, feuerstark: 1.77,
-    wind: 1.23, donner: 1.64, wipfel: 1.25,
-    grillen: 0.99, vogelDe: 1.08, vogelTropen: 1.40, vogelAfrika: 3.13,
+    wind: 1.23, donner: 0.74, wipfel: 1.25,
+    grillen: 0.99, vogelDe: 1.29, vogelTropen: 1.22, vogelAfrika: 1.49,
     wal: 1.41, delfin: 1.03, katze: 1.46,
     schnarchen: 1.02, zug: 0.77, strasse: 1.75,
     weiss: 0.66, rosa: 0.28, braun: 0.95

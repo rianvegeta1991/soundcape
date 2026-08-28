@@ -194,3 +194,16 @@ Lokaler Server: `.claude/launch.json`, Eintrag `soundcape` auf **Port 8794**.
   sich über pwabuilder.com aus der Pages-URL eine installierbare APK erzeugen.
 - Die Kulissen sind austauschbar gedacht: eine neue kommt als Eintrag in `Klang.szenen`
   plus Metadaten in `KULISSEN` (app.js) dazu.
+
+## Lizenzen für Aufnahmen
+
+Bastian hat **CC-BY und CC-BY-SA freigegeben** (seit v1.3), zusätzlich zu gemeinfrei und CC0.
+NC-Lizenzen stellen sich nicht: Wikimedia Commons nimmt sie grundsätzlich nicht auf.
+
+Daraus folgt eine **Pflicht**: Bei CC-BY(-SA) muss genannt werden. Das geschieht an zwei
+Stellen – `audio/QUELLEN.md` (vollständig, mit Lizenz und Verweis) und im Info-Blatt der App
+(Namensliste). **Beim Hinzufügen einer Aufnahme beide Stellen nachziehen.**
+
+Was die Lockerung gebracht hat: bei Vögeln etwa zehnmal so viel Auswahl (Amsel 5 → 45 Treffer),
+und afrikanische Vogelstimmen wurden überhaupt erst möglich (0 → 50). Die großen Vogelbestände
+stammen von xeno-canto.org und stehen dort fast durchweg unter CC-BY-SA.
