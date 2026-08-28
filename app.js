@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.3';
+  var APP_VERSION = '1.4';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================

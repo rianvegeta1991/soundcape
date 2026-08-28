@@ -1,17 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#18274a"/>
+      <stop offset="0" stop-color="#1a2a4f"/>
       <stop offset="1" stop-color="#070c17"/>
     </linearGradient>
-    <linearGradient id="welle" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#5ec8d8"/>
-      <stop offset="0.55" stop-color="#6ea8ff"/>
-      <stop offset="1" stop-color="#9b8cf0"/>
+    <linearGradient id="mantel" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#80bcff"/>
+      <stop offset="1" stop-color="#9278ec"/>
     </linearGradient>
   </defs>
+
   <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <path d="M64 256h42l43-96 53 214 53-278 53 342 43-182h97"
-        fill="none" stroke="url(#welle)" stroke-width="26"
+
+  <!-- Der Mantel legt sich um die Welle: sound im cape -->
+  <path d="M212 106
+           C168 116 146 146 136 192
+           C120 262 110 332 106 398
+           C132 420 166 418 190 402
+           C214 388 234 392 256 404
+           C278 416 298 420 322 402
+           C346 386 380 418 406 398
+           C402 332 392 262 376 192
+           C366 146 344 116 300 106
+           C282 122 230 122 212 106 Z"
+        fill="url(#mantel)"/>
+
+  <!-- Kragen -->
+  <path d="M196 104C214 140 298 140 316 104" fill="none"
+        stroke="#142242" stroke-width="22" stroke-linecap="round" opacity="0.47"/>
+
+  <!-- Klangwelle -->
+  <path d="M152 286h28l20-48 24 100 24-132 24 146 22-90 22 24h44"
+        fill="none" stroke="#0c1424" stroke-width="23"
         stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
