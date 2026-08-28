@@ -107,7 +107,7 @@ für den sauberen Abbau (`abbau()`). Die tragenden Bausteine:
   wären unhöflich. Der fetch-Handler legt sie beim ersten Abspielen in den Cache; offline
   verfügbar sind also die Kulissen, die schon einmal liefen.
 
-23 Kulissen in sechs Kategorien (siehe `KATEGORIEN`/`KULISSEN` in app.js). Die Zuordnung
+22 Kulissen in sechs Kategorien (siehe `KATEGORIEN`/`KULISSEN` in app.js). Die Zuordnung
 id → Baufunktion steht in `Klang.szenen`; **beide Listen müssen deckungsgleich bleiben.**
 
 ### Pegel
@@ -207,3 +207,24 @@ Stellen – `audio/QUELLEN.md` (vollständig, mit Lizenz und Verweis) und im Inf
 Was die Lockerung gebracht hat: bei Vögeln etwa zehnmal so viel Auswahl (Amsel 5 → 45 Treffer),
 und afrikanische Vogelstimmen wurden überhaupt erst möglich (0 → 50). Die großen Vogelbestände
 stammen von xeno-canto.org und stehen dort fast durchweg unter CC-BY-SA.
+
+## Geschwindigkeitsstufen (seit v1.6)
+
+Jede Kulisse hat drei Stufen: langsam (0,62) · normal (1) · schnell (1,55), gespeichert in
+`st.tempo[id]`, umschaltbar über die Segmentleiste in der Kachel.
+
+Der Faktor geht **an einer einzigen Stelle** in `sound.js` ein – als `T` im Bauer – und wirkt
+von dort auf alles Zeitabhängige: `steuer` (Tempo der Steuerkurven), `takt` (Schlagfolge),
+`funken`/`torLang` (Impulsdichte, mit mitlaufender Verstärkung, damit die Lautstärke nicht
+springt) und die Pausen in `rufe`. **Jede neue zeitabhängige Funktion muss T ebenfalls
+verrechnen.**
+
+Sonderfall Schleifen: Dort verschiebt die Abspielrate auch die Tonhöhe. Wie stark das Tempo
+mitgeht, entscheidet die Kulisse über `tempoAnteil` – Grillen 0,8 (zirpen bei Wärme wirklich
+schneller und höher), Feuer 0,12 (sonst klingt es nach Zeitraffer).
+
+Ein Stufenwechsel **baut die Kulisse neu auf**, weil der Faktor in den Aufbau eingeht
+(`tempoUm` in app.js); der Übergang läuft über die übliche Blende.
+
+`feuerstark` gibt es seit v1.6 nicht mehr – das ist jetzt das Lagerfeuer auf Stufe „schnell".
+Alte Stände werden beim Laden umgeschrieben (inklusive Entfernen der Dublette im Pult).

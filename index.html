@@ -100,11 +100,26 @@ header{padding:16px 2px 14px;display:flex;align-items:center;gap:12px}
 .k-proz{font-size:10px;color:var(--dim2);width:30px;text-align:right;font-variant-numeric:tabular-nums;flex:none}
 .kachel.an .k-proz{color:rgba(var(--k-rgb),.95)}
 
+/* Geschwindigkeit je Kulisse: langsam · normal · schnell */
+.k-tempo{
+  width:100%;margin-top:7px;display:flex;gap:2px;padding:2px;
+  border:1px solid var(--line);border-radius:9px;background:transparent;
+  font-family:inherit;cursor:pointer;
+}
+.k-tempo .t-s{
+  flex:1;text-align:center;font-size:10px;line-height:15px;color:var(--dim2);
+  border-radius:6px;letter-spacing:1px;transition:background .2s,color .2s;
+}
+.k-tempo .t-s.gewaehlt{background:rgba(255,255,255,.10);color:var(--text)}
+.kachel.an .k-tempo{border-color:rgba(var(--k-rgb),.35)}
+.kachel.an .k-tempo .t-s.gewaehlt{background:rgba(var(--k-rgb),.25);color:#fff}
+.k-tempo:active{transform:scale(.97)}
+
 /* Kachel, die die Bibliothek öffnet */
 .kachel-plus{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
   border-style:dashed;color:var(--dim2);font-family:inherit;font-size:11.5px;
-  text-align:center;line-height:1.3;min-height:103px;
+  text-align:center;line-height:1.3;min-height:127px;
 }
 .kachel-plus svg{width:26px;height:26px}
 .kachel-plus:active{transform:scale(.97)}
@@ -450,7 +465,8 @@ input[type=number]{width:90px}
     <h3>Nachweise</h3>
     <p class="hinweis">
       Gemeinfrei bzw. CC0: Oona Räisänen · ezwa · Felix Blume · NOAA · Adam Cuerden ·
-      jim_mowatt · Man vyi · florianreichelt · ahriik · Vrymaa · joeboarder14 · giddster.<br><br>
+      jim_mowatt · florianreichelt · ahriik · Vrymaa · joeboarder14 · giddster · TRP ·
+      HECKFRICKER.<br><br>
       Unter CC-BY bzw. CC-BY-SA, mit Dank an: Jonathon Jongsma · Alexander Kurthy ·
       José Carlos Sires · Hannu Varkki · Anne Ndung'u · British Library · Litlok · Sharadapte ·
       JMK · soundbytez · Jonathan Hunt · KTerPalmers · Amuzujoe · busabx.<br><br>
@@ -476,6 +492,12 @@ input[type=number]{width:90px}
       Mehrere Kulissen können gleichzeitig laufen, jede mit eigener Lautstärke – etwa Regen mit
       Lagerfeuer, Donnergrollen über Regen oder Wind über Wellen. Deshalb ist jede Kulisse für sich
       aufgenommen: hinter den Grillen liegt kein Rauschen, hinter dem Donner kein Regen.
+    </p>
+    <h3>Geschwindigkeit</h3>
+    <p class="hinweis">
+      Unter jedem Regler stehen drei Stufen: <b>›</b> langsam, <b>››</b> normal, <b>›››</b> schnell.
+      Sie ändern, wie dicht die Ereignisse kommen – wie oft ein Vogel ruft, wie lebhaft das Feuer
+      knistert, wie schnell die Grillen zirpen, wie zügig die Wellen laufen. Ein Tipp schaltet weiter.
     </p>
     <h3>Als App installieren</h3>
     <p class="hinweis">

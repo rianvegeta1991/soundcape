@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.5';
+  var APP_VERSION = '1.6';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -46,9 +46,6 @@
     /* --- Feuer --- */
     { id: 'feuer', kat: 'feuer', name: 'Lagerfeuer', unter: 'Knistern und Glut', rgb: '245,150,78',
       ikon: '<path d="M20 4c1 6-5 7.5-5 13a5 5 0 0 0 10 0c0-2-1-3.2-1-3.2 3.5 2.2 6 5.6 6 9.7a10 10 0 1 1-20 0C10 15 20 13 20 4z" stroke-linejoin="round"/>' },
-    { id: 'feuerstark', kat: 'feuer', name: 'Feuer, stark', unter: 'Kräftiges Knistern', rgb: '250,120,60',
-      ikon: '<path d="M20 6c.8 5-4 6.4-4 11a4 4 0 0 0 8 0c0-1.7-.8-2.7-.8-2.7 3 1.9 5 4.8 5 8.3a8.2 8.2 0 1 1-16.4 0C11.8 14.6 20 13 20 6z" stroke-linejoin="round"/>' +
-            '<path d="M6 12l3 1.6M34 12l-3 1.6M5 24l3.4.6M35 24l-3.4.6M9 5l1.6 2.8M31 5l-1.6 2.8"/>' },
 
     /* --- Wind & Wetter --- */
     { id: 'wind', kat: 'luft', name: 'Wind', unter: 'Böen und Säuseln', rgb: '162,180,204',
@@ -116,10 +113,16 @@
   /* ==================================================================
    * Zustand
    * ================================================================== */
+  /* Geschwindigkeitsstufen. Der Faktor greift in sound.js auf alles, was ein
+   * Tempo hat: Steuerkurven, Impulsdichte, Pausen zwischen Rufen. */
+  var TEMPO = { '-1': 0.62, '0': 1, '1': 1.55 };
+  var TEMPO_NAME = { '-1': 'langsam', '0': 'normal', '1': 'schnell' };
+
   var st = {
     master: 70,
     pult: PULT_STANDARD.slice(),
     vol: {},
+    tempo: {},          // id -> -1 | 0 | 1
     an: {},
     fadeMin: 1,
     wach: false,
@@ -140,14 +143,33 @@
       if (typeof g.einblenden === 'boolean') st.einblenden = g.einblenden;
       if (typeof g.stereo === 'boolean') st.stereo = g.stereo;
 
-      // "gewitter" gibt es nicht mehr – der Donner steht jetzt für sich
-      function umbenennen(x) { return x === 'gewitter' ? 'donner' : x; }
+      // Alte Namen umbiegen: "gewitter" wurde zu "donner" (Regen getrennt),
+      // "feuerstark" ist jetzt schlicht das Feuer auf Stufe "schnell".
+      function umbenennen(x) {
+        if (x === 'gewitter') return 'donner';
+        if (x === 'feuerstark') return 'feuer';
+        return x;
+      }
+      if (g.tempo) for (var id3 in g.tempo) {
+        var z = umbenennen(id3);
+        if (NACH_ID[z]) st.tempo[z] = g.tempo[id3];
+      }
+      if (g.pult && g.pult.indexOf('feuerstark') >= 0 && st.tempo['feuer'] === undefined) {
+        st.tempo['feuer'] = 1;    // wer das starke Feuer gewählt hatte, bekommt "schnell"
+      }
+
+      function ohneDoppelte(liste) {
+        var raus = [];
+        liste.forEach(function (x) { if (raus.indexOf(x) < 0) raus.push(x); });
+        return raus;
+      }
 
       if (g.pult && g.pult.length) {
-        st.pult = g.pult.map(umbenennen).filter(function (x) { return !!NACH_ID[x]; });
+        // Doppelte entfernen: aus feuer + feuerstark wird sonst zweimal feuer
+        st.pult = ohneDoppelte(g.pult.map(umbenennen).filter(function (x) { return !!NACH_ID[x]; }));
       } else if (g.an) {
         // Stand aus Version 1.0: was damals gewählt war, kommt ins Pult
-        var alt = Object.keys(g.an).map(umbenennen).filter(function (x) { return !!NACH_ID[x]; });
+        var alt = ohneDoppelte(Object.keys(g.an).map(umbenennen).filter(function (x) { return !!NACH_ID[x]; }));
         if (alt.length) st.pult = alt;
       }
       if (!st.pult.length) st.pult = PULT_STANDARD.slice();
@@ -184,6 +206,8 @@
   function pegel(id) {
     return (st.vol[id] / 100) * (Klang.ausgleich[id] || 1);
   }
+  function stufe(id) { return st.tempo[id] || 0; }
+  function tempoFaktor(id) { return TEMPO[String(stufe(id))] || 1; }
   function masterWert() {
     var x = st.master / 100;
     return x * x;   // quadratisch – entspricht eher dem Lautstärkeempfinden
@@ -290,9 +314,23 @@
     var g = ctx.createGain();
     g.gain.value = 0;
     g.connect(bus);
-    var b = Klang.bauen(id, g, { stereo: st.stereo });
+    var b = Klang.bauen(id, g, { stereo: st.stereo, tempo: tempoFaktor(id) });
     szenen[id] = { b: b, g: g };
     rampe(g.gain, pegel(id), st.einblenden ? 8 : 0.6);
+  }
+
+  // Die Geschwindigkeit geht in den Aufbau ein, also wird die Kulisse
+  // neu gebaut. Der kurze Übergang läuft über die übliche Blende.
+  function tempoUm(id) {
+    var neu = stufe(id) + 1;
+    if (neu > 1) neu = -1;
+    st.tempo[id] = neu;
+    if (szenen[id]) {
+      szeneAus(id);
+      setTimeout(function () { if (st.an[id] && laeuft) szeneAn(id); }, 260);
+    }
+    pultAktualisieren();
+    speichern();
   }
 
   function szeneAus(id) {
@@ -463,10 +501,21 @@
           '<input type="range" min="0" max="100" value="' + st.vol[k.id] + '" ' +
           'aria-label="Lautstärke ' + k.name + '">' +
           '<span class="k-proz">' + st.vol[k.id] + '%</span>' +
-        '</div>';
+        '</div>' +
+        '<button class="k-tempo" aria-label="Geschwindigkeit ' + k.name + '">' +
+          '<span class="t-s" data-t="-1">›</span>' +
+          '<span class="t-s" data-t="0">››</span>' +
+          '<span class="t-s" data-t="1">›››</span>' +
+        '</button>';
 
       var regler = el.querySelector('input');
       var proz = el.querySelector('.k-proz');
+      var tempoKnopf = el.querySelector('.k-tempo');
+
+      tempoKnopf.addEventListener('click', function (e) {
+        e.stopPropagation();       // sonst schaltet die Kachel mit um
+        tempoUm(k.id);
+      });
 
       ['pointerdown', 'click', 'touchstart'].forEach(function (ev) {
         regler.addEventListener(ev, function (e) { e.stopPropagation(); },
@@ -507,10 +556,21 @@
     var kacheln = document.querySelectorAll('.kachel[data-id]');
     for (var i = 0; i < kacheln.length; i++) {
       var el = kacheln[i];
-      var an = !!st.an[el.dataset.id];
+      var id = el.dataset.id;
+      var an = !!st.an[id];
       el.classList.toggle('an', an);
-      el.classList.toggle('laedt', !!laedt[el.dataset.id]);
+      el.classList.toggle('laedt', !!laedt[id]);
       el.setAttribute('aria-pressed', an ? 'true' : 'false');
+
+      var s = stufe(id);
+      var knopf = el.querySelector('.k-tempo');
+      if (knopf) {
+        knopf.title = 'Geschwindigkeit: ' + TEMPO_NAME[String(s)];
+        var segmente = knopf.querySelectorAll('.t-s');
+        for (var j = 0; j < segmente.length; j++) {
+          segmente[j].classList.toggle('gewaehlt', +segmente[j].dataset.t === s);
+        }
+      }
     }
     farbeSetzen();
   }

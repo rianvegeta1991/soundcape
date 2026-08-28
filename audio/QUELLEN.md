@@ -27,7 +27,8 @@ daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das O
 | `delfine.mp3` | [Dolphins screaming underwater, Caribbean Sea, Mexico](https://commons.wikimedia.org/wiki/File:161691_felixblume_dolphin-screaming-underwater-in-caribbean-sea-mexico.wav) | CC0 | Felix Blume |
 | `schnurren1.mp3` | [Whiskers' purr edit.ogg](https://commons.wikimedia.org/wiki/File:Whiskers%27_purr_edit.ogg) | Public Domain | Adam Cuerden |
 | `schnurren2.mp3` | [Purring cat bertie.ogg](https://commons.wikimedia.org/wiki/File:Purring_cat_bertie.ogg) | Public Domain | jim_mowatt |
-| `grille.mp3` | [Jer-Cricket.ogg](https://commons.wikimedia.org/wiki/File:Jer-Cricket.ogg) | Public Domain | Man vyi |
+| `grille1.mp3` | [Cricket single, clean internal loop](https://freesound.org/s/573827/) | CC0 | TRP |
+| `grille2.mp3` | [Single Cricket Chirping, Close Perspective](https://freesound.org/s/753272/) | CC0 | HECKFRICKER |
 | `feuer1.mp3` | [bonfire flames sizzling](https://freesound.org/s/563764/) | CC0 | florianreichelt |
 | `feuer2.mp3` | [fire ambience, flames, crackles, pops, burning](https://freesound.org/s/508110/) | CC0 | ahriik |
 | `feuerknack.mp3` | [Dried branches](https://freesound.org/s/734627/) | CC0 | Vrymaa |

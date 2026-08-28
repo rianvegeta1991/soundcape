@@ -193,7 +193,13 @@ const Klang = (function () {
       [3.80, 0.22], [5.80, 0.22], [7.60, 0.22], [9.10, 0.22], [10.30, 0.22], [15.85, 0.22],
       [16.25, 0.27], [17.00, 0.22], [17.60, 0.22], [18.15, 0.22], [18.90, 0.22]] },
 
-    grille: { datei: 'audio/grille.mp3', segmente: [[0.27, 0.16], [0.42, 0.21]] },
+    /* --- Grillen: Schleifenbereiche mit je einigen Zirps, nicht Einzelzirps.
+     * Ein einzelner 0,16-s-Zirp als Endlosschleife klang wie ein Summton –
+     * mit mehreren Zirps samt natürlichem Abstand und Ausklang stimmt es. --- */
+    grille1: { datei: 'audio/grille1.mp3', segmente: [
+      [0.10, 2.30], [3.30, 2.20], [5.10, 2.10]] },
+    grille2: { datei: 'audio/grille2.mp3', segmente: [
+      [0.00, 2.40], [3.60, 2.50], [7.90, 2.40]] },
     schnurren1: { datei: 'audio/schnurren1.mp3', segmente: [[0.5, 8.5]] },
     schnurren2: { datei: 'audio/schnurren2.mp3', segmente: [[0.3, 8.0]] }
   };
@@ -207,9 +213,8 @@ const Klang = (function () {
     delfin: ['delfine'],
     donner: ['donner1', 'donner2', 'donner3'],
     feuer: ['feuer1', 'feuer2', 'feuerknack'],
-    feuerstark: ['feuer1', 'feuer2', 'feuerknack'],
     blasen: ['blasen1', 'blasen2', 'blasen3'],
-    grillen: ['grille'],
+    grillen: ['grille1', 'grille2'],
     katze: ['schnurren1', 'schnurren2']
   };
 
@@ -277,6 +282,12 @@ const Klang = (function () {
     var takte = [];      // Zeitgeber der Ruf-Vorausplanung
     var geplante = [];   // Listen bereits eingeplanter Rufe, für den Abbau
     var stereo = opt.stereo !== false && !!ctx.createStereoPanner;
+
+    /* Geschwindigkeitsstufe der Kulisse (langsam ≈ 0,62 · normal 1 · schnell ≈ 1,55).
+     * Sie geht an einer einzigen Stelle ein – hier – und wirkt von dort auf alles,
+     * was ein Tempo hat: Steuerkurven, Takte, Impulsdichte und die Pausen zwischen
+     * Rufen. Deshalb muss jede neue zeitabhängige Funktion T ebenfalls verrechnen. */
+    var T = opt.tempo || 1;
 
     var api = {
       ctx: ctx,
@@ -384,7 +395,7 @@ const Klang = (function () {
       // sind gegeneinander verstimmt – ihre Summe hat keine brauchbare Periode.
       steuer: function (mitte, tiefe, tempo) {
         var sum = api.v(1);
-        var t = tempo || 1;
+        var t = (tempo || 1) * T;
         var basis = [0.0370, 0.0194, 0.0083];
         for (var i = 0; i < 3; i++) {
           var o = api.sinus(basis[i] * t * (0.72 + Math.random() * 0.56));
@@ -404,7 +415,7 @@ const Klang = (function () {
       // Regelmäßiger Takt (Schienenstöße, Schnurren, Atemzüge). Anders als
       // "selten" bewusst gleichmäßig – hz ist die Schlagfolge je Sekunde.
       takt: function (hz, breite, exp) {
-        return api.kette(api.sinus(hz), api.schwelle(1 - (breite === undefined ? 0.4 : breite),
+        return api.kette(api.sinus(hz * T), api.schwelle(1 - (breite === undefined ? 0.4 : breite),
           exp === undefined ? 1.4 : exp));
       },
 
@@ -414,8 +425,11 @@ const Klang = (function () {
       // Die Amplitude hinter dem Tiefpass hängt von der Abtastrate ab – ohne
       // den Ausgleich knisterte es auf 44,1 kHz anders als auf 48 kHz.
       funken: function (bw, verst, schw) {
-        var norm = Math.sqrt(ctx.sampleRate / 48000);
-        return api.kette(api.rausch(), api.tief(bw, 0.7), api.v(verst * norm), api.schwelle(schw, 1));
+        // Die Verstärkung folgt der Bandbreite: sonst würde mit dem Tempo auch
+        // die Lautstärke der Impulse springen.
+        var b = bw * T;
+        var norm = Math.sqrt(ctx.sampleRate / 48000) / Math.sqrt(T);
+        return api.kette(api.rausch(), api.tief(b, 0.7), api.v(verst * norm), api.schwelle(schw, 1));
       },
 
       // Tor für lange, seltene Ereignisse (Tierrufe, Walgesang, Klickfolgen).
@@ -426,8 +440,9 @@ const Klang = (function () {
       // 0,35 setzt die Streuung so, dass Spitzen etwa 1 erreichen: eine
       // Schwelle von 0,7 heißt also "gut zwei Standardabweichungen".
       torLang: function (bw, schw, exp) {
-        var amp = Math.sqrt(bw / (ctx.sampleRate / 2));
-        return api.kette(api.rausch(), api.tief(bw, 0.7), api.v(0.35 / amp),
+        var b = bw * T;
+        var amp = Math.sqrt(b / (ctx.sampleRate / 2));
+        return api.kette(api.rausch(), api.tief(b, 0.7), api.v(0.35 / amp),
           api.schwelle(schw, exp === undefined ? 1 : exp));
       },
 
@@ -583,7 +598,9 @@ const Klang = (function () {
         if (!o.roh) summe.connect(ziel);
         if (o.ziel) summe.connect(o.ziel);
 
-        var pause = o.pause || [1.5, 6];
+        // schnelleres Tempo = kürzere Pausen zwischen den Rufen
+        var roh = o.pause || [1.5, 6];
+        var pause = [roh[0] / T, roh[1] / T];
         var rate = o.rate || [0.94, 1.06];
         var breite = o.breite === undefined ? 0.7 : o.breite;
         var naechste = ctx.currentTime + 0.4 + Math.random() * (o.start || 2);
@@ -648,7 +665,13 @@ const Klang = (function () {
         q.loop = true;
         q.loopStart = seg[0];
         q.loopEnd = seg[0] + seg[1];
-        q.playbackRate.value = o.rate || 1;
+        /* Bei Schleifen verschiebt die Abspielrate auch die Tonhöhe. Wie stark
+         * das Tempo mitgehen soll, entscheidet die Kulisse über "tempoAnteil":
+         * beim Zirpen darf es deutlich (Grillen zirpen bei Wärme wirklich
+         * schneller und höher), beim Feuer kaum – sonst klingt es nach
+         * Zeitraffer statt nach lebhafterem Feuer. */
+        var anteil = (o.tempoAnteil === undefined) ? 0.45 : o.tempoAnteil;
+        q.playbackRate.value = (o.rate || 1) * (1 + (T - 1) * anteil);
         q.start(ctx.currentTime, seg[0] + Math.random() * seg[1] * 0.5);
         api.reg(q);
 
@@ -832,8 +855,9 @@ const Klang = (function () {
     feuer: function (b) {
       var bremse = b.presser(-22, 6);
       b.raus(bremse, 1.0, 0);
-      var a = b.schleife({ probe: 'feuer1', rate: 0.97, pegel: 0, pan: -0.15, an: bremse });
-      var c = b.schleife({ probe: 'feuer2', rate: 1.04, pegel: 0, pan: 0.18, an: bremse });
+      // kaum Tonhöhenwanderung: das Tempo wirkt hier über die Knacker
+      var a = b.schleife({ probe: 'feuer1', rate: 0.97, pegel: 0, pan: -0.15, an: bremse, tempoAnteil: 0.12 });
+      var c = b.schleife({ probe: 'feuer2', rate: 1.04, pegel: 0, pan: 0.18, an: bremse, tempoAnteil: 0.12 });
       if (!a || !c) return;
       // Die Feldaufnahmen sind leise ausgesteuert: das gleichmäßige Brennen
       // braucht kräftig Pegel, damit es nicht hinter den Knackern verschwindet.
@@ -845,24 +869,6 @@ const Klang = (function () {
       if (k) k.connect(bremse);
     },
 
-    /* ---- Feuer, stark knisternd (Aufnahmen) ----
-     * Dieselben Aufnahmen, andere Mischung: die knisterreiche Lage vorn,
-     * die Knacker dichter und kräftiger. */
-    feuerstark: function (b) {
-      var bremse = b.presser(-22, 6);
-      b.raus(bremse, 1.0, 0);
-      var a = b.schleife({ probe: 'feuer1', rate: 1.02, pegel: 0, pan: -0.2, an: bremse });
-      var c = b.schleife({ probe: 'feuer2', rate: 0.96, pegel: 0, pan: 0.2, an: bremse });
-      if (!a || !c) return;
-      b.atem(a, 1.3, 0.35, 0.7);
-      b.atem(c, 3.0, 0.7, 1.1);
-      var k1 = b.rufe({ probe: 'feuerknack', pegel: 0.85, pause: [0.12, 1.1], rate: [0.85, 1.2],
-                        breite: 0.8, start: 0.5, roh: true });
-      var k2 = b.rufe({ probe: 'feuerknack', pegel: 0.60, pause: [0.5, 3], rate: [0.7, 0.85],
-                        breite: 0.6, start: 2, roh: true });   // tiefere, kräftigere Knacker
-      if (k1) k1.connect(bremse);
-      if (k2) k2.connect(bremse);
-    },
 
     /* ================= Wind & Wetter ================= */
 
@@ -958,27 +964,28 @@ const Klang = (function () {
 
     /* ================= Tiere ================= */
 
-    /* ---- Grillenzirpen (Aufnahme) ----
-     * Ein einzelner Zirp als Schleife ergibt das gleichmäßige Zirpen einer
-     * Grille; fünf Stimmen mit verschiedener Geschwindigkeit und Position
-     * ergeben ein Feld. Die Phrasen (zirpen – Pause – zirpen) steuert eine
-     * synthetische Kurve, damit nichts im Takt läuft. */
+    /* ---- Grillenzirpen (Aufnahmen) ----
+     * Fünf einzelne Grillen in verschiedenen Tonlagen und Entfernungen ergeben
+     * ein Feld. Jede Stimme zirpt in Schüben und macht Pausen – gesteuert von
+     * einer synthetischen Kurve, damit die Stimmen nie im Gleichtakt laufen. */
     grillen: function (b) {
-      var weite = b.hall(0.14, 0.42, 5200);
-      b.raus(weite.aus, 0.35, 0);
+      var weite = b.hall(0.16, 0.4, 5200);
+      b.raus(weite.aus, 0.32, 0);
 
-      for (var i = 0; i < 5; i++) {
-        var g = b.schleife({
-          probe: 'grille',
-          segment: i % 2,
-          rate: 0.82 + Math.random() * 0.42,     // Tonhöhe und Zirptempo zugleich
-          pegel: 0,
-          pan: (Math.random() * 1.7 - 0.85)
-        });
+      var stimmen = [
+        { probe: 'grille2', segment: 0, rate: 1.00, pegel: 0.60, pan: -0.5, phrase: 9 },
+        { probe: 'grille1', segment: 0, rate: 1.09, pegel: 0.42, pan: 0.45, phrase: 13 },
+        { probe: 'grille2', segment: 1, rate: 0.88, pegel: 0.34, pan: 0.12, phrase: 7 },
+        { probe: 'grille1', segment: 2, rate: 1.20, pegel: 0.26, pan: -0.22, phrase: 16 },
+        { probe: 'grille2', segment: 2, rate: 0.94, pegel: 0.20, pan: 0.72, phrase: 11 }
+      ];
+      for (var i = 0; i < stimmen.length; i++) {
+        var s = stimmen[i];
+        var g = b.schleife({ probe: s.probe, segment: s.segment, rate: s.rate,
+                             pegel: 0, pan: s.pan, tempoAnteil: 0.8 });
         if (!g) return;
-        // Phrasen: die Grille zirpt in Schüben und macht Pausen
-        b.mod(g.gain, b.selten(9 + Math.random() * 8, 0.02, 1.2), 0.85 / (1 + i * 0.45));
-        if (i > 1) g.connect(weite.ein);
+        b.mod(g.gain, b.selten(s.phrase, -0.05, 1.2), s.pegel);
+        if (i > 1) g.connect(weite.ein);   // die entfernteren Stimmen mit Raum
       }
     },
 
@@ -1247,7 +1254,7 @@ const Klang = (function () {
    * nicht geschätzt – nach jeder Klangänderung neu messen. */
   var AUSGLEICH = {
     regen: 0.82, strand: 1.22, fluss: 1.27, unterwasser: 1.10, blasen: 1.69,
-    feuer: 0.69, feuerstark: 0.92,
+    feuer: 0.69,
     wind: 1.23, donner: 0.74, wipfel: 1.25,
     grillen: 0.99, vogelDe: 1.29, vogelTropen: 1.22, vogelAfrika: 1.49,
     wal: 1.41, delfin: 1.03, katze: 1.46,
