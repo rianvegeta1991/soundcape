@@ -98,3 +98,23 @@ Entfernt wurden dabei: die Delfin-Kulisse (auf Wunsch), die Perlhühner aus der
 Afrika-Kulisse (ihr Ruf stach hupend heraus), die alten Wal-, Tropfen- und
 Niesel-Aufnahmen (menschlich klingende Rufe, Insekten im Hintergrund,
 Menschenstimmen) sowie die Tukane (die Tropen-Kulisse wurde zu Möwen).
+
+## Seit Version 2.0
+
+| Datei | Aufnahme | Lizenz | Urheber |
+|---|---|---|---|
+| `schnarchL.mp3` | [Light snores of a man sleeping](https://freesound.org/s/500803/) | CC0 | khenshom |
+| `tropfH1.mp3` | [Water Drops in a Cave](https://freesound.org/s/415885/) | CC BY 4.0 | erlipresidente |
+| `tropfH2.mp3` | [Plop_Echo](https://freesound.org/s/398922/) | CC BY 4.0 | nozefian |
+| `kuh1.mp3` | [Peaceful sound of a herd of cows](https://freesound.org/s/457569/) | CC0 | florianreichelt |
+| `schaf1.mp3` | [Baeaeaeh](https://freesound.org/s/165829/) | CC0 | baujahr66 |
+| `huhn1.mp3` | [ChickenYard3](https://freesound.org/s/539741/) | CC0 | blaukreuz |
+| `kamin1.mp3` | [Fire in the stove 2](https://freesound.org/s/533428/) | CC0 | mcmikai |
+| `kamin2.mp3` | [Fire – Chimney / Stove](https://freesound.org/s/770108/) | CC0 | Vrymaa |
+| `schale1.mp3` | [Singing Bowl a tuned](https://freesound.org/s/204915/) | CC0 | brodjaman |
+| `schale2.mp3` | [Tibetan singing bowl 1](https://freesound.org/s/553049/) | CC0 | itinerantmonk108 |
+| `glocke1.mp3` | [Kerkklok Desteldonk](https://freesound.org/s/248095/) | CC BY 4.0 | aifoon |
+
+Die vier **Synth**-Kulissen brauchen keine Aufnahmen: Klangflächen sind der Fall,
+für den die Synthese gebaut ist – sie schweben endlos gegeneinander, weil ihre
+Steuerkurven nicht zueinander passen.

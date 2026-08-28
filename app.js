@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.9';
+  var APP_VERSION = '2.0';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -21,6 +21,7 @@
     { id: 'luft', name: 'Wind & Wetter' },
     { id: 'tiere', name: 'Tiere' },
     { id: 'welt', name: 'Menschenwelt' },
+    { id: 'synth', name: 'Synth' },
     { id: 'rauschen', name: 'Rauschen' }
   ];
 
@@ -58,6 +59,12 @@
     { id: 'feuer', kat: 'feuer', name: 'Lagerfeuer', unter: 'Knistern und Glut', rgb: '245,150,78',
       ikon: '<path d="M20 4c1 6-5 7.5-5 13a5 5 0 0 0 10 0c0-2-1-3.2-1-3.2 3.5 2.2 6 5.6 6 9.7a10 10 0 1 1-20 0C10 15 20 13 20 4z" stroke-linejoin="round"/>' },
 
+    { id: 'kamin', kat: 'feuer', name: 'Kamin', unter: 'Ofen mit leisem Knacken', rgb: '232,132,96',
+      // Ofen mit Flamme dahinter
+      ikon: '<rect x="6" y="9" width="28" height="24" rx="3"/>' +
+            '<path d="M6 15h28M11 33v3M29 33v3"/>' +
+            '<path d="M20 20c.6 3-2.6 3.8-2.6 6.4a2.6 2.6 0 0 0 5.2 0c0-1-.5-1.6-.5-1.6 1.8 1.1 2.9 2.6 2.9 4.4" stroke-linejoin="round"/>' },
+
     /* --- Wind & Wetter --- */
     { id: 'wind', kat: 'luft', name: 'Wind', unter: 'Böen und Säuseln', rgb: '162,180,204',
       ikon: '<path d="M4 13h17a4.5 4.5 0 1 0-4.5-4.5"/>' +
@@ -94,6 +101,12 @@
       ikon: '<path d="M4 26c6 0 9-3 13-3s5 3 5 6" />' +
             '<path d="M22 29c4-1 8-4 10-9 1.4 4 3.4 6 4 10-4.6 1.6-9.6 1.4-14-1z" stroke-linejoin="round"/>' +
             '<path d="M8 14c1.6-3 4-4.6 7-4.6"/>' },
+    { id: 'bauernhof', kat: 'tiere', name: 'Bauernhof', unter: 'Kühe, Schafe, Hühner', rgb: '214,186,120',
+      // Kuhkopf mit Hörnern
+      ikon: '<path d="M7 11c0-3 3-4 6-3M33 11c0-3-3-4-6-3"/>' +
+            '<path d="M13 8c-3 3-4 8-4 12 0 6 5 11 11 11s11-5 11-11c0-4-1-9-4-12"/>' +
+            '<path d="M15 18h.1M25 18h.1"/>' +
+            '<path d="M15 25c0-2.5 2.2-4 5-4s5 1.5 5 4-2.2 4-5 4-5-1.5-5-4z"/>' },
     { id: 'katze', kat: 'tiere', name: 'Katzenschnurren', unter: 'Ruhiges Brummen', rgb: '212,160,196',
       ikon: '<path d="M10 16 8.6 6.6 15 11.4a13 13 0 0 1 10 0L31.4 6.6 30 16" stroke-linejoin="round"/>' +
             '<path d="M20 12c6.6 0 11 4.6 11 10.4S26.6 33 20 33 9 28.2 9 22.4 13.4 12 20 12z"/>' +
@@ -110,6 +123,29 @@
             '<circle cx="25" cy="21" r="1.6" fill="currentColor" stroke="none"/>' },
     { id: 'strasse', kat: 'welt', name: 'Straßengeräusche', unter: 'Vorbeifahrende Autos', rgb: '168,172,180',
       ikon: '<path d="M6 34 15 6M34 34 25 6M20 9v4M20 17v4M20 25v4"/>' },
+    { id: 'schale', kat: 'welt', name: 'Klangschale', unter: 'Stehender Ton', rgb: '222,190,130',
+      // Schale mit Schlägel und Klangwellen
+      ikon: '<path d="M9 18c0 6.5 5 11 11 11s11-4.5 11-11z"/>' +
+            '<path d="M5 18h30M27 8l-4 7"/><circle cx="28.5" cy="6.5" r="2.5"/>' +
+            '<path d="M6 24c-1.6 1.6-1.6 4.4 0 6M34 24c1.6 1.6 1.6 4.4 0 6"/>' },
+    { id: 'glocke', kat: 'welt', name: 'Kirchturmglocke', unter: 'Einzelne Schläge, fern', rgb: '196,178,156',
+      ikon: '<path d="M20 6c-5 0-8 4-8 9 0 6-2 10-3 12h22c-1-2-3-6-3-12 0-5-3-9-8-9z" stroke-linejoin="round"/>' +
+            '<path d="M20 3v3M17 31c0 1.8 1.3 3 3 3s3-1.2 3-3"/>' },
+
+    /* --- Synth --- */
+    { id: 'synthWarm', kat: 'synth', name: 'Warmes Pad', unter: 'Weiche Akkordfläche', rgb: '236,166,120',
+      ikon: '<path d="M5 26c0-9 4.5-14 10-14s7 4 7 9 2.5 8 6.5 8S35 25 35 19"/>' +
+            '<path d="M5 32c6 0 6-3 12-3s6 3 12 3"/>' },
+    { id: 'synthTief', kat: 'synth', name: 'Tiefer Drone', unter: 'Ruhender Grundton', rgb: '148,140,208',
+      ikon: '<path d="M4 20h4M32 20h4"/>' +
+            '<path d="M8 20c0-7 3-11 6-11s6 4 6 11 3 11 6 11 6-4 6-11"/>' },
+    { id: 'synthGlitzer', kat: 'synth', name: 'Glitzern', unter: 'Einzelne helle Töne', rgb: '158,214,240',
+      ikon: '<path d="M20 5v8M20 27v8M5 20h8M27 20h8"/>' +
+            '<path d="M11 11l5 5M24 24l5 5M29 11l-5 5M16 24l-5 5"/>' +
+            '<circle cx="20" cy="20" r="3.5"/>' },
+    { id: 'synthSchweb', kat: 'synth', name: 'Schwebung', unter: 'Zwei Töne, die wandern', rgb: '132,206,196',
+      ikon: '<path d="M4 15c5.5 0 5.5-7 11-7s5.5 7 11 7 5.5-7 10-7"/>' +
+            '<path d="M4 26c5 0 5 7 10 7s5-7 10-7 5 7 12 7"/>' },
 
     /* --- Rauschen --- */
     { id: 'weiss', kat: 'rauschen', name: 'White Noise', unter: 'Volles Spektrum', rgb: '226,232,242',
