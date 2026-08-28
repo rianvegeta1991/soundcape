@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.6';
+  var APP_VERSION = '1.7';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -36,6 +36,14 @@
     { id: 'fluss', kat: 'wasser', name: 'Fluss', unter: 'Über Wasser', rgb: '92,204,152',
       ikon: '<path d="M9 5c0 8 6 10 6 16s-5 8-5 14M31 5c0 8-6 10-6 16s5 8 5 14"/>' +
             '<path d="M15.5 14c1.6 0 1.6 1.6 3.2 1.6s1.6-1.6 3.2-1.6M14 26c1.8 0 1.8 1.6 3.6 1.6S19.4 26 21.2 26"/>' },
+    { id: 'bach', kat: 'wasser', name: 'Bach', unter: 'Plätschern über Steine', rgb: '110,206,186',
+      ikon: '<path d="M4 13c5 0 5 4 10 4s5-4 10-4 5 4 8 4"/>' +
+            '<path d="M4 23c5 0 5 4 10 4s5-4 10-4 5 4 8 4"/>' +
+            '<circle cx="13" cy="33" r="2.4"/><circle cx="25" cy="34.5" r="3"/>' +
+            '<circle cx="31" cy="8" r="2"/>' },
+    { id: 'tropfen', kat: 'wasser', name: 'Wassertropfen', unter: 'Einzelne Tropfen', rgb: '128,196,240',
+      ikon: '<path d="M20 4s7 9 7 13.5a7 7 0 1 1-14 0C13 13 20 4 20 4z" stroke-linejoin="round"/>' +
+            '<path d="M9 30c3.4 2.2 18.6 2.2 22 0M13 35c2.4 1.5 11.6 1.5 14 0"/>' },
     { id: 'unterwasser', kat: 'wasser', name: 'Unter Wasser', unter: 'Dumpf, mit Strömung', rgb: '74,146,214',
       ikon: '<path d="M4 9c3.2 0 3.2-2.4 6.4-2.4S13.6 9 16.8 9s3.2-2.4 6.4-2.4S26.4 9 29.6 9 33 6.6 36 6.6"/>' +
             '<circle cx="13" cy="27" r="4.5"/><circle cx="24.5" cy="19.5" r="3"/><circle cx="27" cy="30" r="2"/>' },
@@ -61,8 +69,12 @@
 
     /* --- Tiere --- */
     { id: 'grillen', kat: 'tiere', name: 'Grillen', unter: 'Sommernacht', rgb: '196,206,112',
-      ikon: '<path d="M26 5a12 12 0 1 0 9.5 14.6A9.5 9.5 0 0 1 26 5z" stroke-linejoin="round"/>' +
-            '<path d="M8 30c1.5-1.6 1.5-4.4 0-6M12.5 31.5c2.4-2.4 2.4-7.6 0-10"/>' },
+      // die Grille selbst: Körper, Kopf mit Fühlern, angewinkeltes Sprungbein
+      ikon: '<ellipse cx="23" cy="23" rx="10.5" ry="6" transform="rotate(-13 23 23)"/>' +
+            '<circle cx="11" cy="27" r="4"/>' +
+            '<path d="M9.5 23.5 3 13M11 21.5 5 10.5"/>' +
+            '<path d="M20 18.5 24.5 8.5 32 17.5"/>' +
+            '<path d="M17 28.5l-2 5.5M22.5 29.5l1 5M28 27l3.5 4.5"/>' },
     { id: 'vogelDe', kat: 'tiere', name: 'Vögel, heimisch', unter: 'Amsel, Meise, Fink', rgb: '146,196,150',
       ikon: '<path d="M13 12a4 4 0 1 1 8 0c0 5 5 5 8 9 2.6 3.4 1 10-6 10-6.5 0-11-4.6-11-11 0-3.4 1-5.6 1-8z" stroke-linejoin="round"/>' +
             '<path d="M15.5 11.2h.1M13 14l-6-2.4 5-1.6M4 34c5-1.4 9-4 11-8"/>' },

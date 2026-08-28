@@ -107,21 +107,55 @@ const Klang = (function () {
       [19.02, 0.61], [20.32, 0.36], [20.77, 0.36], [21.12, 0.56], [22.37, 0.31],
       [22.62, 0.56], [23.67, 0.36], [24.17, 1.06], [25.12, 0.31], [25.62, 0.31],
       [26.12, 0.51], [26.62, 0.31], [27.12, 0.31], [28.07, 0.31], [28.57, 0.31]] },
-    blauwal1: { datei: 'audio/blauwal1.mp3', segmente: [
-      [7.35, 2.85], [10.25, 8.95], [18.65, 2.15], [20.35, 2.25], [51.40, 16.45],
-      [100.95, 15.50], [148.40, 14.85], [196.85, 15.25]] },
-    blauwal2: { datei: 'audio/blauwal2.mp3', segmente: [
-      [12.95, 5.45], [18.15, 1.40], [31.75, 1.80], [93.15, 6.30], [111.50, 2.05],
-      [168.70, 1.70], [170.20, 6.00], [188.40, 1.75]] },
-    buckelwal: { datei: 'audio/buckelwal.mp3', segmente: [
-      [0.65, 1.20], [8.30, 0.55], [24.85, 1.30]] },
-    delfine: { datei: 'audio/delfine.mp3', segmente: [
-      [2.34, 0.42], [3.29, 0.22], [3.79, 0.22], [6.79, 0.22], [7.84, 0.22],
-      [8.44, 0.22], [8.84, 0.22], [8.99, 0.32], [10.74, 0.22], [12.04, 1.37],
-      [15.54, 0.22], [16.24, 0.27], [16.54, 0.22], [16.79, 0.32], [17.54, 0.27],
-      [19.44, 0.27], [23.19, 0.27], [26.69, 0.22], [27.94, 0.32], [28.19, 0.32],
-      [28.74, 0.22], [31.84, 0.32], [32.69, 0.22], [35.54, 0.62], [36.89, 0.37],
-      [37.34, 0.22], [38.54, 0.57], [39.14, 0.22], [39.29, 0.47], [40.34, 0.32]] },
+    /* --- Wal: der Gesang ist ein Dauerklang, keine Folge einzelner Rufe.
+     * Deshalb Schleifenbereiche statt Segmente. --- */
+    wal1: { datei: 'audio/wal1.mp3', segmente: [[2.0, 42.0]] },
+    wal2: { datei: 'audio/wal2.mp3', segmente: [[2.0, 60.0]] },
+
+    delfin1: { datei: 'audio/delfin1.mp3', segmente: [
+      [3.79, 0.22], [4.34, 0.22], [4.64, 0.32], [5.54, 0.22], [5.89, 0.37], [6.54, 0.22],
+      [8.39, 0.22], [10.29, 0.22], [10.74, 0.27], [14.74, 0.27], [15.99, 0.22], [16.24, 0.32],
+      [29.84, 0.22], [30.89, 0.87], [31.74, 0.42], [32.19, 0.22], [35.94, 0.22], [37.04, 0.22],
+      [51.54, 0.22], [51.74, 0.27]] },
+    delfin2: { datei: 'audio/delfin2.mp3', segmente: [
+      [5.89, 0.22], [14.84, 1.82], [17.49, 0.27], [26.39, 0.27], [29.19, 0.22], [31.09, 0.22],
+      [32.74, 0.47], [33.19, 0.22], [33.44, 0.22], [33.64, 0.27], [34.74, 1.92], [36.64, 0.27],
+      [36.89, 0.27]] },
+
+    /* --- Schnarchen: die Segmente sind einzelne Atemzüge --- */
+    schnarch1: { datei: 'audio/schnarch1.mp3', segmente: [
+      [9.95, 1.20], [16.75, 1.35], [33.05, 1.20], [36.45, 1.65], [39.05, 1.20], [41.50, 2.10]] },
+    schnarch2: { datei: 'audio/schnarch2.mp3', segmente: [
+      [9.30, 1.50], [12.90, 1.20], [16.20, 1.30], [22.70, 1.25], [25.85, 1.30], [29.20, 1.20]] },
+
+    /* --- Donner --- */
+    donnerA: { datei: 'audio/donnerA.mp3', segmente: [
+      [8.85, 2.05], [10.40, 1.70], [14.85, 1.95], [16.60, 1.65], [18.25, 1.75]] },
+    donnerB: { datei: 'audio/donnerB.mp3', segmente: [[0.35, 1.30]] },
+    donnerC: { datei: 'audio/donnerC.mp3', segmente: [[0.30, 1.35]] },
+
+    /* --- Bach: gleichmäßiges Plätschern, als Schleife --- */
+    bach1: { datei: 'audio/bach1.mp3', segmente: [[13.0, 20.0]] },
+    bach2: { datei: 'audio/bach2.mp3', segmente: [[1.0, 52.0]] },
+
+    /* --- Wassertropfen: einzelne Tropfen --- */
+    tropfen1: { datei: 'audio/tropfen1.mp3', segmente: [
+      [0.05, 0.20], [1.80, 0.15], [1.95, 0.25], [2.15, 0.15], [2.70, 0.15], [4.35, 0.20],
+      [4.60, 0.15], [5.30, 0.15], [6.95, 0.15], [7.20, 0.15], [7.90, 0.20], [9.50, 0.20],
+      [9.70, 0.15], [9.80, 0.15], [10.55, 0.15], [12.40, 0.15], [13.15, 0.20], [14.70, 0.15],
+      [14.85, 0.15], [15.00, 0.15]] },
+    tropfen2: { datei: 'audio/tropfen2.mp3', segmente: [
+      [0.00, 0.35], [2.05, 0.15], [2.55, 0.15], [3.00, 0.15], [4.40, 0.15], [4.50, 0.15],
+      [4.65, 0.20], [5.15, 0.30], [5.60, 0.20], [7.45, 0.20], [7.70, 0.15], [8.10, 0.15],
+      [8.20, 0.25], [8.95, 0.20], [10.05, 0.15], [10.45, 0.50], [11.55, 0.15], [11.70, 0.20],
+      [11.95, 0.15], [12.05, 0.25]] },
+
+    /* --- Afrika: echte Morgenatmosphäre plus Perlhühner --- */
+    afrika1: { datei: 'audio/afrika1.mp3', segmente: [[1.0, 55.0]] },
+    afrika2: { datei: 'audio/afrika2.mp3', segmente: [
+      [1.17, 0.56], [1.62, 0.36], [3.77, 0.56], [7.82, 1.01], [10.77, 0.96], [12.37, 0.56],
+      [13.67, 0.61], [15.02, 0.56], [16.82, 0.91], [17.62, 0.36], [19.37, 0.51], [19.82, 0.61],
+      [22.42, 0.61], [24.77, 0.66], [27.17, 1.06], [28.42, 0.31], [28.62, 0.46]] },
     /* --- heimische Vögel (Xeno-canto über Commons, CC-BY-SA) --- */
     rotkehlchen: { datei: 'audio/rotkehlchen.mp3', segmente: [
       [1.27, 0.41], [17.92, 0.56], [22.02, 0.41], [24.62, 0.36], [26.02, 0.41], [31.82, 0.41]] },
@@ -134,26 +168,6 @@ const Klang = (function () {
     grasmuecke: { datei: 'audio/grasmuecke.mp3', segmente: [
       [3.32, 0.36], [7.57, 0.31], [8.77, 0.31], [8.97, 0.56], [9.42, 0.51], [9.82, 0.31],
       [10.02, 0.71], [11.12, 0.31], [11.62, 0.31], [12.02, 0.36], [13.22, 0.36]] },
-
-    /* --- afrikanische Vögel --- */
-    glanzstar: { datei: 'audio/glanzstar.mp3', segmente: [
-      [0.00, 1.86], [1.67, 0.71], [2.32, 1.11], [3.62, 0.36], [7.22, 1.06], [8.17, 0.66],
-      [22.77, 0.36], [23.42, 0.41], [24.67, 0.46], [26.62, 0.41], [27.02, 0.36], [27.52, 0.36],
-      [28.12, 0.41], [29.47, 0.51], [30.17, 0.61], [33.82, 0.36], [40.37, 0.46], [42.02, 0.46],
-      [44.37, 0.36], [47.92, 0.46], [49.82, 0.61], [50.32, 0.36]] },
-    hornvogel: { datei: 'audio/hornvogel.mp3', segmente: [
-      [1.17, 0.36], [1.57, 0.36], [2.02, 0.31], [2.42, 0.36], [2.82, 0.36], [3.27, 0.31],
-      [3.67, 0.36], [4.12, 0.36], [4.52, 0.41], [4.87, 0.36], [5.37, 0.36], [5.82, 0.36],
-      [6.22, 0.36], [6.67, 0.36], [7.47, 0.36], [7.92, 0.36], [8.37, 0.36], [9.17, 0.36],
-      [9.62, 0.36], [10.42, 0.36], [10.87, 0.41], [11.32, 0.41]] },
-    perlhuhn: { datei: 'audio/perlhuhn.mp3', segmente: [
-      [0.07, 0.31], [0.87, 0.36], [1.52, 0.41], [2.97, 0.41], [6.87, 0.56], [7.37, 0.36], [7.72, 0.31]] },
-    palmtaube: { datei: 'audio/palmtaube.mp3', segmente: [
-      [0.62, 0.36], [0.87, 0.31], [1.07, 0.46], [2.52, 0.31], [2.72, 0.61], [3.77, 0.46],
-      [4.12, 0.31], [4.32, 0.36]] },
-    buelbuel: { datei: 'audio/buelbuel.mp3', segmente: [
-      [1.67, 0.36], [1.97, 0.76], [5.67, 0.41], [6.07, 0.41], [6.37, 0.51], [11.92, 0.31],
-      [12.22, 0.41], [12.52, 0.46], [15.22, 0.36]] },
 
     /* --- weitere Tukane --- */
     tukan2: { datei: 'audio/tukan2.mp3', segmente: [
@@ -208,10 +222,13 @@ const Klang = (function () {
   var BRAUCHT = {
     vogelDe: ['amsel', 'gartenvoegel', 'rotkehlchen', 'buchfink', 'meise', 'grasmuecke'],
     vogelTropen: ['tukane', 'tukan2', 'tukan3'],
-    vogelAfrika: ['glanzstar', 'hornvogel', 'perlhuhn', 'palmtaube', 'buelbuel'],
-    wal: ['blauwal1', 'blauwal2', 'buckelwal'],
-    delfin: ['delfine'],
-    donner: ['donner1', 'donner2', 'donner3'],
+    vogelAfrika: ['afrika1', 'afrika2'],
+    wal: ['wal1', 'wal2'],
+    delfin: ['delfin1', 'delfin2'],
+    donner: ['donnerA', 'donnerB', 'donnerC'],
+    bach: ['bach1', 'bach2'],
+    tropfen: ['tropfen1', 'tropfen2'],
+    schnarchen: ['schnarch1', 'schnarch2'],
     feuer: ['feuer1', 'feuer2', 'feuerknack'],
     blasen: ['blasen1', 'blasen2', 'blasen3'],
     grillen: ['grille1', 'grille2'],
@@ -918,16 +935,18 @@ const Klang = (function () {
         gedaempft.connect(weite.ein);
       }
 
-      ferne('donner1', 0.85, [14, 45], 300, 3, 0.4);
-      ferne('donner2', 0.80, [22, 70], 240, 18, 0.3);
-      ferne('donner3', 0.70, [30, 90], 350, 40, 0.5);
+      // "DistantThunder" trägt die Kulisse, die beiden nahen Schläge kommen
+      // seltener und stärker gedämpft dazu – Entfernung heißt: weniger Höhen.
+      ferne('donnerA', 0.90, [12, 40], 420, 3, 0.4);
+      ferne('donnerB', 0.75, [26, 80], 200, 20, 0.3);
+      ferne('donnerC', 0.70, [34, 95], 240, 45, 0.5);
 
       // ganz tiefes Nachrollen, synthetisch: verlängert die Aufnahmen nach unten
       var sub = b.kette(b.rausch(true), b.tief(55, 1.4));
       var tor3 = b.v(0);
       sub.connect(tor3);
-      b.mod(tor3.gain, b.selten(0.9, 0.60, 3.0), 1.2);
-      b.raus(tor3, 0.5, 0);
+      b.mod(tor3.gain, b.selten(0.9, 0.60, 3.0), 1.0);
+      b.raus(tor3, 0.4, 0);
     },
 
     /* ---- Baumwipfel-Rascheln ---- */
@@ -993,8 +1012,8 @@ const Klang = (function () {
      * Sechs Stimmen, jede mit eigenem Rhythmus – so entsteht ein Garten und
      * nicht ein einzelner Vogel. Verrauschtere Aufnahmen laufen leiser. */
     vogelDe: function (b) {
-      var weite = b.hall(0.13, 0.4, 4200);
-      b.raus(weite.aus, 0.28, 0);
+      var weite = b.hall(0.10, 0.25, 4200);
+      b.raus(weite.aus, 0.10, 0);   // deutlich weniger Hall: Vogelrufe im Garten sind trocken
       b.rufe({ probe: 'amsel', pegel: 0.80, pause: [3, 11], rate: [0.95, 1.05],
                breite: 0.75, ziel: weite.ein, start: 3 });
       b.rufe({ probe: 'gartenvoegel', pegel: 0.55, pause: [2.5, 9], rate: [0.93, 1.08],
@@ -1011,8 +1030,8 @@ const Klang = (function () {
 
     /* ---- Vogelstimmen: Tropen (Aufnahmen) ---- */
     vogelTropen: function (b) {
-      var weite = b.hall(0.19, 0.5, 3200);
-      b.raus(weite.aus, 0.42, 0);
+      var weite = b.hall(0.14, 0.32, 3200);
+      b.raus(weite.aus, 0.16, 0);   // Regenwald hallt etwas, aber nicht wie eine Halle
       // Tukane im Amazonas: viele kurze Rufe dicht hintereinander
       b.rufe({ probe: 'tukane', pegel: 0.60, pause: [0.4, 2.6], rate: [0.9, 1.1],
                breite: 0.85, ziel: weite.ein, start: 2 });
@@ -1025,74 +1044,82 @@ const Klang = (function () {
                breite: 0.6, ziel: weite.ein, start: 11 });
     },
 
-    /* ---- Vogelstimmen: Afrika (Aufnahmen) ---- */
+    /* ---- Vogelstimmen: Afrika (Aufnahmen) ----
+     * Eine echte Morgenaufnahme aus Südafrika trägt die Kulisse; darüber
+     * kommen einzelne Perlhuhnrufe. Zusammengesetzte Einzelrufe verschiedener
+     * Arten klangen wie ein Zoo, nicht wie ein Ort. */
     vogelAfrika: function (b) {
-      var weite = b.hall(0.22, 0.5, 2800);
-      b.raus(weite.aus, 0.45, 0);
-      // Glanzstar: helles, geschwätziges Rufen
-      b.rufe({ probe: 'glanzstar', pegel: 0.70, pause: [1.5, 7], rate: [0.95, 1.07],
-               breite: 0.8, ziel: weite.ein, start: 2 });
-      // Hornvogel: gleichmäßige Rufserien
-      b.rufe({ probe: 'hornvogel', pegel: 0.55, pause: [0.5, 3.5], rate: [0.94, 1.06],
-               breite: 0.7, ziel: weite.ein, start: 5 });
-      // Bülbül
-      b.rufe({ probe: 'buelbuel', pegel: 0.60, pause: [3, 10], rate: [0.95, 1.06],
-               breite: 0.75, ziel: weite.ein, start: 8 });
-      // Palmtaube: ruhiges Gurren im Hintergrund
-      b.rufe({ probe: 'palmtaube', pegel: 0.50, pause: [4, 13], rate: [0.93, 1.03],
-               breite: 0.55, ziel: weite.ein, start: 12 });
-      // Perlhuhn: gelegentliches Rufen weiter weg
-      b.rufe({ probe: 'perlhuhn', pegel: 0.40, pause: [6, 18], rate: [0.9, 1.05],
-               breite: 0.65, ziel: weite.ein, start: 16 });
-    },
-
-    /* ---- Vogelstimmen: Afrika ---- */
-    vogelAfrika: function (b) {
-      var weite = b.hall(0.22, 0.52, 2600);
-      b.raus(weite.aus, 0.65, 0);
-
-      // Turteltaube: gleichmäßiges, tiefes Gurren
-      b.ruf({ f: 420, hub: 70, tempo: 6, laenge: 2.8, dichte: 0.52, form: 'triangle',
-              phrase: 1.6, pegel: 0.30, pan: -0.4, ziel: weite.ein });
-      // Hornvogel: rauer, hohler Ruf in Serien
-      b.ruf({ f: 780, hub: 220, tempo: 14, laenge: 5, dichte: 0.50, rau: 6,
-              phrase: 2.6, pegel: 2.3, pan: 0.4, ziel: weite.ein });
-      // Webervögel: geschwätziges, schnelles Zwitschern
-      b.ruf({ f: 3600, hub: 1500, tempo: 70, laenge: 34, dichte: 0.50, triller: 21,
-              phrase: 8, pegel: 0.20, pan: 0.15, ziel: weite.ein });
-      // heller Pfiff mit steilem Abfall
-      b.ruf({ f: 2600, hub: 1700, tempo: 30, laenge: 10, dichte: 0.54,
-              phrase: 4.5, pegel: 0.22, pan: -0.15, ziel: weite.ein });
-      // Perlhuhn-artiges Rattern, ganz hinten
-      b.ruf({ f: 1100, hub: 180, tempo: 45, laenge: 26, dichte: 0.52, rau: 11,
-              triller: 13, phrase: 2.2, pegel: 1.7, pan: 0.6, ziel: weite.ein });
+      // Die Perlhühner sind viel lauter als die Morgenatmosphäre – ohne
+      // Spitzenbremse bliebe der Morgen unhörbar leise.
+      var bremse = b.presser(-24, 4);
+      b.raus(bremse, 1.0, 0);
+      var morgen = b.schleife({ probe: 'afrika1', rate: 1.0, pegel: 0, pan: 0,
+                                tempoAnteil: 0.3, an: bremse });
+      if (!morgen) return;
+      b.atem(morgen, 2.4, 0.3, 0.4);     // die Feldaufnahme ist leise ausgesteuert
+      var p = b.rufe({ probe: 'afrika2', pegel: 1.1, pause: [4, 16], rate: [0.92, 1.06],
+                       breite: 0.7, start: 6, roh: true });
+      if (p) p.connect(bremse);
     },
 
     /* ---- Walgesang (Aufnahmen) ----
-     * Blauwal-Rufe der NOAA, dazu ein Buckelwal. Die Rufe sind bis zu 16 s
-     * lang, entsprechend groß sind die Abstände. */
+     * Walgesang ist ein Dauerklang, kein Nacheinander einzelner Rufe – als
+     * geschnittene Einzelstücke klang er zerhackt. Zwei Schleifen mit leicht
+     * verschiedener Geschwindigkeit driften auseinander, der Nachhall setzt
+     * das Ganze in die Tiefe. */
     wal: function (b) {
-      // Die NOAA-Aufnahmen sind bereits voll ausgesteuert; zusammen mit dem
-      // Hall riss die Kulisse sonst über die Vollaussteuerung (gemessen: 1,15).
-      var tiefe = b.hall(0.42, 0.5, 700);
-      b.raus(tiefe.aus, 0.32, 0);
-      b.rufe({ probe: 'blauwal1', pegel: 0.42, pause: [6, 22], rate: [0.97, 1.03],
-               breite: 0.35, ziel: tiefe.ein, start: 2 });
-      b.rufe({ probe: 'blauwal2', pegel: 0.35, pause: [10, 30], rate: [0.94, 1.06],
-               breite: 0.5, ziel: tiefe.ein, start: 12 });
-      b.rufe({ probe: 'buckelwal', pegel: 0.30, pause: [14, 40], rate: [0.9, 1.08],
-               breite: 0.6, ziel: tiefe.ein, start: 20 });
+      var tiefe = b.hall(0.42, 0.48, 700);
+      b.raus(tiefe.aus, 0.5, 0);
+      var a = b.schleife({ probe: 'wal1', rate: 0.98, pegel: 0, pan: -0.2, tempoAnteil: 0.3 });
+      var c = b.schleife({ probe: 'wal2', rate: 1.03, pegel: 0, pan: 0.22, tempoAnteil: 0.3 });
+      if (!a || !c) return;
+      b.atem(a, 0.85, 0.25, 0.35);
+      b.atem(c, 0.55, 0.20, 0.25);
+      a.connect(tiefe.ein);
+      c.connect(tiefe.ein);
     },
 
-    /* ---- Delfingesang (Aufnahme) ---- */
+    /* ---- Delfingesang (Aufnahmen) ---- */
     delfin: function (b) {
-      var raum = b.hall(0.11, 0.5, 6000);
-      b.raus(raum.aus, 0.4, 0);
-      // Pfiffe und Klicks kommen in Schüben
-      b.rufe({ probe: 'delfine', pegel: 0.9, pause: [0.25, 2.5], rate: [0.92, 1.1],
+      var raum = b.hall(0.11, 0.45, 6000);
+      b.raus(raum.aus, 0.3, 0);
+      // Pfiffe und Klickfolgen kommen in Schüben
+      b.rufe({ probe: 'delfin1', pegel: 0.85, pause: [0.2, 2.2], rate: [0.94, 1.08],
                breite: 0.8, ziel: raum.ein, start: 1 });
-      b.rufe({ probe: 'delfine', pegel: 0.5, pause: [1.5, 6], rate: [0.8, 0.95],
-               breite: 0.5, ziel: raum.ein, start: 4 });    // entferntere Tiere
+      b.rufe({ probe: 'delfin2', pegel: 0.70, pause: [0.6, 4], rate: [0.9, 1.05],
+               breite: 0.7, ziel: raum.ein, start: 3 });
+      b.rufe({ probe: 'delfin1', pegel: 0.40, pause: [2, 7], rate: [0.8, 0.92],
+               breite: 0.5, ziel: raum.ein, start: 6 });    // entferntere Tiere
+    },
+
+    /* ---- Bach (Aufnahmen) ----
+     * Anders als der Fluss: kleiner und näher, plätschernd statt rauschend. */
+    bach: function (b) {
+      var a = b.schleife({ probe: 'bach1', rate: 0.98, pegel: 0, pan: -0.25, tempoAnteil: 0.25 });
+      var c = b.schleife({ probe: 'bach2', rate: 1.03, pegel: 0, pan: 0.28, tempoAnteil: 0.25 });
+      if (!a || !c) return;
+      b.atem(a, 2.0, 0.3, 0.5);          // beide Bachaufnahmen sind leise
+      b.atem(c, 2.3, 0.35, 0.35);
+    },
+
+    /* ---- Wassertropfen (Aufnahmen) ----
+     * Einzelne Tropfen mit viel Raum dazwischen – das Fallen zählt, nicht der
+     * Untergrund. Ein langer Hall gibt jedem Tropfen seine Höhle. */
+    tropfen: function (b) {
+      // Einzelne Tropfen sind sehr laut gegen die Stille dazwischen; ohne
+      // Spitzenbremse müsste die ganze Kulisse fast unhörbar leise laufen.
+      var bremse = b.presser(-20, 5);
+      b.raus(bremse, 1.0, 0);
+      var hoehle = b.hall(0.19, 0.55, 3200);
+      hoehle.aus.connect(bremse);
+      [{ p: 'tropfen1', g: 3.0, pause: [0.25, 1.8], r: [0.85, 1.15], br: 0.8, s: 1 },
+       { p: 'tropfen2', g: 2.5, pause: [0.4, 2.4], r: [0.9, 1.2], br: 0.75, s: 2 },
+       { p: 'tropfen1', g: 1.8, pause: [1.2, 4], r: [0.65, 0.8], br: 0.6, s: 4 }
+      ].forEach(function (t) {
+        var k = b.rufe({ probe: t.p, pegel: t.g, pause: t.pause, rate: t.r,
+                         breite: t.br, ziel: hoehle.ein, start: t.s, roh: true });
+        if (k) k.connect(bremse);
+      });
     },
 
     /* ---- Katzenschnurren (Aufnahme) ----
@@ -1108,38 +1135,17 @@ const Klang = (function () {
       b.atem(c, 0.55, 0.18, 0.35);
     },
 
-    /* ---- Leises Schnarchen ---- */
+    /* ---- Leises Schnarchen (Aufnahmen) ----
+     * Synthetisch klang es nach Motor: ein Atemzug hat eine Kehle, kein Rasseln
+     * aus Rauschen. Die Segmente sind einzelne Atemzüge; die Pausen dazwischen
+     * sind eng gehalten, denn Atmung ist regelmäßig – aber nicht metronomisch. */
     schnarchen: function (b) {
-      // Ein Atemzug dauert gut vier Sekunden: Einatmen rasselnd, Ausatmen weich.
-      var zyklus = b.sinus(0.23);
-      var ein = b.kette(zyklus, b.schwelle(0.15, 1.6));
-      var spaet = b.verz(2.2);
-      zyklus.connect(spaet);
-      var aus = b.kette(spaet, b.schwelle(0.3, 1.8));
-
-      // Einatmen: tiefes Rasseln (Gaumensegel flattert mit ~38 Hz)
-      var rassel = b.kette(b.rausch(true), b.tief(340, 1.4));
-      var rTor = b.v(0);
-      rassel.connect(rTor);
-      var flattern = b.v(0);
-      b.takt(38, 0.55, 1.0).connect(flattern);
-      b.mod(flattern.gain, ein, 1.0);
-      flattern.connect(rTor.gain);
-      b.raus(rTor, 1.6, -0.1);
-
-      // etwas Luftgeräusch dazu, nur während des Einatmens
-      var luft = b.kette(b.rausch(), b.band(700, 1.1));
-      var lTor = b.v(0);
-      luft.connect(lTor);
-      b.mod(lTor.gain, ein, 0.5);
-      b.raus(lTor, 0.5, 0.1);
-
-      // Ausatmen: weiches Hauchen ohne Rasseln
-      var hauch = b.kette(b.rausch(), b.tief(520, 0.8), b.hoch(120));
-      var hTor = b.v(0);
-      hauch.connect(hTor);
-      b.mod(hTor.gain, aus, 0.30);
-      b.raus(hTor, 0.6, 0.15);
+      var raum = b.hall(0.09, 0.3, 1400);
+      b.raus(raum.aus, 0.12, 0);   // nur ein Hauch Zimmer, kein Hall
+      b.rufe({ probe: 'schnarch2', pegel: 0.85, pause: [2.0, 3.2], rate: [0.94, 1.04],
+               breite: 0.25, ziel: raum.ein, start: 1 });
+      b.rufe({ probe: 'schnarch1', pegel: 0.45, pause: [7, 16], rate: [0.9, 1.02],
+               breite: 0.3, ziel: raum.ein, start: 9 });   // gelegentlich ein tieferer Zug
     },
 
     /* ================= Menschenwelt ================= */
@@ -1254,11 +1260,12 @@ const Klang = (function () {
    * nicht geschätzt – nach jeder Klangänderung neu messen. */
   var AUSGLEICH = {
     regen: 0.82, strand: 1.22, fluss: 1.27, unterwasser: 1.10, blasen: 1.69,
+    bach: 1.76, tropfen: 0.88,
     feuer: 0.69,
-    wind: 1.23, donner: 0.74, wipfel: 1.25,
-    grillen: 0.99, vogelDe: 1.29, vogelTropen: 1.22, vogelAfrika: 1.49,
-    wal: 1.41, delfin: 1.03, katze: 1.46,
-    schnarchen: 1.02, zug: 0.77, strasse: 1.75,
+    wind: 1.23, donner: 0.49, wipfel: 1.25,
+    grillen: 0.99, vogelDe: 1.79, vogelTropen: 1.69, vogelAfrika: 1.30,
+    wal: 0.72, delfin: 2.21, katze: 1.46,
+    schnarchen: 1.50, zug: 0.77, strasse: 1.75,
     weiss: 0.66, rosa: 0.28, braun: 0.95
   };
 

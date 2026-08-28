@@ -21,10 +21,16 @@ daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das O
 | `amsel.mp3` | [Turdus merula 2.ogg](https://commons.wikimedia.org/wiki/File:Turdus_merula_2.ogg) | Public Domain | Oona Räisänen (Mysid) |
 | `gartenvoegel.mp3` | [Birds singing in garden.ogg](https://commons.wikimedia.org/wiki/File:Birds_singing_in_garden.ogg) | Public Domain | ezwa |
 | `tukane.mp3` | [Toucans singing in the Amazonian rainforest, Brazil](https://commons.wikimedia.org/wiki/File:404114_felix-blume_toucans-singing-in-the-amazonian-rainforest-brazil.ogg) | CC0 | Felix Blume |
-| `blauwal1.mp3` | [Blue Whale NE Pacific 1x.oga](https://commons.wikimedia.org/wiki/File:Blue_Whale_NE_Pacific_1x.oga) | CC0 | NOAA |
-| `blauwal2.mp3` | [Blue whale atlantic3 1x.oga](https://commons.wikimedia.org/wiki/File:Blue_whale_atlantic3_1x.oga) | CC0 | NOAA |
-| `buckelwal.mp3` | [Humpback whale moo.ogg](https://commons.wikimedia.org/wiki/File:Humpback_whale_moo.ogg) | Public Domain | NOAA / NEFSC |
-| `delfine.mp3` | [Dolphins screaming underwater, Caribbean Sea, Mexico](https://commons.wikimedia.org/wiki/File:161691_felixblume_dolphin-screaming-underwater-in-caribbean-sea-mexico.wav) | CC0 | Felix Blume |
+| `wal1.mp3` | [Whale Sounds (High Quality)](https://freesound.org/s/653612/) | CC0 | MPooman |
+| `delfin1.mp3` | [Atlantic Spotted Dolphins](https://freesound.org/s/385796/) | CC0 | geraldfiebig |
+| `schnarch1.mp3` | [Terrible snore](https://freesound.org/s/174453/) | CC0 | iampagan |
+| `schnarch2.mp3` | [Snoring](https://freesound.org/s/233600/) | CC0 | SortsApostata |
+| `donnerA.mp3` | [DistantThunder](https://freesound.org/s/473864/) | CC0 | Kragnour |
+| `bach1.mp3` | [Creek Ambience](https://freesound.org/s/721616/) | CC0 | SduggySounds |
+| `bach2.mp3` | [Kervijen babbling creek](https://freesound.org/s/690326/) | CC0 | bruno.auzet |
+| `tropfen1.mp3` | [Water Cave](https://freesound.org/s/443061/) | CC0 | Klangkobold |
+| `afrika1.mp3` | [Bird sounds Spionkop lodge early morning](https://freesound.org/s/704918/) | CC0 | geoffvt |
+| `afrika2.mp3` | [Guineafowl calls isolated – South Africa](https://freesound.org/s/386985/) | CC0 | EpicWizard |
 | `schnurren1.mp3` | [Whiskers' purr edit.ogg](https://commons.wikimedia.org/wiki/File:Whiskers%27_purr_edit.ogg) | Public Domain | Adam Cuerden |
 | `schnurren2.mp3` | [Purring cat bertie.ogg](https://commons.wikimedia.org/wiki/File:Purring_cat_bertie.ogg) | Public Domain | jim_mowatt |
 | `grille1.mp3` | [Cricket single, clean internal loop](https://freesound.org/s/573827/) | CC0 | TRP |
@@ -43,17 +49,14 @@ daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das O
 | `buchfink.mp3` | Fringilla coelebs – Common Chaffinch XC108344 | CC BY-SA 4.0 | Alexander Kurthy |
 | `meise.mp3` | Parus major – Great Tit XC165660 | CC BY-SA 3.0 | José Carlos Sires |
 | `grasmuecke.mp3` | Sylvia atricapilla – Eurasian Blackcap XC457403 | CC BY-SA 4.0 | Hannu Varkki |
-| `glanzstar.mp3` | Lamprotornis superbus – Superb Starling XC402690 | CC BY-SA 4.0 | Anne Ndung'u |
-| `hornvogel.mp3` | African Grey Hornbill (Tockus nasutus) | CC BY 4.0 | British Library |
-| `perlhuhn.mp3` | Numida meleagris – chant | CC BY-SA 4.0 | Litlok |
-| `palmtaube.mp3` | Laughing dove song, Dandoba hill, Sangli | CC BY-SA 4.0 | Sharadapte |
-| `buelbuel.mp3` | Pycnonotus tricolor, roep, Pretoria | CC BY-SA 4.0 | JMK |
 | `tukan2.mp3` | Keel Billed Toucan | CC BY 3.0 | soundbytez |
 | `tukan3.mp3` | Chesnut-mandibled toucan | CC BY 3.0 | soundbytez |
-| `donner1.mp3` | Thunder Claps | CC BY-SA 4.0 | Jonathan Hunt |
-| `donner2.mp3` | Booming Thunder 2023-10-09 | CC BY-SA 4.0 | KTerPalmers |
-| `donner3.mp3` | Thunder 01 | CC BY-SA 4.0 | Amuzujoe |
 | `blasen3.mp3` | [water and bubbles soundscape 04](https://freesound.org/s/736971/) | CC BY 4.0 | busabx |
+| `wal2.mp3` | [Underwater recording of Humpback whales](https://freesound.org/s/399609/) | CC BY 4.0 | alanmcki |
+| `delfin2.mp3` | [ANMLAqua-dolphin-eldora](https://freesound.org/s/727605/) | CC BY 4.0 | nathanwolek |
+| `donnerB.mp3` | [Thunder, Very Close, No Rain, B](https://freesound.org/s/320049/) | CC BY 4.0 | InspectorJ |
+| `donnerC.mp3` | [Thunder, Very Close, No Rain, A](https://freesound.org/s/320050/) | CC BY 4.0 | InspectorJ |
+| `tropfen2.mp3` | [Dripping in Cavern (close perspective)](https://freesound.org/s/816060/) | CC BY 4.0 | iainmccurdy |
 
 Die Vogelaufnahmen mit „XC"-Nummer stammen ursprünglich von
 [xeno-canto.org](https://xeno-canto.org) und kamen über Commons hierher.
@@ -71,7 +74,10 @@ mit fernem Donner genauso, und erst dadurch klingt er nach „weit weg".
 
 ## Was noch synthetisch ist
 
-Lagerfeuer und Blubberblasen. Für solche Umgebungsgeräusche ist Commons als
-Enzyklopädie-Mediathek eine schlechte Quelle – dort finden sich unter „Feuer" vor allem
-Klavierstücke und Feueralarm-Ansagen. Passendes Material gäbe es auf freesound.org (viel CC0),
-dessen Download aber einen kostenlosen API-Schlüssel braucht.
+Regen, Wind, Strand, Fluss, Unterwasser, Baumwipfel, Zug, Straße und die drei Rauscharten.
+Das sind Rauschprozesse – dafür ist die Synthese das richtige Werkzeug und liefert
+zugleich die Endlosigkeit ohne jede Wiederholung.
+
+Von Aufnahmen kommen alle Tierstimmen, Donner, Feuer, Blasen, Bach, Wassertropfen
+und das Schnarchen: Dort geht es um strukturierte Einzelereignisse, die sich aus
+Rauschen und Filtern nicht überzeugend bauen lassen.

@@ -34,11 +34,19 @@ Bluetooth-Box. **Deutsch ist die Quellsprache** (Code, Kommentare, Oberfläche).
   zurück, das die Bauart vermeidet.
 - Winzig, offlinefähig, keine Urheberrechtsfrage.
 
-**Die Ausnahme: Tierstimmen.** Sie sind keine Rauschprozesse, sondern hochstrukturierte
-Signale – synthetisch klingen sie unweigerlich nach Pfeifton. Das war der Befund aus der
-Praxis, nicht aus der Theorie: Version 1.1 hatte alle sieben Tierkulissen synthetisch, und
-sie klangen durchweg unecht. Seit 1.2 liegen dafür **gemeinfreie Aufnahmen** bei
-(`audio/`, Public Domain und CC0, Nachweise in `audio/QUELLEN.md`).
+**Die Ausnahme: strukturierte Einzelereignisse.** Tierstimmen, Donnerschläge, Feuerknacken,
+Blasen, Tropfen und Atemzüge sind keine Rauschprozesse – synthetisch klingen sie unweigerlich
+nach Pfeifton oder Motor. Das war der Befund aus der Praxis, nicht aus der Theorie: erst
+klangen die Tierstimmen unecht (v1.1), dann Feuer, Blasen, Donner und Schnarchen. Dafür
+liegen **freie Aufnahmen** bei (`audio/`, Nachweise in `audio/QUELLEN.md`).
+
+**Die Faustregel:** gleichmäßiges Rauschen (Regen, Wind, Wellen, Fluss, Rauscharten) wird
+synthetisiert; alles mit erkennbarer Struktur kommt von Aufnahmen.
+
+**Fallstrick beim Umbau auf Aufnahmen:** Beim Ersetzen einer synthetischen Kulisse die alte
+Baufunktion wirklich **löschen**. In `Klang.szenen` gewinnt bei doppeltem Schlüssel die
+*letzte* Definition – so lief `vogelAfrika` zwei Versionen lang weiter synthetisch, obwohl
+die Aufnahmen längst eingebaut waren, und fiel erst dem Nutzer auf.
 
 Damit trotzdem keine Schleife hörbar wird, sind die Dateien **keine fertigen Loops**: Aus
 jeder Aufnahme sind die brauchbaren Rufe als Zeitmarken vermessen (`PROBEN` in sound.js),
@@ -107,7 +115,7 @@ für den sauberen Abbau (`abbau()`). Die tragenden Bausteine:
   wären unhöflich. Der fetch-Handler legt sie beim ersten Abspielen in den Cache; offline
   verfügbar sind also die Kulissen, die schon einmal liefen.
 
-22 Kulissen in sechs Kategorien (siehe `KATEGORIEN`/`KULISSEN` in app.js). Die Zuordnung
+24 Kulissen in sechs Kategorien (siehe `KATEGORIEN`/`KULISSEN` in app.js). Die Zuordnung
 id → Baufunktion steht in `Klang.szenen`; **beide Listen müssen deckungsgleich bleiben.**
 
 ### Pegel
