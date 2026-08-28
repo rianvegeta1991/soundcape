@@ -173,6 +173,26 @@ const Klang = (function () {
       [10.50, 6.00], [16.85, 2.20], [19.00, 1.75], [21.45, 4.75]] },
     donner3: { datei: 'audio/donner3.mp3', segmente: [[0.10, 3.65]] },
 
+    /* --- Feuer: zwei gleichmäßige Lagen als Schleife, dazu einzelne Knacker --- */
+    feuer1: { datei: 'audio/feuer1.mp3', segmente: [[2.0, 46.0]] },
+    feuer2: { datei: 'audio/feuer2.mp3', segmente: [[2.0, 24.0]] },
+    feuerknack: { datei: 'audio/feuerknack.mp3', segmente: [
+      [0.35, 0.22], [0.70, 0.27], [1.00, 0.37], [3.20, 0.32], [3.70, 0.47], [4.10, 0.22],
+      [4.25, 0.32], [5.05, 0.27], [5.35, 0.37], [5.85, 0.27], [7.10, 0.22], [8.15, 0.42],
+      [9.20, 0.32], [9.55, 0.22], [10.65, 0.22], [11.10, 0.22], [11.25, 0.27], [13.25, 0.22],
+      [14.00, 0.22], [14.55, 0.22], [15.70, 0.27], [16.10, 0.27]] },
+
+    /* --- Blasen --- */
+    blasen1: { datei: 'audio/blasen1.mp3', segmente: [
+      [1.60, 0.32], [2.60, 0.27], [8.85, 0.42], [9.20, 0.32], [9.45, 0.22], [9.60, 0.22],
+      [18.70, 0.62], [20.45, 0.22], [20.60, 0.27], [20.85, 0.22], [22.55, 0.22], [24.60, 0.27],
+      [25.40, 0.42], [25.80, 0.27], [26.10, 0.32], [26.45, 0.27], [26.80, 0.22]] },
+    blasen2: { datei: 'audio/blasen2.mp3', segmente: [
+      [0.95, 0.32], [4.00, 0.62], [6.50, 0.22], [7.35, 0.77], [8.25, 0.22], [10.55, 0.22], [10.70, 0.57]] },
+    blasen3: { datei: 'audio/blasen3.mp3', segmente: [
+      [3.80, 0.22], [5.80, 0.22], [7.60, 0.22], [9.10, 0.22], [10.30, 0.22], [15.85, 0.22],
+      [16.25, 0.27], [17.00, 0.22], [17.60, 0.22], [18.15, 0.22], [18.90, 0.22]] },
+
     grille: { datei: 'audio/grille.mp3', segmente: [[0.27, 0.16], [0.42, 0.21]] },
     schnurren1: { datei: 'audio/schnurren1.mp3', segmente: [[0.5, 8.5]] },
     schnurren2: { datei: 'audio/schnurren2.mp3', segmente: [[0.3, 8.0]] }
@@ -186,6 +206,9 @@ const Klang = (function () {
     wal: ['blauwal1', 'blauwal2', 'buckelwal'],
     delfin: ['delfine'],
     donner: ['donner1', 'donner2', 'donner3'],
+    feuer: ['feuer1', 'feuer2', 'feuerknack'],
+    feuerstark: ['feuer1', 'feuer2', 'feuerknack'],
+    blasen: ['blasen1', 'blasen2', 'blasen3'],
     grillen: ['grille'],
     katze: ['schnurren1', 'schnurren2']
   };
@@ -417,6 +440,20 @@ const Klang = (function () {
         return api.kette(tor, api.band(f, q));
       },
 
+      /* Spitzenbremse für Aufnahmen mit großem Abstand zwischen leisem Grund
+       * und lauten Einzelereignissen (Feuer: leises Brennen, laute Knacker).
+       * Ohne sie müsste man die ganze Kulisse so weit absenken, dass das
+       * Brennen unhörbar wird – gemessen: Spitze 1,42 bei RMS 0,05. */
+      presser: function (schwelle, verhaeltnis) {
+        var k = ctx.createDynamicsCompressor();
+        k.threshold.value = schwelle === undefined ? -20 : schwelle;
+        k.knee.value = 12;
+        k.ratio.value = verhaeltnis === undefined ? 5 : verhaeltnis;
+        k.attack.value = 0.003;
+        k.release.value = 0.12;
+        return api.reg(k);
+      },
+
       // Ein schlichter Nachhall aus drei rückgekoppelten Verzögerungen.
       // Die Wege werden abwechselnd nach links und rechts gelegt: sonst kommt
       // alles Verhallte in der Mitte heraus und zieht die ganze Kulisse nach
@@ -617,12 +654,13 @@ const Klang = (function () {
 
         var g = api.v(o.pegel === undefined ? 1 : o.pegel);
         q.connect(g);
+        var hin = o.an || ziel;      // "an" leitet die Schleife woandershin (z.B. Spitzenbremse)
         if (stereo && o.pan) {
           var p = api.reg(ctx.createStereoPanner());
           p.pan.value = o.pan;
-          g.connect(p); p.connect(ziel);
+          g.connect(p); p.connect(hin);
         } else {
-          g.connect(ziel);
+          g.connect(hin);
         }
         return g;
       },
@@ -770,94 +808,60 @@ const Klang = (function () {
       b.raus(b.kette(kies, b.tief(1200, 1.0)), 1.2, -0.35);
     },
 
-    /* ---- Blubberblasen (isoliert, ohne Wasserteppich) ---- */
+    /* ---- Blubberblasen (Aufnahmen, isoliert ohne Wasserteppich) ---- */
     blasen: function (b) {
-      var raum = b.hall(0.07, 0.5, 900);
-      b.raus(raum.aus, 0.5, 0);
-
-      // drei Blasenquellen in verschiedenen Tonlagen und Tempi
-      var lagen = [
-        { f: 260, hub: 150, tempo: 2.2, bw: 220, schw: 0.54, q: 24, pegel: 5.0, pan: -0.3 },
-        { f: 520, hub: 280, tempo: 3.4, bw: 380, schw: 0.50, q: 20, pegel: 4.0, pan: 0.28 },
-        { f: 900, hub: 420, tempo: 4.6, bw: 520, schw: 0.52, q: 16, pegel: 2.6, pan: 0.05 }
-      ];
-      for (var i = 0; i < lagen.length; i++) {
-        var l = lagen[i];
-        var bf = b.band(l.f, l.q);
-        bf.frequency.value = 0;
-        b.mod(bf.frequency, b.steuer(l.f, l.hub, l.tempo));
-        var tor = b.v(0);
-        b.rausch().connect(tor);
-        b.funken(l.bw, 5.0, l.schw).connect(tor.gain);
-        var kette = b.kette(tor, bf);
-        b.raus(kette, l.pegel, l.pan);
-        kette.connect(raum.ein);
-      }
-
-      // gelegentlich ein großer, tiefer Blubber
-      var gf = b.band(150, 18);
-      gf.frequency.value = 0;
-      b.mod(gf.frequency, b.steuer(150, 90, 1.4));
-      var gtor = b.v(0);
-      b.rausch().connect(gtor);
-      b.funken(45, 5.6, 0.60).connect(gtor.gain);
-      b.raus(b.kette(gtor, gf), 6.0, 0);
+      var raum = b.hall(0.07, 0.45, 2200);
+      b.raus(raum.aus, 0.35, 0);
+      // drei Quellen mit verschiedenen Tonlagen: die Abspielgeschwindigkeit
+      // verschiebt die Blasengröße mit
+      b.rufe({ probe: 'blasen1', pegel: 0.75, pause: [0.15, 1.6], rate: [0.9, 1.15],
+               breite: 0.8, ziel: raum.ein, start: 1 });
+      b.rufe({ probe: 'blasen2', pegel: 0.60, pause: [0.4, 3.0], rate: [0.75, 1.0],
+               breite: 0.7, ziel: raum.ein, start: 2 });   // größere, tiefere Blasen
+      b.rufe({ probe: 'blasen3', pegel: 0.55, pause: [0.3, 2.2], rate: [1.0, 1.3],
+               breite: 0.85, ziel: raum.ein, start: 3 });  // feine, hohe Bläschen
     },
 
     /* ================= Feuer ================= */
 
-    /* ---- Lagerfeuer ---- */
+    /* ---- Lagerfeuer (Aufnahmen) ----
+     * Das gleichmäßige Brennen läuft als Schleife, die einzelnen Knacker
+     * kommen als eigene Ereignisse dazu. Zwei Schleifen mit leicht
+     * verschiedener Geschwindigkeit driften auseinander, dadurch bleibt die
+     * Wiederholung unhörbar. */
     feuer: function (b) {
-      // Flammenrauschen bewusst knapp gehalten: das Knistern soll die Kulisse
-      // tragen, nicht ein Rauschteppich dahinter.
-      var flamme = b.kette(b.rausch(true), b.tief(340, 0.9));
-      b.atem(b.raus(flamme, 0.18, -0.1), 0.18, 0.07, 0.75);
-
-      var glut = b.kette(b.rausch(true), b.tief(95, 1.1));
-      b.atem(b.raus(glut, 0.10, 0), 0.10, 0.04, 0.4);
-
-      var kf = b.band(2400, 5);
-      kf.frequency.value = 0;
-      b.mod(kf.frequency, b.steuer(2300, 850, 3.2));
-      var tor = b.v(0);
-      b.rausch().connect(tor);
-      var dichte = b.v(0);
-      b.funken(900, 5.0, 0.52).connect(dichte);
-      b.atem(dichte, 0.85, 0.45, 2.2);
-      dichte.connect(tor.gain);
-      b.raus(b.kette(tor, kf), 0.9, 0.22);
-
-      var knack = b.knister(90, 5.8, 0.56, 680, 12);
-      b.raus(knack, 4.4, -0.35);
+      var bremse = b.presser(-22, 6);
+      b.raus(bremse, 1.0, 0);
+      var a = b.schleife({ probe: 'feuer1', rate: 0.97, pegel: 0, pan: -0.15, an: bremse });
+      var c = b.schleife({ probe: 'feuer2', rate: 1.04, pegel: 0, pan: 0.18, an: bremse });
+      if (!a || !c) return;
+      // Die Feldaufnahmen sind leise ausgesteuert: das gleichmäßige Brennen
+      // braucht kräftig Pegel, damit es nicht hinter den Knackern verschwindet.
+      b.atem(a, 2.3, 0.5, 0.6);
+      b.atem(c, 1.7, 0.4, 0.9);
+      // einzelne Knacker, ruhig verteilt – ebenfalls durch die Bremse
+      var k = b.rufe({ probe: 'feuerknack', pegel: 0.55, pause: [0.6, 4], rate: [0.9, 1.15],
+                       breite: 0.7, start: 1, roh: true });
+      if (k) k.connect(bremse);
     },
 
-    /* ---- Feuer, stark knisternd ---- */
+    /* ---- Feuer, stark knisternd (Aufnahmen) ----
+     * Dieselben Aufnahmen, andere Mischung: die knisterreiche Lage vorn,
+     * die Knacker dichter und kräftiger. */
     feuerstark: function (b) {
-      // fast nur Knistern: dichteres Tor, mehr Knacker, kaum Grundrauschen
-      var flamme = b.kette(b.rausch(true), b.tief(300, 0.9));
-      b.atem(b.raus(flamme, 0.08, -0.1), 0.08, 0.04, 0.8);
-
-      var kf = b.band(2600, 4.5);
-      kf.frequency.value = 0;
-      b.mod(kf.frequency, b.steuer(2500, 1100, 3.6));
-      var tor = b.v(0);
-      b.rausch().connect(tor);
-      var dichte = b.v(0);
-      b.funken(1600, 5.0, 0.44).connect(dichte);
-      b.atem(dichte, 0.95, 0.4, 2.6);
-      dichte.connect(tor.gain);
-      b.raus(b.kette(tor, kf), 1.0, 0.2);
-
-      // zweite Knisterlage, tiefer und trockener
-      var kf2 = b.band(1200, 6);
-      var tor2 = b.v(0);
-      b.rausch().connect(tor2);
-      b.funken(700, 5.0, 0.46).connect(tor2.gain);
-      b.raus(b.kette(tor2, kf2), 1.1, -0.25);
-
-      // kräftige Knacker, häufiger als beim ruhigen Feuer
-      b.raus(b.knister(160, 5.6, 0.50, 620, 11), 4.0, -0.4);
-      b.raus(b.knister(60, 6.0, 0.52, 340, 9), 5.0, 0.35);
+      var bremse = b.presser(-22, 6);
+      b.raus(bremse, 1.0, 0);
+      var a = b.schleife({ probe: 'feuer1', rate: 1.02, pegel: 0, pan: -0.2, an: bremse });
+      var c = b.schleife({ probe: 'feuer2', rate: 0.96, pegel: 0, pan: 0.2, an: bremse });
+      if (!a || !c) return;
+      b.atem(a, 1.3, 0.35, 0.7);
+      b.atem(c, 3.0, 0.7, 1.1);
+      var k1 = b.rufe({ probe: 'feuerknack', pegel: 0.85, pause: [0.12, 1.1], rate: [0.85, 1.2],
+                        breite: 0.8, start: 0.5, roh: true });
+      var k2 = b.rufe({ probe: 'feuerknack', pegel: 0.60, pause: [0.5, 3], rate: [0.7, 0.85],
+                        breite: 0.6, start: 2, roh: true });   // tiefere, kräftigere Knacker
+      if (k1) k1.connect(bremse);
+      if (k2) k2.connect(bremse);
     },
 
     /* ================= Wind & Wetter ================= */
@@ -1242,8 +1246,8 @@ const Klang = (function () {
    * Die Werte sind gemessen (OfflineAudioContext, Ziel-RMS 0,09),
    * nicht geschätzt – nach jeder Klangänderung neu messen. */
   var AUSGLEICH = {
-    regen: 0.82, strand: 1.22, fluss: 1.27, unterwasser: 1.10, blasen: 3.23,
-    feuer: 2.30, feuerstark: 1.77,
+    regen: 0.82, strand: 1.22, fluss: 1.27, unterwasser: 1.10, blasen: 1.69,
+    feuer: 0.69, feuerstark: 0.92,
     wind: 1.23, donner: 0.74, wipfel: 1.25,
     grillen: 0.99, vogelDe: 1.29, vogelTropen: 1.22, vogelAfrika: 1.49,
     wal: 1.41, delfin: 1.03, katze: 1.46,

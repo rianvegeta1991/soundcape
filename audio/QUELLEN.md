@@ -1,8 +1,13 @@
 # Quellen der Aufnahmen
 
-Alle Dateien stammen von **Wikimedia Commons**. Sie sind entweder gemeinfrei bzw. CC0
-(keine Auflagen) oder stehen unter **CC-BY / CC-BY-SA** – dann ist die Namensnennung
-Pflicht, die hier und im Info-Bereich der App erfolgt.
+Die Dateien stammen von **Wikimedia Commons** und **freesound.org**. Sie sind entweder
+gemeinfrei bzw. CC0 (keine Auflagen) oder stehen unter **CC-BY / CC-BY-SA** – dann ist die
+Namensnennung Pflicht, die hier und im Info-Bereich der App erfolgt. Kein Material unter
+NC-Lizenz („nicht kommerziell").
+
+Von freesound.org sind die **HQ-Vorschaudateien** (MP3) bezogen, nicht die Originale: sie
+reichen für Hintergrundklänge und sind wesentlich kleiner. Dafür genügt ein Lese-Token,
+OAuth2 wird nicht gebraucht.
 
 **Bearbeitung:** Die Dateien wurden über den Transkodierungsdienst von Commons als MP3
 bezogen (Ogg spielt auf iPhones nicht). `tukane.mp3` ist auf die ersten 110 Sekunden
@@ -23,6 +28,11 @@ daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das O
 | `schnurren1.mp3` | [Whiskers' purr edit.ogg](https://commons.wikimedia.org/wiki/File:Whiskers%27_purr_edit.ogg) | Public Domain | Adam Cuerden |
 | `schnurren2.mp3` | [Purring cat bertie.ogg](https://commons.wikimedia.org/wiki/File:Purring_cat_bertie.ogg) | Public Domain | jim_mowatt |
 | `grille.mp3` | [Jer-Cricket.ogg](https://commons.wikimedia.org/wiki/File:Jer-Cricket.ogg) | Public Domain | Man vyi |
+| `feuer1.mp3` | [bonfire flames sizzling](https://freesound.org/s/563764/) | CC0 | florianreichelt |
+| `feuer2.mp3` | [fire ambience, flames, crackles, pops, burning](https://freesound.org/s/508110/) | CC0 | ahriik |
+| `feuerknack.mp3` | [Dried branches](https://freesound.org/s/734627/) | CC0 | Vrymaa |
+| `blasen1.mp3` | [Bubbles.wav](https://freesound.org/s/412619/) | CC0 | joeboarder14 |
+| `blasen2.mp3` | [Water + straw, bubbling](https://freesound.org/s/387950/) | CC0 | giddster |
 
 ## CC-BY und CC-BY-SA – Namensnennung erforderlich
 
@@ -42,6 +52,7 @@ daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das O
 | `donner1.mp3` | Thunder Claps | CC BY-SA 4.0 | Jonathan Hunt |
 | `donner2.mp3` | Booming Thunder 2023-10-09 | CC BY-SA 4.0 | KTerPalmers |
 | `donner3.mp3` | Thunder 01 | CC BY-SA 4.0 | Amuzujoe |
+| `blasen3.mp3` | [water and bubbles soundscape 04](https://freesound.org/s/736971/) | CC BY 4.0 | busabx |
 
 Die Vogelaufnahmen mit „XC"-Nummer stammen ursprünglich von
 [xeno-canto.org](https://xeno-canto.org) und kamen über Commons hierher.
