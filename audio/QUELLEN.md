@@ -19,11 +19,9 @@ daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das O
 |---|---|---|---|
 | `amsel.mp3` | [Turdus merula 2.ogg](https://commons.wikimedia.org/wiki/File:Turdus_merula_2.ogg) | Public Domain | Oona Räisänen (Mysid) |
 | `gartenvoegel.mp3` | [Birds singing in garden.ogg](https://commons.wikimedia.org/wiki/File:Birds_singing_in_garden.ogg) | Public Domain | ezwa |
-| `wal1.mp3` | [Whale Sounds (High Quality)](https://freesound.org/s/653612/) | CC0 | MPooman |
 | `bach1.mp3` | [Creek Ambience](https://freesound.org/s/721616/) | CC0 | SduggySounds |
 | `bach2.mp3` | [Kervijen babbling creek](https://freesound.org/s/690326/) | CC0 | bruno.auzet |
 | `afrika1.mp3` | [Bird sounds Spionkop lodge early morning](https://freesound.org/s/704918/) | CC0 | geoffvt |
-| `afrika2.mp3` | [Guineafowl calls isolated – South Africa](https://freesound.org/s/386985/) | CC0 | EpicWizard |
 | `schnurren1.mp3` | [Whiskers' purr edit.ogg](https://commons.wikimedia.org/wiki/File:Whiskers%27_purr_edit.ogg) | Public Domain | Adam Cuerden |
 | `schnurren2.mp3` | [Purring cat bertie.ogg](https://commons.wikimedia.org/wiki/File:Purring_cat_bertie.ogg) | Public Domain | jim_mowatt |
 | `grille1.mp3` | [Cricket single, clean internal loop](https://freesound.org/s/573827/) | CC0 | TRP |
@@ -43,7 +41,6 @@ daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das O
 | `meise.mp3` | Parus major – Great Tit XC165660 | CC BY-SA 3.0 | José Carlos Sires |
 | `grasmuecke.mp3` | Sylvia atricapilla – Eurasian Blackcap XC457403 | CC BY-SA 4.0 | Hannu Varkki |
 | `blasen3.mp3` | [water and bubbles soundscape 04](https://freesound.org/s/736971/) | CC BY 4.0 | busabx |
-| `wal2.mp3` | [Underwater recording of Humpback whales](https://freesound.org/s/399609/) | CC BY 4.0 | alanmcki |
 
 Die Vogelaufnahmen mit „XC"-Nummer stammen ursprünglich von
 [xeno-canto.org](https://xeno-canto.org) und kamen über Commons hierher.
@@ -78,16 +75,26 @@ Alle von freesound.org.
 | `moewe1.mp3` | [Seagull Swarm at Port](https://freesound.org/s/468080/) | CC0 | Kinoton |
 | `moewe2.mp3` | [harbour, seagulls](https://freesound.org/s/208074/) | CC0 | Further_Roman |
 | `blatt1.mp3` | [wind bushes coast](https://freesound.org/s/735332/) | CC BY 4.0 | klankbeeld |
-| `niesel1.mp3` | [drizzle on polyethylene film](https://freesound.org/s/459693/) | CC0 | arseniiv |
-| `niesel2.mp3` | [rain falling into small puddle](https://freesound.org/s/556320/) | CC0 | jsoccer99 |
 | `atem1.mp3` | [breathingsleeping](https://freesound.org/s/554074/) | CC0 | christophe1138 |
-| `trop1.mp3` | [Single drop falling](https://freesound.org/s/414104/) | CC0 | felix.blume |
-| `trop2.mp3` | [Slow Dropping Water 5](https://freesound.org/s/396065/) | CC BY 4.0 | Edo333 |
 | `donnN1.mp3` | [THUNDER long rumbling – no Rain](https://freesound.org/s/367702/) | CC0 | BlueDelta |
 | `donnN2.mp3` | [Long Low Thunder 01](https://freesound.org/s/177476/) | CC0 | unfa |
 | `windN1.mp3` | [Wind howling, whispering, whistles](https://freesound.org/s/728737/) | CC0 | Borgory |
 | `windN2.mp3` | [wind whistling](https://freesound.org/s/331892/) | CC0 | squashy555 |
 | `flussN1.mp3` | [Small Brook Flowing Around Rocks](https://freesound.org/s/819768/) | CC0 | pepasystem |
 | `flussN2.mp3` | [Gentle flowing water – Panther Creek](https://freesound.org/s/510058/) | CC0 | nvisiblesound |
-| `delfN1.mp3` | [Dolphin](https://freesound.org/s/391317/) | CC0 | Forpus_Prod |
-| `delfN2.mp3` | [Amazonian Dolphins](https://freesound.org/s/408555/) | CC0 | felix.blume |
+
+## Seit Version 1.9 (Ersatz für Aufnahmen mit Störgeräuschen)
+
+| Datei | Aufnahme | Lizenz | Urheber |
+|---|---|---|---|
+| `walN1.mp3` | [Diving with whales](https://freesound.org/s/82325/) | CC0 | KEVOY |
+| `tropN1.mp3` | [sfx_waterdrip](https://freesound.org/s/530730/) | CC0 | FairSonicStudio |
+| `tropN2.mp3` | [water_drips](https://freesound.org/s/667289/) | CC BY 4.0 | pekena_larva |
+| `niesN1.mp3` | [rain on dry autumn leaves](https://freesound.org/s/657065/) | CC BY 4.0 | Garuda1982 |
+| `niesN2.mp3` | [dribbling rain (snow melt from roof)](https://freesound.org/s/329576/) | CC0 | pillonoise |
+| `zugN1.mp3` | [Distant Train Rumble – Natural Rhythmic Sub](https://freesound.org/s/646750/) | CC BY 4.0 | Geoff-Bremner-Audio |
+
+Entfernt wurden dabei: die Delfin-Kulisse (auf Wunsch), die Perlhühner aus der
+Afrika-Kulisse (ihr Ruf stach hupend heraus), die alten Wal-, Tropfen- und
+Niesel-Aufnahmen (menschlich klingende Rufe, Insekten im Hintergrund,
+Menschenstimmen) sowie die Tukane (die Tropen-Kulisse wurde zu Möwen).

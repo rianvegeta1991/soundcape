@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.8';
+  var APP_VERSION = '1.9';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -94,8 +94,6 @@
       ikon: '<path d="M4 26c6 0 9-3 13-3s5 3 5 6" />' +
             '<path d="M22 29c4-1 8-4 10-9 1.4 4 3.4 6 4 10-4.6 1.6-9.6 1.4-14-1z" stroke-linejoin="round"/>' +
             '<path d="M8 14c1.6-3 4-4.6 7-4.6"/>' },
-    { id: 'delfin', kat: 'tiere', name: 'Delfingesang', unter: 'Pfiffe und Klicks', rgb: '96,204,224',
-      ikon: '<path d="M5 12c8-1 13 3 16 8 2-3 5-4 8-3.6-2 2-2.6 4.6-2 7 2.6.6 4.6 2.6 5 5-6 1.4-11-1-14-5-3.4 3.6-8 4.6-13 3 3.6-2 5-5 4-8-2-1.6-3.4-4-4-6.4z" stroke-linejoin="round"/>' },
     { id: 'katze', kat: 'tiere', name: 'Katzenschnurren', unter: 'Ruhiges Brummen', rgb: '212,160,196',
       ikon: '<path d="M10 16 8.6 6.6 15 11.4a13 13 0 0 1 10 0L31.4 6.6 30 16" stroke-linejoin="round"/>' +
             '<path d="M20 12c6.6 0 11 4.6 11 10.4S26.6 33 20 33 9 28.2 9 22.4 13.4 12 20 12z"/>' +

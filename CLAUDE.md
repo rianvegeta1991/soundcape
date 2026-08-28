@@ -118,7 +118,7 @@ für den sauberen Abbau (`abbau()`). Die tragenden Bausteine:
   wären unhöflich. Der fetch-Handler legt sie beim ersten Abspielen in den Cache; offline
   verfügbar sind also die Kulissen, die schon einmal liefen.
 
-25 Kulissen in sechs Kategorien (siehe `KATEGORIEN`/`KULISSEN` in app.js). Die Zuordnung
+24 Kulissen in sechs Kategorien (siehe `KATEGORIEN`/`KULISSEN` in app.js). Die Zuordnung
 id → Baufunktion steht in `Klang.szenen`; **beide Listen müssen deckungsgleich bleiben.**
 
 ### Pegel
