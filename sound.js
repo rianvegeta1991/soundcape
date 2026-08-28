@@ -122,33 +122,70 @@ const Klang = (function () {
       [32.74, 0.47], [33.19, 0.22], [33.44, 0.22], [33.64, 0.27], [34.74, 1.92], [36.64, 0.27],
       [36.89, 0.27]] },
 
-    /* --- Schnarchen: die Segmente sind einzelne Atemzüge --- */
-    schnarch1: { datei: 'audio/schnarch1.mp3', segmente: [
-      [9.95, 1.20], [16.75, 1.35], [33.05, 1.20], [36.45, 1.65], [39.05, 1.20], [41.50, 2.10]] },
-    schnarch2: { datei: 'audio/schnarch2.mp3', segmente: [
-      [9.30, 1.50], [12.90, 1.20], [16.20, 1.30], [22.70, 1.25], [25.85, 1.30], [29.20, 1.20]] },
+    /* --- Ruhiges Atmen im Schlaf: vier Atemzüge --- */
+    atem1: { datei: 'audio/atem1.mp3', segmente: [
+      [1.11, 2.02], [4.47, 1.94], [9.63, 1.90], [13.07, 1.26]] },
 
-    /* --- Donner --- */
-    donnerA: { datei: 'audio/donnerA.mp3', segmente: [
-      [8.85, 2.05], [10.40, 1.70], [14.85, 1.95], [16.60, 1.65], [18.25, 1.75]] },
-    donnerB: { datei: 'audio/donnerB.mp3', segmente: [[0.35, 1.30]] },
-    donnerC: { datei: 'audio/donnerC.mp3', segmente: [[0.30, 1.35]] },
+    /* --- Donner: langes Grollen ohne Regen --- */
+    donnN1: { datei: 'audio/donnN1.mp3', segmente: [
+      [1.08, 6.88], [7.20, 1.96], [10.56, 3.92], [15.88, 2.76]] },
+    donnN2: { datei: 'audio/donnN2.mp3', segmente: [
+      [32.32, 2.36], [37.52, 2.08], [41.48, 15.40]] },
+
+    /* --- Möwen am Hafen --- */
+    moewe1: { datei: 'audio/moewe1.mp3', segmente: [
+      [1.72, 0.32], [4.24, 0.36], [9.20, 0.36], [13.64, 0.32], [14.40, 0.32], [15.20, 0.36],
+      [15.92, 0.48], [16.88, 0.40], [17.44, 0.32], [17.64, 0.56], [18.44, 0.48], [18.84, 0.32],
+      [19.12, 0.40], [19.96, 0.40], [20.72, 0.44], [21.68, 0.36], [22.60, 0.36], [23.56, 0.40]] },
+    moewe2: { datei: 'audio/moewe2.mp3', segmente: [[35.0, 20.0]] },
+
+    /* --- Blätter im Wind --- */
+    blatt1: { datei: 'audio/blatt1.mp3', segmente: [[14.0, 10.0]] },
+
+    /* --- Nieselregen: einzelne Tropfen bleiben hörbar --- */
+    niesel1: { datei: 'audio/niesel1.mp3', segmente: [[18.0, 25.0]] },
+    niesel2: { datei: 'audio/niesel2.mp3', segmente: [[20.0, 30.0]] },
+    nieseltropf: { datei: 'audio/niesel1.mp3', segmente: [
+      [0.16, 0.12], [0.40, 0.12], [1.36, 0.12], [1.52, 0.12], [1.64, 0.16], [1.84, 0.12],
+      [2.00, 0.12], [2.12, 0.12], [2.60, 0.16], [3.12, 0.12], [3.44, 0.12], [3.56, 0.16],
+      [4.28, 0.12], [4.40, 0.12], [4.48, 0.12], [4.72, 0.16], [5.40, 0.12], [5.68, 0.12],
+      [5.76, 0.12], [5.92, 0.12]] },
+
+    /* --- Wind: pfeifend und böig --- */
+    windN1: { datei: 'audio/windN1.mp3', segmente: [[45.0, 12.0]] },
+    windN2: { datei: 'audio/windN2.mp3', segmente: [[31.0, 15.0]] },
+
+    /* --- Fließendes Wasser --- */
+    flussN1: { datei: 'audio/flussN1.mp3', segmente: [[7.0, 55.0]] },
+    flussN2: { datei: 'audio/flussN2.mp3', segmente: [[1.0, 45.0]] },
+
+    /* --- Delfinschnattern --- */
+    delfN1: { datei: 'audio/delfN1.mp3', segmente: [
+      [0.71, 0.18], [0.83, 0.26], [1.03, 0.18], [2.11, 0.18], [2.23, 0.18], [2.87, 0.18],
+      [2.99, 0.18], [3.11, 0.26], [3.31, 0.18], [3.43, 0.18], [4.03, 0.18], [4.75, 0.18],
+      [4.87, 0.18], [4.99, 0.50], [5.43, 0.30], [6.35, 0.18], [6.47, 0.18], [6.59, 0.18],
+      [6.71, 0.18], [6.83, 0.18]] },
+    delfN2: { datei: 'audio/delfN2.mp3', segmente: [
+      [1.11, 0.22], [1.55, 0.46], [2.91, 0.34], [3.91, 0.46], [6.71, 0.62], [7.27, 0.18],
+      [8.27, 0.50], [9.07, 0.54], [9.71, 0.22], [10.47, 0.22], [11.03, 0.26], [11.39, 0.26],
+      [11.95, 0.18], [12.35, 0.22], [12.75, 0.30], [13.07, 0.82], [13.83, 0.50], [14.39, 0.34],
+      [14.67, 0.26], [15.99, 0.38]] },
 
     /* --- Bach: gleichmäßiges Plätschern, als Schleife --- */
     bach1: { datei: 'audio/bach1.mp3', segmente: [[13.0, 20.0]] },
     bach2: { datei: 'audio/bach2.mp3', segmente: [[1.0, 52.0]] },
 
-    /* --- Wassertropfen: einzelne Tropfen --- */
-    tropfen1: { datei: 'audio/tropfen1.mp3', segmente: [
-      [0.05, 0.20], [1.80, 0.15], [1.95, 0.25], [2.15, 0.15], [2.70, 0.15], [4.35, 0.20],
-      [4.60, 0.15], [5.30, 0.15], [6.95, 0.15], [7.20, 0.15], [7.90, 0.20], [9.50, 0.20],
-      [9.70, 0.15], [9.80, 0.15], [10.55, 0.15], [12.40, 0.15], [13.15, 0.20], [14.70, 0.15],
-      [14.85, 0.15], [15.00, 0.15]] },
-    tropfen2: { datei: 'audio/tropfen2.mp3', segmente: [
-      [0.00, 0.35], [2.05, 0.15], [2.55, 0.15], [3.00, 0.15], [4.40, 0.15], [4.50, 0.15],
-      [4.65, 0.20], [5.15, 0.30], [5.60, 0.20], [7.45, 0.20], [7.70, 0.15], [8.10, 0.15],
-      [8.20, 0.25], [8.95, 0.20], [10.05, 0.15], [10.45, 0.50], [11.55, 0.15], [11.70, 0.20],
-      [11.95, 0.15], [12.05, 0.25]] },
+    /* --- Wassertropfen: nur der Tropfen, ohne Höhle und Klappern --- */
+    trop1: { datei: 'audio/trop1.mp3', segmente: [
+      [0.75, 0.18], [2.07, 0.22], [2.87, 0.14], [3.43, 0.14], [3.99, 0.14], [4.11, 0.14],
+      [4.19, 0.14], [4.83, 0.14], [4.91, 0.14], [6.79, 0.14], [6.87, 0.14], [8.27, 0.14],
+      [9.59, 0.14], [9.67, 0.14], [10.75, 0.14], [12.23, 0.26], [13.47, 0.18], [13.59, 0.14],
+      [14.11, 0.14], [14.23, 0.14]] },
+    trop2: { datei: 'audio/trop2.mp3', segmente: [
+      [0.39, 0.14], [0.99, 0.14], [1.19, 0.14], [1.35, 0.14], [1.51, 0.22], [1.67, 0.14],
+      [1.75, 0.18], [1.99, 0.18], [2.19, 0.22], [2.51, 0.22], [2.67, 0.14], [2.95, 0.14],
+      [3.03, 0.14], [3.23, 0.14], [3.43, 0.22], [3.83, 0.22], [4.19, 0.30], [4.95, 0.18],
+      [5.27, 0.22], [5.43, 0.18]] },
 
     /* --- Afrika: echte Morgenatmosphäre plus Perlhühner --- */
     afrika1: { datei: 'audio/afrika1.mp3', segmente: [[1.0, 55.0]] },
@@ -221,14 +258,18 @@ const Klang = (function () {
   // Welche Aufnahmen eine Kulisse braucht
   var BRAUCHT = {
     vogelDe: ['amsel', 'gartenvoegel', 'rotkehlchen', 'buchfink', 'meise', 'grasmuecke'],
-    vogelTropen: ['tukane', 'tukan2', 'tukan3'],
+    moewen: ['moewe1', 'moewe2'],
     vogelAfrika: ['afrika1', 'afrika2'],
     wal: ['wal1', 'wal2'],
-    delfin: ['delfin1', 'delfin2'],
-    donner: ['donnerA', 'donnerB', 'donnerC'],
+    delfin: ['delfN1', 'delfN2'],
+    donner: ['donnN1', 'donnN2'],
     bach: ['bach1', 'bach2'],
-    tropfen: ['tropfen1', 'tropfen2'],
-    schnarchen: ['schnarch1', 'schnarch2'],
+    tropfen: ['trop1', 'trop2'],
+    schnarchen: ['atem1'],
+    wipfel: ['blatt1'],
+    wind: ['windN1', 'windN2'],
+    fluss: ['flussN1', 'flussN2'],
+    niesel: ['niesel1', 'niesel2', 'nieseltropf'],
     feuer: ['feuer1', 'feuer2', 'feuerknack'],
     blasen: ['blasen1', 'blasen2', 'blasen3'],
     grillen: ['grille1', 'grille2'],
@@ -481,7 +522,9 @@ const Klang = (function () {
         k.threshold.value = schwelle === undefined ? -20 : schwelle;
         k.knee.value = 12;
         k.ratio.value = verhaeltnis === undefined ? 5 : verhaeltnis;
-        k.attack.value = 0.003;
+        // schnelles Ansprechen: ein Tropfen dauert nur gut hundert Millisekunden,
+        // mit trägerer Regelung ist er vorbei, bevor die Bremse greift
+        k.attack.value = 0.0012;
         k.release.value = 0.12;
         return api.reg(k);
       },
@@ -793,30 +836,15 @@ const Klang = (function () {
       b.atem(b.raus(fern, 0.06, 0.45), 0.06, 0.035, 0.8);
     },
 
-    /* ---- Fluss (über Wasser) ---- */
+    /* ---- Fluss (Aufnahmen) ----
+     * Synthetisch klang er reißend wie ein Wasserfall. In echten Aufnahmen
+     * hört man das Wasser selbst: Wirbel, Gluckern, einzelne Steine. */
     fluss: function (b) {
-      var grund = b.kette(b.rausch(), b.band(1150, 0.75));
-      b.atem(b.raus(grund, 0.3, 0), 0.3, 0.05, 0.7);
-
-      // drei Strudel: schmalbandig, mit langsam wandernder Tonhöhe
-      var pans = [-0.45, 0.05, 0.5];
-      var tempi = [0.9, 1.5, 2.3];
-      for (var i = 0; i < 3; i++) {
-        var f = b.band(1000, 7);
-        f.frequency.value = 0;
-        b.mod(f.frequency, b.steuer(720 + i * 420, 320, tempi[i]));
-        var s = b.kette(b.rausch(), f);
-        b.atem(b.raus(s, 0.14, pans[i]), 0.14, 0.06, tempi[i] * 0.6);
-      }
-
-      var hoehen = b.kette(b.rausch(), b.hoch(4200, 0.7));
-      b.atem(b.raus(hoehen, 0.07, 0.35), 0.07, 0.035, 1.2);
-
-      var gluck = b.knister(420, 5.0, 0.52, 640, 16);
-      b.raus(gluck, 2.5, -0.3);
-
-      var strom = b.kette(b.rausch(true), b.tief(300, 0.9));
-      b.raus(strom, 0.2, 0);
+      var a = b.schleife({ probe: 'flussN1', rate: 0.98, pegel: 0, pan: -0.22, tempoAnteil: 0.2 });
+      var c = b.schleife({ probe: 'flussN2', rate: 1.03, pegel: 0, pan: 0.25, tempoAnteil: 0.2 });
+      if (!a || !c) return;
+      b.atem(a, 2.6, 0.3, 0.4);      // beide Flussaufnahmen sind leise ausgesteuert
+      b.atem(c, 2.1, 0.25, 0.6);
     },
 
     /* ---- Fluss (unter Wasser) ---- */
@@ -854,11 +882,12 @@ const Klang = (function () {
       b.raus(raum.aus, 0.35, 0);
       // drei Quellen mit verschiedenen Tonlagen: die Abspielgeschwindigkeit
       // verschiebt die Blasengröße mit
-      b.rufe({ probe: 'blasen1', pegel: 0.75, pause: [0.15, 1.6], rate: [0.9, 1.15],
+      // stetig statt vereinzelt: kurze Pausen, drei Quellen überlappend
+      b.rufe({ probe: 'blasen1', pegel: 0.75, pause: [0.05, 0.5], rate: [0.9, 1.15],
                breite: 0.8, ziel: raum.ein, start: 1 });
-      b.rufe({ probe: 'blasen2', pegel: 0.60, pause: [0.4, 3.0], rate: [0.75, 1.0],
+      b.rufe({ probe: 'blasen2', pegel: 0.60, pause: [0.1, 0.9], rate: [0.75, 1.0],
                breite: 0.7, ziel: raum.ein, start: 2 });   // größere, tiefere Blasen
-      b.rufe({ probe: 'blasen3', pegel: 0.55, pause: [0.3, 2.2], rate: [1.0, 1.3],
+      b.rufe({ probe: 'blasen3', pegel: 0.55, pause: [0.08, 0.7], rate: [1.0, 1.3],
                breite: 0.85, ziel: raum.ein, start: 3 });  // feine, hohe Bläschen
     },
 
@@ -889,30 +918,18 @@ const Klang = (function () {
 
     /* ================= Wind & Wetter ================= */
 
-    /* ---- Wind ---- */
+    /* ---- Wind (Aufnahmen) ----
+     * Synthetisch war es ein gleichmäßiger Rauschteppich – echter Wind pfeift,
+     * kommt in Böen und hat Struktur. Zwei Aufnahmen driften auseinander. */
     wind: function (b) {
-      var f = b.band(430, 1.3);
-      f.frequency.value = 0;
-      b.mod(f.frequency, b.steuer(440, 280, 0.55));
-      var boe = b.kette(b.rausch(), f);
-      b.atem(b.raus(boe, 0.4, -0.2), 0.34, 0.30, 2.8);
-
-      var tief = b.kette(b.rausch(true), b.tief(190, 0.8));
-      b.atem(b.raus(tief, 0.36, 0.15), 0.32, 0.22, 1.6);
-
-      var saeuseln = b.kette(b.rausch(), b.hoch(1900, 0.7), b.tief(7500));
-      b.atem(b.raus(saeuseln, 0.13, 0.4), 0.12, 0.10, 3.4);
-
-      var pf = b.band(1200, 11);
-      pf.frequency.value = 0;
-      b.mod(pf.frequency, b.steuer(1150, 620, 1.15));
-      var pfeif = b.kette(b.rausch(), pf);
-      var pg = b.raus(pfeif, 0, -0.45);
-      pg.gain.value = 0;
-      b.mod(pg.gain, b.selten(2.0, 0.44, 2.0), 0.55);
-
-      var basis = b.kette(b.rausch(true), b.tief(85, 1.0));
-      b.raus(basis, 0.28, 0);
+      var a = b.schleife({ probe: 'windN1', rate: 0.98, pegel: 0, pan: -0.2, tempoAnteil: 0.2 });
+      var c = b.schleife({ probe: 'windN2', rate: 1.03, pegel: 0, pan: 0.24, tempoAnteil: 0.2 });
+      if (!a || !c) return;
+      b.atem(a, 2.1, 0.5, 0.5);      // Windaufnahmen ebenfalls leise
+      b.atem(c, 1.1, 0.45, 0.8);
+      // etwas synthetisches Tieffrequentes darunter gibt Fülle
+      var basis = b.kette(b.rausch(true), b.tief(90, 1.0));
+      b.atem(b.raus(basis, 0.2, 0), 0.2, 0.08, 0.4);
     },
 
     /* ---- Fernes Donnergrollen (Aufnahmen, isoliert ohne Regen) ----
@@ -937,9 +954,10 @@ const Klang = (function () {
 
       // "DistantThunder" trägt die Kulisse, die beiden nahen Schläge kommen
       // seltener und stärker gedämpft dazu – Entfernung heißt: weniger Höhen.
-      ferne('donnerA', 0.90, [12, 40], 420, 3, 0.4);
-      ferne('donnerB', 0.75, [26, 80], 200, 20, 0.3);
-      ferne('donnerC', 0.70, [34, 95], 240, 45, 0.5);
+      // Ein langes, rollendes Grollen ohne Regen trägt die Kulisse; die
+      // Tiefpässe sind offener als zuvor, damit es klar bleibt statt dumpf.
+      ferne('donnN1', 1.0, [14, 45], 900, 3, 0.4);
+      ferne('donnN2', 0.9, [20, 60], 700, 22, 0.35);
 
       // ganz tiefes Nachrollen, synthetisch: verlängert die Aufnahmen nach unten
       var sub = b.kette(b.rausch(true), b.tief(55, 1.4));
@@ -949,36 +967,24 @@ const Klang = (function () {
       b.raus(tor3, 0.4, 0);
     },
 
-    /* ---- Baumwipfel-Rascheln ---- */
+    /* ---- Baumwipfel-Rascheln (Aufnahme) ----
+     * Aus Rauschimpulsen gebaut blieb es ein monotoner Teppich: echtes Laub
+     * raschelt in Böen, mit einzelnen Blättern und Zweigen dazwischen.
+     * Drei Stimmen derselben Aufnahme in verschiedenen Geschwindigkeiten und
+     * mit eigenem Atem machen daraus eine ganze Krone. */
     wipfel: function (b) {
-      // Blätter: sehr viele winzige Anschläge, keine tiefe Grundschicht
-      var bf = b.band(3800, 2.2);
-      bf.frequency.value = 0;
-      b.mod(bf.frequency, b.steuer(3900, 1400, 2.4));
-      var tor = b.v(0);
-      b.rausch().connect(tor);
-      var dichte = b.v(0);
-      b.funken(2600, 5.0, 0.42).connect(dichte);
-      b.atem(dichte, 0.9, 0.55, 2.2);          // Böen lassen das Rascheln anschwellen
-      dichte.connect(tor.gain);
-      b.raus(b.kette(tor, bf), 0.85, -0.2);
-
-      // zweite Lage, etwas dunkler und auf der anderen Seite
-      var bf2 = b.band(2200, 2.0);
-      var tor2 = b.v(0);
-      b.rausch().connect(tor2);
-      var dichte2 = b.v(0);
-      b.funken(1800, 5.0, 0.46).connect(dichte2);
-      b.atem(dichte2, 0.8, 0.5, 1.6);
-      dichte2.connect(tor2.gain);
-      b.raus(b.kette(tor2, bf2), 0.75, 0.3);
-
-      // einzelne Zweige, die sich reiben
-      b.raus(b.knister(120, 5.6, 0.58, 900, 8), 1.6, 0.42);
-
-      // ein Hauch Luftbewegung durch die Krone – schmal gefiltert, kein Teppich
-      var luft = b.kette(b.rausch(), b.band(1400, 0.9));
-      b.atem(b.raus(luft, 0.1, 0), 0.1, 0.09, 2.4);
+      var lagen = [
+        { rate: 0.95, pan: -0.35, mitte: 0.85, tiefe: 0.35, tempo: 0.6 },
+        { rate: 1.06, pan: 0.32, mitte: 0.55, tiefe: 0.30, tempo: 0.9 },
+        { rate: 1.19, pan: 0.05, mitte: 0.35, tiefe: 0.22, tempo: 1.4 }
+      ];
+      for (var i = 0; i < lagen.length; i++) {
+        var l = lagen[i];
+        var g = b.schleife({ probe: 'blatt1', rate: l.rate, pegel: 0, pan: l.pan,
+                             tempoAnteil: 0.3 });
+        if (!g) return;
+        b.atem(g, l.mitte, l.tiefe, l.tempo);
+      }
     },
 
     /* ================= Tiere ================= */
@@ -1012,36 +1018,49 @@ const Klang = (function () {
      * Sechs Stimmen, jede mit eigenem Rhythmus – so entsteht ein Garten und
      * nicht ein einzelner Vogel. Verrauschtere Aufnahmen laufen leiser. */
     vogelDe: function (b) {
-      var weite = b.hall(0.10, 0.25, 4200);
-      b.raus(weite.aus, 0.10, 0);   // deutlich weniger Hall: Vogelrufe im Garten sind trocken
+      // ganz ohne Hall: Vogelrufe im Freien haben keinen Nachklang, und der
+      // Hall war es, der die Kulisse nach Aufnahmestudio klingen ließ
       b.rufe({ probe: 'amsel', pegel: 0.80, pause: [3, 11], rate: [0.95, 1.05],
-               breite: 0.75, ziel: weite.ein, start: 3 });
+               breite: 0.75, start: 3 });
       b.rufe({ probe: 'gartenvoegel', pegel: 0.55, pause: [2.5, 9], rate: [0.93, 1.08],
-               breite: 0.8, ziel: weite.ein, start: 6 });
+               breite: 0.8, start: 6 });
       b.rufe({ probe: 'rotkehlchen', pegel: 0.55, pause: [3, 12], rate: [0.96, 1.06],
-               breite: 0.7, ziel: weite.ein, start: 9 });
+               breite: 0.7, start: 9 });
       b.rufe({ probe: 'buchfink', pegel: 0.50, pause: [2, 8], rate: [0.94, 1.06],
-               breite: 0.75, ziel: weite.ein, start: 5 });
+               breite: 0.75, start: 5 });
       b.rufe({ probe: 'meise', pegel: 0.45, pause: [4, 14], rate: [0.96, 1.05],
-               breite: 0.7, ziel: weite.ein, start: 13 });
+               breite: 0.7, start: 13 });
       b.rufe({ probe: 'grasmuecke', pegel: 0.50, pause: [3, 11], rate: [0.95, 1.06],
-               breite: 0.65, ziel: weite.ein, start: 17 });
+               breite: 0.65, start: 17 });
     },
 
-    /* ---- Vogelstimmen: Tropen (Aufnahmen) ---- */
-    vogelTropen: function (b) {
-      var weite = b.hall(0.14, 0.32, 3200);
-      b.raus(weite.aus, 0.16, 0);   // Regenwald hallt etwas, aber nicht wie eine Halle
-      // Tukane im Amazonas: viele kurze Rufe dicht hintereinander
-      b.rufe({ probe: 'tukane', pegel: 0.60, pause: [0.4, 2.6], rate: [0.9, 1.1],
-               breite: 0.85, ziel: weite.ein, start: 2 });
-      b.rufe({ probe: 'tukan3', pegel: 0.55, pause: [0.8, 4], rate: [0.92, 1.08],
-               breite: 0.8, ziel: weite.ein, start: 4 });
-      b.rufe({ probe: 'tukan2', pegel: 0.45, pause: [1.5, 6], rate: [0.88, 1.04],
-               breite: 0.7, ziel: weite.ein, start: 7 });
-      // tiefere, fernere Rufe derselben Aufnahmen
-      b.rufe({ probe: 'tukane', pegel: 0.30, pause: [2, 8], rate: [0.72, 0.85],
-               breite: 0.6, ziel: weite.ein, start: 11 });
+    /* ---- Möwen (Aufnahmen) ----
+     * Die Hafenatmosphäre läuft als Schleife, darüber einzelne Rufe – so
+     * klingt es nach Hafen und nicht nach aneinandergereihten Schreien. */
+    moewen: function (b) {
+      var hafen = b.schleife({ probe: 'moewe2', rate: 1.0, pegel: 0, pan: 0, tempoAnteil: 0.25 });
+      if (!hafen) return;
+      b.atem(hafen, 0.9, 0.15, 0.4);
+      b.rufe({ probe: 'moewe1', pegel: 0.75, pause: [0.6, 4], rate: [0.94, 1.08],
+               breite: 0.85, start: 1 });
+      b.rufe({ probe: 'moewe1', pegel: 0.40, pause: [2, 8], rate: [0.82, 0.94],
+               breite: 0.6, start: 4 });     // entferntere Möwen
+    },
+
+    /* ---- Nieselregen (Aufnahmen) ----
+     * Kein geschlossenes Rauschen: die einzelnen Tropfen bleiben hörbar.
+     * Zwei leise Schleifen tragen den Grund, darüber einzelne Aufschläge. */
+    niesel: function (b) {
+      var a = b.schleife({ probe: 'niesel1', rate: 0.97, pegel: 0, pan: -0.2, tempoAnteil: 0.25 });
+      var c = b.schleife({ probe: 'niesel2', rate: 1.04, pegel: 0, pan: 0.22, tempoAnteil: 0.25 });
+      if (!a || !c) return;
+      b.atem(a, 0.55, 0.12, 0.4);
+      b.atem(c, 0.45, 0.10, 0.6);
+      // einzelne, deutlich hörbare Tropfen darüber
+      b.rufe({ probe: 'nieseltropf', pegel: 1.5, pause: [0.1, 0.7], rate: [0.85, 1.2],
+               breite: 0.85, start: 1 });
+      b.rufe({ probe: 'nieseltropf', pegel: 0.9, pause: [0.3, 1.6], rate: [0.7, 0.88],
+               breite: 0.7, start: 2 });     // größere, tiefere Tropfen
     },
 
     /* ---- Vogelstimmen: Afrika (Aufnahmen) ----
@@ -1081,15 +1100,16 @@ const Klang = (function () {
 
     /* ---- Delfingesang (Aufnahmen) ---- */
     delfin: function (b) {
-      var raum = b.hall(0.11, 0.45, 6000);
-      b.raus(raum.aus, 0.3, 0);
-      // Pfiffe und Klickfolgen kommen in Schüben
-      b.rufe({ probe: 'delfin1', pegel: 0.85, pause: [0.2, 2.2], rate: [0.94, 1.08],
+      // Nur Pfiffe und Schnattern; die alte Aufnahme brachte Platschen und
+      // dumpfe Schläge mit. Kaum Hall, damit es nah und freundlich bleibt.
+      var raum = b.hall(0.08, 0.3, 7000);
+      b.raus(raum.aus, 0.12, 0);
+      b.rufe({ probe: 'delfN1', pegel: 0.85, pause: [0.15, 1.4], rate: [0.95, 1.1],
                breite: 0.8, ziel: raum.ein, start: 1 });
-      b.rufe({ probe: 'delfin2', pegel: 0.70, pause: [0.6, 4], rate: [0.9, 1.05],
-               breite: 0.7, ziel: raum.ein, start: 3 });
-      b.rufe({ probe: 'delfin1', pegel: 0.40, pause: [2, 7], rate: [0.8, 0.92],
-               breite: 0.5, ziel: raum.ein, start: 6 });    // entferntere Tiere
+      b.rufe({ probe: 'delfN2', pegel: 0.75, pause: [0.3, 2.2], rate: [0.92, 1.06],
+               breite: 0.7, ziel: raum.ein, start: 2 });
+      b.rufe({ probe: 'delfN2', pegel: 0.40, pause: [1.5, 5], rate: [0.82, 0.94],
+               breite: 0.5, ziel: raum.ein, start: 5 });    // entferntere Tiere
     },
 
     /* ---- Bach (Aufnahmen) ----
@@ -1106,18 +1126,16 @@ const Klang = (function () {
      * Einzelne Tropfen mit viel Raum dazwischen – das Fallen zählt, nicht der
      * Untergrund. Ein langer Hall gibt jedem Tropfen seine Höhle. */
     tropfen: function (b) {
-      // Einzelne Tropfen sind sehr laut gegen die Stille dazwischen; ohne
-      // Spitzenbremse müsste die ganze Kulisse fast unhörbar leise laufen.
-      var bremse = b.presser(-20, 5);
+      // Ohne Hall und ohne Höhle: nur der Tropfen selbst. Die Spitzenbremse
+      // bleibt, weil einzelne Tropfen sehr laut gegen die Stille stehen.
+      var bremse = b.presser(-26, 8);
       b.raus(bremse, 1.0, 0);
-      var hoehle = b.hall(0.19, 0.55, 3200);
-      hoehle.aus.connect(bremse);
-      [{ p: 'tropfen1', g: 3.0, pause: [0.25, 1.8], r: [0.85, 1.15], br: 0.8, s: 1 },
-       { p: 'tropfen2', g: 2.5, pause: [0.4, 2.4], r: [0.9, 1.2], br: 0.75, s: 2 },
-       { p: 'tropfen1', g: 1.8, pause: [1.2, 4], r: [0.65, 0.8], br: 0.6, s: 4 }
+      [{ p: 'trop1', g: 4.0, pause: [0.2, 1.4], r: [0.9, 1.12], br: 0.75, s: 1 },
+       { p: 'trop2', g: 3.4, pause: [0.3, 2.0], r: [0.95, 1.2], br: 0.7, s: 2 },
+       { p: 'trop1', g: 2.4, pause: [0.9, 3.2], r: [0.7, 0.85], br: 0.55, s: 4 }
       ].forEach(function (t) {
         var k = b.rufe({ probe: t.p, pegel: t.g, pause: t.pause, rate: t.r,
-                         breite: t.br, ziel: hoehle.ein, start: t.s, roh: true });
+                         breite: t.br, start: t.s, roh: true });
         if (k) k.connect(bremse);
       });
     },
@@ -1140,12 +1158,10 @@ const Klang = (function () {
      * aus Rauschen. Die Segmente sind einzelne Atemzüge; die Pausen dazwischen
      * sind eng gehalten, denn Atmung ist regelmäßig – aber nicht metronomisch. */
     schnarchen: function (b) {
-      var raum = b.hall(0.09, 0.3, 1400);
-      b.raus(raum.aus, 0.12, 0);   // nur ein Hauch Zimmer, kein Hall
-      b.rufe({ probe: 'schnarch2', pegel: 0.85, pause: [2.0, 3.2], rate: [0.94, 1.04],
-               breite: 0.25, ziel: raum.ein, start: 1 });
-      b.rufe({ probe: 'schnarch1', pegel: 0.45, pause: [7, 16], rate: [0.9, 1.02],
-               breite: 0.3, ziel: raum.ein, start: 9 });   // gelegentlich ein tieferer Zug
+      // Nur die Atemzüge, ohne Raum und ohne Nebengeräusch: eine ruhig
+      // schlafende Person neben einem, mehr nicht.
+      b.rufe({ probe: 'atem1', pegel: 26, pause: [1.4, 2.4], rate: [0.95, 1.05],
+               breite: 0.2, start: 1 });
     },
 
     /* ================= Menschenwelt ================= */
@@ -1259,13 +1275,13 @@ const Klang = (function () {
    * Die Werte sind gemessen (OfflineAudioContext, Ziel-RMS 0,09),
    * nicht geschätzt – nach jeder Klangänderung neu messen. */
   var AUSGLEICH = {
-    regen: 0.82, strand: 1.22, fluss: 1.27, unterwasser: 1.10, blasen: 1.69,
-    bach: 1.76, tropfen: 0.88,
-    feuer: 0.69,
-    wind: 1.23, donner: 0.49, wipfel: 1.25,
-    grillen: 0.99, vogelDe: 1.79, vogelTropen: 1.69, vogelAfrika: 1.30,
-    wal: 0.72, delfin: 2.21, katze: 1.46,
-    schnarchen: 1.50, zug: 0.77, strasse: 1.75,
+    regen: 0.82, niesel: 1.11, strand: 1.22, fluss: 1.73, unterwasser: 1.10, blasen: 1.09,
+    bach: 1.76, tropfen: 0.83, moewen: 1.08,
+    feuer: 0.89,
+    wind: 2.15, donner: 0.87, wipfel: 1.99,
+    grillen: 0.99, vogelDe: 2.12, vogelAfrika: 1.50,
+    wal: 0.72, delfin: 0.91, katze: 1.46,
+    schnarchen: 4.90, zug: 0.77, strasse: 1.75,
     weiss: 0.66, rosa: 0.28, braun: 0.95
   };
 

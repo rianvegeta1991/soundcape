@@ -10,7 +10,6 @@ reichen für Hintergrundklänge und sind wesentlich kleiner. Dafür genügt ein 
 OAuth2 wird nicht gebraucht.
 
 **Bearbeitung:** Die Dateien wurden über den Transkodierungsdienst von Commons als MP3
-bezogen (Ogg spielt auf iPhones nicht). `tukane.mp3` ist auf die ersten 110 Sekunden
 gekürzt. Sonst ist nichts verändert; beim Abspielen wird lediglich abschnittsweise
 daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das Original.
 
@@ -20,15 +19,9 @@ daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das O
 |---|---|---|---|
 | `amsel.mp3` | [Turdus merula 2.ogg](https://commons.wikimedia.org/wiki/File:Turdus_merula_2.ogg) | Public Domain | Oona Räisänen (Mysid) |
 | `gartenvoegel.mp3` | [Birds singing in garden.ogg](https://commons.wikimedia.org/wiki/File:Birds_singing_in_garden.ogg) | Public Domain | ezwa |
-| `tukane.mp3` | [Toucans singing in the Amazonian rainforest, Brazil](https://commons.wikimedia.org/wiki/File:404114_felix-blume_toucans-singing-in-the-amazonian-rainforest-brazil.ogg) | CC0 | Felix Blume |
 | `wal1.mp3` | [Whale Sounds (High Quality)](https://freesound.org/s/653612/) | CC0 | MPooman |
-| `delfin1.mp3` | [Atlantic Spotted Dolphins](https://freesound.org/s/385796/) | CC0 | geraldfiebig |
-| `schnarch1.mp3` | [Terrible snore](https://freesound.org/s/174453/) | CC0 | iampagan |
-| `schnarch2.mp3` | [Snoring](https://freesound.org/s/233600/) | CC0 | SortsApostata |
-| `donnerA.mp3` | [DistantThunder](https://freesound.org/s/473864/) | CC0 | Kragnour |
 | `bach1.mp3` | [Creek Ambience](https://freesound.org/s/721616/) | CC0 | SduggySounds |
 | `bach2.mp3` | [Kervijen babbling creek](https://freesound.org/s/690326/) | CC0 | bruno.auzet |
-| `tropfen1.mp3` | [Water Cave](https://freesound.org/s/443061/) | CC0 | Klangkobold |
 | `afrika1.mp3` | [Bird sounds Spionkop lodge early morning](https://freesound.org/s/704918/) | CC0 | geoffvt |
 | `afrika2.mp3` | [Guineafowl calls isolated – South Africa](https://freesound.org/s/386985/) | CC0 | EpicWizard |
 | `schnurren1.mp3` | [Whiskers' purr edit.ogg](https://commons.wikimedia.org/wiki/File:Whiskers%27_purr_edit.ogg) | Public Domain | Adam Cuerden |
@@ -49,14 +42,8 @@ daraus gelesen. Die bearbeiteten Dateien stehen unter derselben Lizenz wie das O
 | `buchfink.mp3` | Fringilla coelebs – Common Chaffinch XC108344 | CC BY-SA 4.0 | Alexander Kurthy |
 | `meise.mp3` | Parus major – Great Tit XC165660 | CC BY-SA 3.0 | José Carlos Sires |
 | `grasmuecke.mp3` | Sylvia atricapilla – Eurasian Blackcap XC457403 | CC BY-SA 4.0 | Hannu Varkki |
-| `tukan2.mp3` | Keel Billed Toucan | CC BY 3.0 | soundbytez |
-| `tukan3.mp3` | Chesnut-mandibled toucan | CC BY 3.0 | soundbytez |
 | `blasen3.mp3` | [water and bubbles soundscape 04](https://freesound.org/s/736971/) | CC BY 4.0 | busabx |
 | `wal2.mp3` | [Underwater recording of Humpback whales](https://freesound.org/s/399609/) | CC BY 4.0 | alanmcki |
-| `delfin2.mp3` | [ANMLAqua-dolphin-eldora](https://freesound.org/s/727605/) | CC BY 4.0 | nathanwolek |
-| `donnerB.mp3` | [Thunder, Very Close, No Rain, B](https://freesound.org/s/320049/) | CC BY 4.0 | InspectorJ |
-| `donnerC.mp3` | [Thunder, Very Close, No Rain, A](https://freesound.org/s/320050/) | CC BY 4.0 | InspectorJ |
-| `tropfen2.mp3` | [Dripping in Cavern (close perspective)](https://freesound.org/s/816060/) | CC BY 4.0 | iainmccurdy |
 
 Die Vogelaufnahmen mit „XC"-Nummer stammen ursprünglich von
 [xeno-canto.org](https://xeno-canto.org) und kamen über Commons hierher.
@@ -74,10 +61,33 @@ mit fernem Donner genauso, und erst dadurch klingt er nach „weit weg".
 
 ## Was noch synthetisch ist
 
-Regen, Wind, Strand, Fluss, Unterwasser, Baumwipfel, Zug, Straße und die drei Rauscharten.
-Das sind Rauschprozesse – dafür ist die Synthese das richtige Werkzeug und liefert
-zugleich die Endlosigkeit ohne jede Wiederholung.
+Regen, Strand, Unterwasser, Zug, Straße und die drei Rauscharten – gleichmäßige
+Rauschprozesse, für die die Synthese das richtige Werkzeug ist und die Endlosigkeit
+ohne jede Wiederholung mitliefert.
 
-Von Aufnahmen kommen alle Tierstimmen, Donner, Feuer, Blasen, Bach, Wassertropfen
-und das Schnarchen: Dort geht es um strukturierte Einzelereignisse, die sich aus
-Rauschen und Filtern nicht überzeugend bauen lassen.
+Alles andere kommt von Aufnahmen. Wind, Fluss und Baumwipfel sind seit 1.8 dabei:
+Sie sind zwar rauschartig, klangen synthetisch aber monoton – echter Wind pfeift und
+kommt in Böen, ein Fluss lässt einzelne Wirbel hören, Laub raschelt in Schüben.
+
+## Seit Version 1.8 dazugekommen
+
+Alle von freesound.org.
+
+| Datei | Aufnahme | Lizenz | Urheber |
+|---|---|---|---|
+| `moewe1.mp3` | [Seagull Swarm at Port](https://freesound.org/s/468080/) | CC0 | Kinoton |
+| `moewe2.mp3` | [harbour, seagulls](https://freesound.org/s/208074/) | CC0 | Further_Roman |
+| `blatt1.mp3` | [wind bushes coast](https://freesound.org/s/735332/) | CC BY 4.0 | klankbeeld |
+| `niesel1.mp3` | [drizzle on polyethylene film](https://freesound.org/s/459693/) | CC0 | arseniiv |
+| `niesel2.mp3` | [rain falling into small puddle](https://freesound.org/s/556320/) | CC0 | jsoccer99 |
+| `atem1.mp3` | [breathingsleeping](https://freesound.org/s/554074/) | CC0 | christophe1138 |
+| `trop1.mp3` | [Single drop falling](https://freesound.org/s/414104/) | CC0 | felix.blume |
+| `trop2.mp3` | [Slow Dropping Water 5](https://freesound.org/s/396065/) | CC BY 4.0 | Edo333 |
+| `donnN1.mp3` | [THUNDER long rumbling – no Rain](https://freesound.org/s/367702/) | CC0 | BlueDelta |
+| `donnN2.mp3` | [Long Low Thunder 01](https://freesound.org/s/177476/) | CC0 | unfa |
+| `windN1.mp3` | [Wind howling, whispering, whistles](https://freesound.org/s/728737/) | CC0 | Borgory |
+| `windN2.mp3` | [wind whistling](https://freesound.org/s/331892/) | CC0 | squashy555 |
+| `flussN1.mp3` | [Small Brook Flowing Around Rocks](https://freesound.org/s/819768/) | CC0 | pepasystem |
+| `flussN2.mp3` | [Gentle flowing water – Panther Creek](https://freesound.org/s/510058/) | CC0 | nvisiblesound |
+| `delfN1.mp3` | [Dolphin](https://freesound.org/s/391317/) | CC0 | Forpus_Prod |
+| `delfN2.mp3` | [Amazonian Dolphins](https://freesound.org/s/408555/) | CC0 | felix.blume |

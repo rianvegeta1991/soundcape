@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.7';
+  var APP_VERSION = '1.8';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -29,6 +29,9 @@
     { id: 'regen', kat: 'wasser', name: 'Regen', unter: 'Gleichmäßiger Landregen', rgb: '110,168,255',
       ikon: '<path d="M12 20a6 6 0 0 1 1.4-11.8A7.5 7.5 0 0 1 27.6 11 5 5 0 0 1 27 20z"/>' +
             '<path d="M13 25l-1.6 5M20 25l-1.6 5M27 25l-1.6 5"/>' },
+    { id: 'niesel', kat: 'wasser', name: 'Nieselregen', unter: 'Einzelne Tropfen hörbar', rgb: '134,178,222',
+      ikon: '<path d="M12 18a5.5 5.5 0 0 1 1.3-10.8A7 7 0 0 1 26.6 9.5 4.6 4.6 0 0 1 26 18z"/>' +
+            '<path d="M11 24h.1M16 27h.1M21 24h.1M26 27h.1M13 31h.1M19 33h.1M25 31h.1"/>' },
     { id: 'strand', kat: 'wasser', name: 'Strand', unter: 'Wellen und Brandung', rgb: '84,198,214',
       ikon: '<circle cx="27.5" cy="11" r="4"/>' +
             '<path d="M5 24c3.2 0 3.2-2.6 6.4-2.6S14.6 24 17.8 24s3.2-2.6 6.4-2.6S27.4 24 30.6 24 34 21.4 35 21.4"/>' +
@@ -78,9 +81,11 @@
     { id: 'vogelDe', kat: 'tiere', name: 'Vögel, heimisch', unter: 'Amsel, Meise, Fink', rgb: '146,196,150',
       ikon: '<path d="M13 12a4 4 0 1 1 8 0c0 5 5 5 8 9 2.6 3.4 1 10-6 10-6.5 0-11-4.6-11-11 0-3.4 1-5.6 1-8z" stroke-linejoin="round"/>' +
             '<path d="M15.5 11.2h.1M13 14l-6-2.4 5-1.6M4 34c5-1.4 9-4 11-8"/>' },
-    { id: 'vogelTropen', kat: 'tiere', name: 'Vögel, Tropen', unter: 'Papageien im Regenwald', rgb: '86,206,178',
-      ikon: '<path d="M15 13a4.2 4.2 0 1 1 8.4 0c0 4.6 4.6 5.4 6.6 9.6 1.8 3.8-.8 9.4-7 9.4-6 0-10.4-4.4-10.4-10.4 0-3.4 2.4-5 2.4-8.6z" stroke-linejoin="round"/>' +
-            '<path d="M17.4 12.2h.1M15 15l-7-1.6 5.6-2.6M22 32c2.6 2 5 2.6 8 2.4"/>' },
+    { id: 'moewen', kat: 'tiere', name: 'Möwen', unter: 'Am Hafen', rgb: '150,196,224',
+      // zwei fliegende Möwen über der Wasserlinie
+      ikon: '<path d="M3 15c4.5 0 6.5-5 9-5s4.5 5 9 5"/>' +
+            '<path d="M19 24c3.6 0 5.2-4 7.2-4s3.6 4 7.2 4"/>' +
+            '<path d="M4 33c3.4 0 3.4-2.2 6.8-2.2S14.2 33 17.6 33s3.4-2.2 6.8-2.2S27.8 33 31.2 33 34 30.8 36 30.8"/>' },
     { id: 'vogelAfrika', kat: 'tiere', name: 'Vögel, Afrika', unter: 'Savanne am Morgen', rgb: '226,178,96',
       ikon: '<circle cx="29" cy="10" r="5"/>' +
             '<path d="M6 30h28M10 30c0-5 4-8 9-8s9 3 9 8"/>' +
@@ -160,6 +165,7 @@
       function umbenennen(x) {
         if (x === 'gewitter') return 'donner';
         if (x === 'feuerstark') return 'feuer';
+        if (x === 'vogelTropen') return 'moewen';   // Tropenvögel wurden zu Möwen
         return x;
       }
       if (g.tempo) for (var id3 in g.tempo) {

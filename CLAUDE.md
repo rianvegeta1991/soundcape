@@ -40,8 +40,11 @@ nach Pfeifton oder Motor. Das war der Befund aus der Praxis, nicht aus der Theor
 klangen die Tierstimmen unecht (v1.1), dann Feuer, Blasen, Donner und Schnarchen. Dafür
 liegen **freie Aufnahmen** bei (`audio/`, Nachweise in `audio/QUELLEN.md`).
 
-**Die Faustregel:** gleichmäßiges Rauschen (Regen, Wind, Wellen, Fluss, Rauscharten) wird
-synthetisiert; alles mit erkennbarer Struktur kommt von Aufnahmen.
+**Die Faustregel (Stand 1.8):** Nur noch Regen, Strand, Unterwasser, Zug, Straße und die drei
+Rauscharten sind synthetisch. Wind, Fluss und Baumwipfel sind dazugekommen, obwohl sie
+rauschartig sind – synthetisch klangen sie **monoton**: echter Wind pfeift und kommt in Böen,
+ein Fluss lässt einzelne Wirbel hören, Laub raschelt in Schüben. Gleichmäßiges Rauschen zu
+erzeugen ist leicht; das feine Leben darin nicht.
 
 **Fallstrick beim Umbau auf Aufnahmen:** Beim Ersetzen einer synthetischen Kulisse die alte
 Baufunktion wirklich **löschen**. In `Klang.szenen` gewinnt bei doppeltem Schlüssel die
@@ -115,7 +118,7 @@ für den sauberen Abbau (`abbau()`). Die tragenden Bausteine:
   wären unhöflich. Der fetch-Handler legt sie beim ersten Abspielen in den Cache; offline
   verfügbar sind also die Kulissen, die schon einmal liefen.
 
-24 Kulissen in sechs Kategorien (siehe `KATEGORIEN`/`KULISSEN` in app.js). Die Zuordnung
+25 Kulissen in sechs Kategorien (siehe `KATEGORIEN`/`KULISSEN` in app.js). Die Zuordnung
 id → Baufunktion steht in `Klang.szenen`; **beide Listen müssen deckungsgleich bleiben.**
 
 ### Pegel
