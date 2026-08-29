@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '2.0';
+  var APP_VERSION = '2.1';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -113,6 +113,12 @@
             '<path d="M16 21h.1M24 21h.1M20 25v1.6M20 26.6c-1.4 1.4-3.4 1.2-4.4-.4M20 26.6c1.4 1.4 3.4 1.2 4.4-.4"/>' },
 
     /* --- Menschenwelt --- */
+    { id: 'froesche', kat: 'tiere', name: 'Frösche', unter: 'Abend am Teich', rgb: '134,196,116',
+      // Frosch von vorn: Kopf mit Augen und angewinkelten Beinen
+      ikon: '<circle cx="14" cy="12" r="3.5"/><circle cx="26" cy="12" r="3.5"/>' +
+            '<path d="M8 20c0-5 5.4-8 12-8s12 3 12 8c0 5.5-5.4 9-12 9s-12-3.5-12-9z"/>' +
+            '<path d="M16 25c1.4 1.4 6.6 1.4 8 0"/>' +
+            '<path d="M8 22c-3 1-4.5 4-4 8 3 .6 5.6-1 7-3.5M32 22c3 1 4.5 4 4 8-3 .6-5.6-1-7-3.5"/>' },
     { id: 'schnarchen', kat: 'welt', name: 'Leises Schnarchen', unter: 'Ruhiger Atem', rgb: '176,168,214',
       ikon: '<path d="M4 28h12a6 6 0 0 0 6-6v-4a6 6 0 0 1 6-6h4"/>' +
             '<path d="M24 6h7l-7 7h7M28 18h5l-5 5h5"/>' },
@@ -146,6 +152,11 @@
     { id: 'synthSchweb', kat: 'synth', name: 'Schwebung', unter: 'Zwei Töne, die wandern', rgb: '132,206,196',
       ikon: '<path d="M4 15c5.5 0 5.5-7 11-7s5.5 7 11 7 5.5-7 10-7"/>' +
             '<path d="M4 26c5 0 5 7 10 7s5-7 10-7 5 7 12 7"/>' },
+    { id: 'synthOm', kat: 'synth', name: 'OM', unter: 'Ein langer, stehender Ton', rgb: '228,184,140',
+      // Om-artiger Kreis mit ruhenden Wellen
+      ikon: '<circle cx="20" cy="20" r="14"/>' +
+            '<path d="M9 20c3.7 0 3.7-4 7.3-4s3.7 4 7.4 4 3.7-4 7.3-4"/>' +
+            '<path d="M20 6v3M20 31v3"/>' },
 
     /* --- Rauschen --- */
     { id: 'weiss', kat: 'rauschen', name: 'White Noise', unter: 'Volles Spektrum', rgb: '226,232,242',
@@ -160,6 +171,7 @@
   KULISSEN.forEach(function (k) { NACH_ID[k.id] = k; });
 
   var PULT_STANDARD = ['regen', 'strand', 'feuer', 'grillen', 'wind', 'vogelDe'];
+  var MAX_FAVORITEN = 10;
 
   /* ==================================================================
    * Zustand
@@ -174,6 +186,7 @@
     pult: PULT_STANDARD.slice(),
     vol: {},
     tempo: {},          // id -> -1 | 0 | 1
+    favoriten: [],      // bis zu 10 gespeicherte Mischungen
     an: {},
     fadeMin: 1,
     wach: false,
@@ -201,6 +214,15 @@
         if (x === 'feuerstark') return 'feuer';
         if (x === 'vogelTropen') return 'moewen';   // Tropenvögel wurden zu Möwen
         return x;
+      }
+      if (g.favoriten && g.favoriten.length) {
+        st.favoriten = g.favoriten.slice(0, MAX_FAVORITEN).map(function (f) {
+          return {
+            name: String(f.name || 'Ohne Namen').slice(0, 40),
+            pult: (f.pult || []).map(umbenennen).filter(function (x) { return !!NACH_ID[x]; }),
+            an: f.an || {}, vol: f.vol || {}, tempo: f.tempo || {}
+          };
+        });
       }
       if (g.tempo) for (var id3 in g.tempo) {
         var z = umbenennen(id3);
@@ -686,6 +708,88 @@
       : st.pult.length + ' Kulissen im Pult';
   }
 
+  /* ---- Favoriten: benannte Mischungen ----
+   * Gespeichert wird, was die Mischung ausmacht: welche Kulissen auf dem Pult
+   * liegen, welche davon laufen, ihre Lautstärken und Geschwindigkeiten. */
+  function favoritSpeichern(name) {
+    var aktiv = aktiveIds();
+    if (!aktiv.length) { setStatus('Erst eine Mischung starten, dann speichern.'); return false; }
+    if (st.favoriten.length >= MAX_FAVORITEN) {
+      setStatus('Es sind schon ' + MAX_FAVORITEN + ' Favoriten gespeichert – lösch erst einen.');
+      return false;
+    }
+    var vol = {}, tempo = {};
+    st.pult.forEach(function (id) {
+      vol[id] = st.vol[id];
+      if (st.tempo[id]) tempo[id] = st.tempo[id];
+    });
+    var an = {};
+    aktiv.forEach(function (id) { an[id] = true; });
+    st.favoriten.push({ name: name.slice(0, 40), pult: st.pult.slice(), an: an, vol: vol, tempo: tempo });
+    speichern();
+    favoritenBauen();
+    return true;
+  }
+
+  function favoritLaden(i) {
+    var f = st.favoriten[i];
+    if (!f) return;
+    // erst alles Laufende abräumen
+    aktiveIds().forEach(function (id) { delete st.an[id]; szeneAus(id); });
+    st.pult = (f.pult || []).filter(function (id) { return !!NACH_ID[id]; });
+    for (var id in f.vol) if (NACH_ID[id]) st.vol[id] = f.vol[id];
+    st.tempo = {};
+    for (var id2 in f.tempo) if (NACH_ID[id2]) st.tempo[id2] = f.tempo[id2];
+    st.an = {};
+    for (var id3 in f.an) if (NACH_ID[id3] && st.pult.indexOf(id3) >= 0) st.an[id3] = true;
+    pultBauen();
+    bibliothekAktualisieren();
+    if (!laeuft) starten(); else aktiveIds().forEach(szeneAn);
+    speichern(); ui(); sessionSetzen();
+    blattZu('bl-fav');
+    setStatus('<b>' + f.name + '</b> geladen');
+  }
+
+  function favoritLoeschen(i) {
+    st.favoriten.splice(i, 1);
+    speichern();
+    favoritenBauen();
+  }
+
+  function favoritenBauen() {
+    var box = $('fav-liste');
+    box.innerHTML = '';
+    if (!st.favoriten.length) {
+      var leer = document.createElement('p');
+      leer.className = 'hinweis';
+      leer.textContent = 'Noch nichts gespeichert. Stell dir eine Mischung zusammen und sichere sie unten unter einem Namen.';
+      box.appendChild(leer);
+    }
+    st.favoriten.forEach(function (f, i) {
+      var namen = (f.pult || []).filter(function (id) { return f.an[id]; })
+        .map(function (id) { return NACH_ID[id] ? NACH_ID[id].name : id; });
+      var z = document.createElement('div');
+      z.className = 'fav-zeile';
+      z.innerHTML =
+        '<button class="fav-laden">' +
+          '<span class="fav-name"></span>' +
+          '<span class="fav-inhalt"></span>' +
+        '</button>' +
+        '<button class="fav-weg" aria-label="Favorit löschen">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">' +
+          '<path d="M6 6l12 12M18 6L6 18"/></svg></button>';
+      z.querySelector('.fav-name').textContent = f.name;
+      z.querySelector('.fav-inhalt').textContent =
+        namen.length ? namen.join(' · ') : 'leer';
+      z.querySelector('.fav-laden').addEventListener('click', function () { favoritLaden(i); });
+      z.querySelector('.fav-weg').addEventListener('click', function () { favoritLoeschen(i); });
+      box.appendChild(z);
+    });
+    $('fav-zahl').textContent = st.favoriten.length + ' von ' + MAX_FAVORITEN;
+    $('fav-name-feld').disabled = st.favoriten.length >= MAX_FAVORITEN;
+    $('fav-sichern').disabled = st.favoriten.length >= MAX_FAVORITEN;
+  }
+
   // Kulisse ins Pult legen oder herausnehmen
   function pultUm(id) {
     var i = st.pult.indexOf(id);
@@ -806,6 +910,27 @@
     });
 
     $('chip-bib').addEventListener('click', function () { blattAuf('bl-bib'); });
+
+    /* ---- Favoriten ---- */
+    $('chip-fav').addEventListener('click', function () { favoritenBauen(); blattAuf('bl-fav'); });
+    $('fav-fertig').addEventListener('click', function () { blattZu('bl-fav'); });
+    blattVerdrahten('bl-fav');
+    $('fav-sichern').addEventListener('click', function () {
+      var feld = $('fav-name-feld');
+      var name = (feld.value || '').trim();
+      if (!name) {
+        // ohne Eingabe: die laufenden Kulissen als Namen vorschlagen
+        name = aktiveIds().map(function (id) { return NACH_ID[id].name; }).slice(0, 3).join(' + ');
+      }
+      if (!name) { setStatus('Erst eine Mischung starten, dann speichern.'); return; }
+      if (favoritSpeichern(name)) {
+        feld.value = '';
+        setStatus('<b>' + name + '</b> gespeichert');
+      }
+    });
+    $('fav-name-feld').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); $('fav-sichern').click(); }
+    });
 
     /* ---- Bibliothek ---- */
     $('bib-fertig').addEventListener('click', function () { blattZu('bl-bib'); });

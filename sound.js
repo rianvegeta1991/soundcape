@@ -136,22 +136,17 @@ const Klang = (function () {
     bach1: { datei: 'audio/bach1.mp3', segmente: [[13.0, 20.0]] },
     bach2: { datei: 'audio/bach2.mp3', segmente: [[1.0, 52.0]] },
 
-    /* --- Wassertropfen mit Ausklang: die Segmente sind 3 Sekunden lang und
-     * beginnen am Aufschlag – so bleibt der ganze Nachklang erhalten. --- */
-    tropfH1: { datei: 'audio/tropfH1.mp3', segmente: [
-      [1.80, 3.0], [3.65, 3.0], [5.55, 3.0], [7.40, 3.0], [9.25, 3.0]] },
-    tropfH2: { datei: 'audio/tropfH2.mp3', segmente: [
-      [1.20, 3.0], [5.35, 3.0], [10.60, 3.0], [18.15, 3.0]] },
-
     /* --- Leichtes Schnarchen als Schleife: ein- und ausatmen im Stück --- */
     schnarchL: { datei: 'audio/schnarchL.mp3', segmente: [[2.0, 30.0]] },
 
+    /* --- Frösche am Teich --- */
+    frosch1: { datei: 'audio/frosch1.mp3', segmente: [[2.0, 36.0]] },
+    frosch2: { datei: 'audio/frosch2.mp3', segmente: [[2.0, 36.0]] },
+
     /* --- Bauernhof --- */
-    huhn1: { datei: 'audio/huhn1.mp3', segmente: [[12.0, 40.0]] },
+    huhn2: { datei: 'audio/huhn2.mp3', segmente: [[4.0, 42.0]] },
     kuh1: { datei: 'audio/kuh1.mp3', segmente: [
       [0.0, 4.5], [4.5, 4.5], [9.5, 4.5], [14.5, 4.5], [19.5, 4.5], [23.5, 4.0]] },
-    schaf1: { datei: 'audio/schaf1.mp3', segmente: [
-      [0.0, 4.0], [4.5, 4.0], [9.0, 4.0], [13.5, 4.0], [18.0, 4.0], [22.0, 4.0]] },
 
     /* --- Kaminfeuer --- */
     kamin1: { datei: 'audio/kamin1.mp3', segmente: [[36.0, 12.0]] },
@@ -235,9 +230,10 @@ const Klang = (function () {
     wal: ['walN1'],
     donner: ['donnN1', 'donnN2'],
     bach: ['bach1', 'bach2'],
-    tropfen: ['tropfH1', 'tropfH2'],
+    // tropfen braucht seit 2.1 keine Aufnahme mehr - der Tropfen wird erzeugt
     schnarchen: ['schnarchL'],
-    bauernhof: ['huhn1', 'kuh1', 'schaf1'],
+    bauernhof: ['huhn2', 'kuh1'],
+    froesche: ['frosch1', 'frosch2'],
     kamin: ['kamin1', 'kamin2', 'feuerknack'],
     schale: ['schale1', 'schale2'],
     glocke: ['glocke1'],
@@ -895,17 +891,26 @@ const Klang = (function () {
 
     /* ---- Blubberblasen (Aufnahmen, isoliert ohne Wasserteppich) ---- */
     blasen: function (b) {
+      /* Eine Bremse über allem: einzelne Blasen platzen sonst deutlich lauter
+       * als der Strom dahinter, und der Pegel schwankte von Aufbau zu Aufbau
+       * (gemessen: Spitze 0,62 bis 0,89 bei gleichem Ausgleich). */
+      var bremse = b.presser(-20, 5);
+      b.raus(bremse, 1.0, 0);
       var raum = b.hall(0.07, 0.45, 2200);
-      b.raus(raum.aus, 0.35, 0);
+      var nass = b.v(0.35);
+      raum.aus.connect(nass); nass.connect(bremse);
+      // trocken und verhallt laufen beide durch die Bremse
+      var misch = b.v(1);
+      misch.connect(bremse); misch.connect(raum.ein);
       // drei Quellen mit verschiedenen Tonlagen: die Abspielgeschwindigkeit
-      // verschiebt die Blasengröße mit
+      // verschiebt die Blasengröße mit.
       // stetig statt vereinzelt: kurze Pausen, drei Quellen überlappend
-      b.rufe({ probe: 'blasen1', pegel: 0.75, pause: [0.05, 0.5], rate: [0.9, 1.15],
-               breite: 0.8, ziel: raum.ein, start: 1 });
-      b.rufe({ probe: 'blasen2', pegel: 0.60, pause: [0.1, 0.9], rate: [0.75, 1.0],
-               breite: 0.7, ziel: raum.ein, start: 2 });   // größere, tiefere Blasen
-      b.rufe({ probe: 'blasen3', pegel: 0.55, pause: [0.08, 0.7], rate: [1.0, 1.3],
-               breite: 0.85, ziel: raum.ein, start: 3 });  // feine, hohe Bläschen
+      b.rufe({ probe: 'blasen1', pegel: 0.75, pause: [0.04, 0.22], rate: [0.9, 1.15],
+               breite: 0.8, ziel: misch, start: 1, roh: true });
+      b.rufe({ probe: 'blasen2', pegel: 0.60, pause: [0.08, 0.4], rate: [0.75, 1.0],
+               breite: 0.7, ziel: misch, start: 2, roh: true });   // größere, tiefere Blasen
+      b.rufe({ probe: 'blasen3', pegel: 0.55, pause: [0.06, 0.3], rate: [1.0, 1.3],
+               breite: 0.85, ziel: misch, start: 3, roh: true });  // feine, hohe Bläschen
     },
 
     /* ================= Feuer ================= */
@@ -1150,19 +1155,42 @@ const Klang = (function () {
       // bleibt, weil einzelne Tropfen sehr laut gegen die Stille stehen.
       /* Sanft geregelt: mit hohem Verhältnis und tiefer Schwelle klang der
        * Nachklang der Tropfen blechern, weil die Regelung ihn nachpumpte. */
-      var bremse = b.presser(-14, 2.5);
-      b.raus(bremse, 1.0, 0);
-      /* Jeder Tropfen ist drei Sekunden lang und klingt im Wasser aus. Weil
-       * die Pausen kürzer sind als die Segmente, überlagern sich die Tropfen –
-       * dadurch reißt nichts ab. Die Blende ist mit "weich" lang und gewölbt. */
-      [{ p: 'tropfH1', g: 4.2, pause: [0.4, 1.8], r: [0.92, 1.06], br: 0.7, s: 1 },
-       { p: 'tropfH2', g: 3.4, pause: [0.7, 2.4], r: [0.95, 1.1], br: 0.65, s: 2 },
-       { p: 'tropfH1', g: 2.5, pause: [1.2, 3.5], r: [0.72, 0.86], br: 0.5, s: 4 }
-      ].forEach(function (t) {
-        var k = b.rufe({ probe: t.p, pegel: t.g, pause: t.pause, rate: t.r,
-                         breite: t.br, start: t.s, roh: true, weich: 0.3 });
-        if (k) k.connect(bremse);
-      });
+      var hall = b.hall(0.21, 0.42, 4200);
+      b.raus(hall.aus, 0.3, 0);
+      /* Die Tropfen entstehen hier, statt aus einer Aufnahme zu kommen.
+       * Ein Wassertropfen ist genau das, was Beatboxer nachmachen: ein kurzer
+       * Ton, dessen Tonhöhe beim Eintauchen schnell nach oben schnellt, mit
+       * weichem Ausklang. Als Klangnetz gebaut lässt sich das gleichmäßig
+       * halten – aus Aufnahmen geschnitten blieb es abgehackt und blechern. */
+      var takte = [1.05, 1.55, 2.35];        // drei ruhige, leicht versetzte Tropfraten
+      var lagen = [
+        { f: 620, ziel: 1500, pegel: 0.55, pan: -0.3, ton: 0.34 },
+        { f: 430, ziel: 1050, pegel: 0.42, pan: 0.28, ton: 0.42 },
+        { f: 820, ziel: 2050, pegel: 0.30, pan: 0.05, ton: 0.28 }
+      ];
+      for (var i = 0; i < lagen.length; i++) {
+        var l = lagen[i];
+        var o = b.sinus(l.f, 'sine');
+        // Der Tropfen: die Tonhöhe steigt beim Eintauchen steil an
+        var huelle = b.takt(1 / takte[i], 0.14, 0.55);   // takt() rechnet das Tempo mit
+        o.frequency.value = l.f;
+        b.mod(o.frequency, huelle, l.ziel - l.f);
+
+        var tor = b.v(0);
+        o.connect(tor);
+        b.mod(tor.gain, huelle, l.pegel);
+        // etwas Körper: eine Oktave darunter, leiser
+        var tief = b.sinus(l.f * 0.5, 'sine');
+        var tTor = b.v(0);
+        tief.connect(tTor);
+        b.mod(tTor.gain, huelle, l.pegel * 0.35);
+
+        var misch = b.v(1);
+        tor.connect(misch); tTor.connect(misch);
+        var weich = b.kette(misch, b.tief(3200, 0.8));
+        b.raus(weich, 1.0, l.pan);
+        weich.connect(hall.ein);
+      }
     },
 
     /* ---- Katzenschnurren (Aufnahme) ----
@@ -1186,14 +1214,43 @@ const Klang = (function () {
      * Der Hühnerhof trägt als Schleife, Kühe und Schafe rufen gelegentlich
      * dazwischen – so klingt es nach Hof und nicht nach Streichelzoo. */
     bauernhof: function (b) {
-      var hof = b.schleife({ probe: 'huhn1', rate: 1.0, pegel: 0, pan: 0,
-                             tempoAnteil: 0.25, blende: 3 });
+      // Nur Hennen und Kühe: die Schafe sind raus, und ein Tiefpass nimmt dem
+      // Hühnerhof die schrillen Spitzen, in denen der Hahn sitzt.
+      // Beide Schichten laufen durch eine gemeinsame Bremse: das Muhen war
+      // sonst um ein Vielfaches lauter als der Hof dahinter (gemessen: Spitze
+      // 3,9 bei RMS 0,10), und der Ausgleich hätte alles unhörbar leise gemacht.
+      var bremse = b.presser(-24, 6);
+      b.raus(bremse, 1.0, 0);
+      // Achtung: kette() gibt das LETZTE Glied zurueck. Der Eingang der Kette ist
+      // der Tiefpass - der muss separat gehalten werden, sonst haengt die Schleife
+      // am Hochpass und der Tiefpass ist wirkungslos.
+      var tief = b.tief(2600, 0.7);
+      var sanft = b.kette(tief, b.hoch(180, 0.6));
+      sanft.connect(bremse);
+      var hof = b.schleife({ probe: 'huhn2', rate: 1.0, pegel: 0, pan: 0,
+                             tempoAnteil: 0.25, blende: 3, an: tief });
       if (!hof) return;
-      b.atem(hof, 4.5, 0.6, 0.4);
-      b.rufe({ probe: 'kuh1', pegel: 1.1, pause: [6, 20], rate: [0.95, 1.05],
-               breite: 0.6, start: 4, weich: 0.15 });
-      b.rufe({ probe: 'schaf1', pegel: 0.9, pause: [8, 26], rate: [0.94, 1.06],
-               breite: 0.7, start: 11, weich: 0.15 });
+      b.atem(hof, 1.5, 0.18, 0.4);
+      b.rufe({ probe: 'kuh1', pegel: 0.5, pause: [7, 22], rate: [0.95, 1.05],
+               breite: 0.6, start: 4, weich: 0.15, roh: true, ziel: bremse });
+    },
+
+    /* ---- Frösche am Teich (Aufnahmen) ----
+     * Zwei Aufnahmen mit verschiedener Tonlage: die tiefere Lage klingt nach
+     * größeren Tieren weiter hinten. */
+    froesche: function (b) {
+      // Quaken kommt in Schüben: ohne Bremse standen Spitzen von 1,15 gegen
+      // einen Mittelwert von 0,09, und der Ausgleich haette den Teich
+      // insgesamt zu leise gemacht.
+      var bremse = b.presser(-22, 5);
+      b.raus(bremse, 1.0, 0);
+      var a = b.schleife({ probe: 'frosch1', rate: 1.0, pegel: 0, pan: -0.25,
+                           tempoAnteil: 0.3, blende: 3, an: bremse });
+      var c = b.schleife({ probe: 'frosch2', rate: 0.88, pegel: 0, pan: 0.28,
+                           tempoAnteil: 0.3, blende: 3, an: bremse });
+      if (!a || !c) return;
+      b.atem(a, 1.1, 0.15, 0.4);
+      b.atem(c, 0.7, 0.12, 0.3);
     },
 
     /* ---- Kaminfeuer (Aufnahmen) ----
@@ -1236,8 +1293,10 @@ const Klang = (function () {
     glocke: function (b) {
       var weite = b.hall(0.34, 0.55, 1800);
       b.raus(weite.aus, 0.55, 0);
-      var s = b.rufe({ probe: 'glocke1', pegel: 0.9, pause: [8, 30], rate: [0.96, 1.04],
-                       breite: 0.4, start: 3, roh: true, weich: 0.12 });
+      // Gleichmäßiger Takt statt zufälliger Abstände: eine Kirchturmglocke
+      // schlägt gemächlich, aber beständig.
+      var s = b.rufe({ probe: 'glocke1', pegel: 0.9, pause: [3.4, 3.8], rate: [0.99, 1.01],
+                       breite: 0.3, start: 3, roh: true, weich: 0.12 });
       if (!s) return;
       var fern = b.kette(s, b.tief(2400, 0.7));
       b.raus(fern, 1.0, 0);
@@ -1288,20 +1347,57 @@ const Klang = (function () {
 
     /* ---- Glitzern: sparsame hohe Töne mit langem Nachklang ---- */
     synthGlitzer: function (b) {
-      var raum = b.hall(0.42, 0.68, 7000);
-      b.raus(raum.aus, 0.75, 0);
-      // Pentatonik, damit nie etwas schief klingt
-      var toene = [880, 1046, 1318, 1568, 1760, 2093];
-      for (var i = 0; i < 5; i++) {
+      /* Deutlich zurückgenommen: eine Oktave tiefer, ein Tiefpass gegen die
+       * spitzen Höhen und weichere Anschläge. Vorher stachen einzelne Töne
+       * scharf heraus.
+       *
+       * Die Schwelle war außerdem so hoch (0,62 bei Exponent 4), dass die Töne
+       * mal gar nicht und mal alle zugleich aufblühten: gemessen schwankte der
+       * Pegel zwischen RMS 0,011 und 0,147, je nachdem, wie die Zufallstempi
+       * gerade fielen. Jetzt schwellen sie flach und regelmäßig an. */
+      var raum = b.hall(0.42, 0.6, 4200);
+      b.raus(raum.aus, 0.5, 0);
+      // Achtung: kette() gibt das LETZTE Glied zurueck – der Eingang muss
+      // separat gehalten werden, sonst haengt alles am Hochpass.
+      var tief = b.tief(2400, 0.6);
+      var daempfer = b.kette(tief, b.hoch(280, 0.5));
+      b.raus(daempfer, 1.0, 0);
+      var toene = [440, 523, 659, 784, 880, 1046];   // Pentatonik
+      for (var i = 0; i < 4; i++) {
         var f = toene[Math.floor(Math.random() * toene.length)];
         var o = b.sinus(f, 'sine');
         var tor = b.v(0);
         o.connect(tor);
-        // seltene, weich ansteigende Anschläge
-        b.mod(tor.gain, b.selten(0.5 + Math.random() * 0.7, 0.55, 3.0), 1.5);
-        var g = b.raus(tor, 1.0, (Math.random() * 1.6 - 0.8));
+        b.mod(tor.gain, b.selten(0.3 + Math.random() * 0.3, 0.45, 3.0), 0.24);
+        tor.connect(tief);
         tor.connect(raum.ein);
       }
+    },
+
+    /* ---- OM: ein langer, gleichmäßiger Vokalklang ----
+     * Aufgebaut wie eine Stimme: Grundton mit Obertönen, geformt von drei
+     * Formantfiltern, die den Vokal ausmachen. Der Ton steht und atmet nur
+     * ganz leicht – kein Anfang, kein Ende. */
+    synthOm: function (b) {
+      var raum = b.hall(0.38, 0.5, 2200);
+      b.raus(raum.aus, 0.3, 0);
+      var grund = 110;
+      var summe = b.v(1);
+      [[1, 1.0], [2, 0.5], [3, 0.28], [4, 0.16], [5, 0.09], [6, 0.05]].forEach(function (t) {
+        var o = b.sinus(0, 'sine');
+        o.frequency.value = 0;
+        b.mod(o.frequency, b.steuer(grund * t[0], grund * t[0] * 0.0015, 0.25));
+        var g = b.v(t[1]);
+        o.connect(g); g.connect(summe);
+      });
+      // Formanten: zwischen offenem 'o' und geschlossenem 'm'
+      var f1 = b.flt('peaking', 420, 3); f1.gain.value = 11;
+      var f2 = b.flt('peaking', 800, 4); f2.gain.value = 7;
+      var f3 = b.flt('peaking', 2400, 5); f3.gain.value = -6;
+      var stimme = b.kette(summe, f1, f2, f3, b.tief(2800, 0.7));
+      var aus = b.raus(stimme, 0, 0);
+      b.atem(aus, 0.05, 0.006, 0.18);   // kaum Bewegung: der Ton steht
+      aus.connect(raum.ein);
     },
 
     /* ---- Schwebung: zwei fast gleiche Töne, die langsam gegeneinander laufen ---- */
@@ -1322,11 +1418,20 @@ const Klang = (function () {
     schnarchen: function (b) {
       /* Als Schleife statt als einzelne Atemzüge: nur so bleibt der ganze
        * Zyklus aus Ein- und Ausatmen erhalten. Aus geschnittenen Einzelzügen
-       * wurde immer ein Ein- und Ausschalten, egal wie weich die Blende war. */
-      var a = b.schleife({ probe: 'schnarchL', rate: 0.97, pegel: 0, pan: -0.1,
-                           tempoAnteil: 0.35, blende: 4 });
+       * wurde immer ein Ein- und Ausschalten, egal wie weich die Blende war.
+       *
+       * Die Bremse ist hier das eigentliche Werkzeug gegen das Grunzen: roh
+       * steht eine Spitze von 0,96 gegen einen Mittelwert von 0,047 – die
+       * lauten Stellen sind zwanzigmal so laut wie der ruhige Atem dazwischen.
+       * Mit der Bremse rückt beides zusammen, das Atmen wird gleichmäßig. */
+      var bremse = b.presser(-30, 5);
+      var weich = b.tief(2000, 0.6);   // nimmt dem Schnarchen die Rasselschärfe
+      weich.connect(bremse);
+      b.raus(bremse, 1.0, -0.08);
+      var a = b.schleife({ probe: 'schnarchL', rate: 0.86, pegel: 0, pan: 0,
+                           tempoAnteil: 0.25, blende: 6, an: weich });
       if (!a) return;
-      b.atem(a, 6.5, 0.6, 0.3);
+      b.atem(a, 7.5, 0.12, 0.2);   // kaum Schwankung: ruhiger, gleichmaessiger Atem
     },
 
     /* ================= Menschenwelt ================= */
@@ -1340,16 +1445,28 @@ const Klang = (function () {
       b.raus(weite.aus, 0.35, 0);
       var a = b.schleife({ probe: 'zugN1', rate: 0.99, pegel: 0, pan: -0.15,
                            tempoAnteil: 0.25, blende: 3 });
-      /* Die zweite Lage läuft in DERSELBEN Geschwindigkeit. Vorher lief sie
-       * mit 0,83 – dadurch schlugen zwei verschiedene Rhythmen gegeneinander
-       * und verwischten genau das, was den Zug ausmacht: den gleichmäßigen
-       * Takt der Schienenstöße. Sie trägt jetzt nur noch die Tiefe bei. */
-      var c = b.schleife({ probe: 'zugN1', rate: 1.0, pegel: 0, pan: 0.16,
-                           tempoAnteil: 0.25, blende: 2.5 });
-      if (!a || !c) return;
-      b.atem(a, 0.9, 0.08, 0.3);
-      b.atem(c, 0.4, 0.05, 0.22);
+      if (!a) return;
+      b.atem(a, 0.75, 0.06, 0.3);
       a.connect(weite.ein);
+
+      /* Die Schienenstöße kommen aus dem Klangnetz, nicht aus der Aufnahme:
+       * In keiner der gefundenen Aufnahmen war das typische Tuck-Tuck klar
+       * genug. Synthetisch ist der Takt exakt – und genau das macht den Zug
+       * aus. Zwei Schläge kurz nacheinander, weil ein Drehgestell zwei Achsen
+       * hat, dann eine Pause bis zum nächsten Wagen. */
+      var stoss = b.v(0);
+      b.rausch().connect(stoss);
+      b.takt(1.35, 0.16, 1.8).connect(stoss.gain);
+      var st = b.kette(stoss, b.band(380, 2.4), b.tief(850, 0.9));
+      b.raus(st, 0.85, -0.18);
+      st.connect(weite.ein);
+
+      var stoss2 = b.v(0);
+      b.rausch().connect(stoss2);
+      var versetzt = b.verz(0.21);         // zweite Achse, gut zwei Zehntel später
+      b.takt(1.35, 0.16, 1.8).connect(versetzt);
+      versetzt.connect(stoss2.gain);
+      b.raus(b.kette(stoss2, b.band(330, 2.6), b.tief(760, 0.9)), 0.6, 0.2);
     },
 
     /* ---- Straßengeräusche ---- */
@@ -1412,15 +1529,15 @@ const Klang = (function () {
    * Die Werte sind gemessen (OfflineAudioContext, Ziel-RMS 0,09),
    * nicht geschätzt – nach jeder Klangänderung neu messen. */
   var AUSGLEICH = {
-    regen: 0.82, niesel: 1.08, strand: 1.22, fluss: 1.73, unterwasser: 1.10, blasen: 1.09,
-    bach: 1.76, tropfen: 0.96, moewen: 1.08,
+    regen: 0.82, niesel: 1.08, strand: 1.22, fluss: 1.73, unterwasser: 1.10, blasen: 1.25,
+    bach: 1.76, tropfen: 0.55, moewen: 1.08,
     feuer: 0.89,
     wind: 2.09, donner: 1.22, wipfel: 2.02,
     grillen: 0.99, vogelDe: 1.45, vogelAfrika: 2.33,
-    wal: 1.14, katze: 1.46, bauernhof: 1.76, kamin: 1.14,
-    schnarchen: 0.82, zug: 0.93, strasse: 1.75,
-    schale: 0.94, glocke: 1.27,
-    synthWarm: 9.18, synthTief: 3.14, synthGlitzer: 0.60, synthSchweb: 7.96,
+    wal: 1.14, katze: 1.46, bauernhof: 1.25, kamin: 1.14, froesche: 0.95,
+    schnarchen: 0.98, zug: 1.20, strasse: 1.75,
+    schale: 0.94, glocke: 0.90,
+    synthWarm: 9.18, synthTief: 3.14, synthGlitzer: 3.00, synthSchweb: 7.96, synthOm: 1.81,
     weiss: 0.66, rosa: 0.28, braun: 0.95
   };
 

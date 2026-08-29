@@ -239,3 +239,40 @@ Ein Stufenwechsel **baut die Kulisse neu auf**, weil der Faktor in den Aufbau ei
 
 `feuerstark` gibt es seit v1.6 nicht mehr – das ist jetzt das Lagerfeuer auf Stufe „schnell".
 Alte Stände werden beim Laden umgeschrieben (inklusive Entfernen der Dublette im Pult).
+
+## Favoriten (seit v2.1)
+
+Bis zu **zehn benannte Mischungen** (`MAX_FAVORITEN`), im Blatt `#bl-fav` über den Chip
+`#chip-fav`. Gespeichert wird, was die Mischung ausmacht: `pult`, `an`, `vol`, `tempo` –
+alles in `st.favoriten`, also im selben `localStorage`-Eintrag wie der übrige Zustand.
+
+- `favoritSpeichern(name)` verweigert eine leere Mischung (nichts läuft) und die elfte.
+- `favoritLaden(i)` räumt erst alles Laufende ab, setzt dann Pult, Regler und Stufen und
+  startet die gespeicherten Kulissen. Unbekannte Ids (aus einer alten Fassung) werden
+  dabei **weggefiltert** – sonst läge eine Kachel im Pult, zu der es keine Kulisse gibt.
+- Ab zehn Einträgen sperren sich Namensfeld und Sichern-Knopf.
+
+## Fallstricke (dazugekommen in 2.1)
+
+- **`kette()` gibt das LETZTE Glied zurück.** Wer eine Filterkette *vor* eine Schicht hängen
+  will, braucht den Eingang separat – sonst hängt die Quelle am letzten Filter und alle
+  davor sind wirkungslos. Genau das war beim Bauernhof passiert: der Tiefpass, der die
+  schrillen Spitzen nehmen sollte, lag im Signalweg gar nicht drin.
+- **Schichten mit sehr verschiedener Lautheit brauchen eine gemeinsame Bremse, nicht nur
+  einen kleineren Ausgleich.** Der Bauernhof stand bei RMS 0,10 mit einer Spitze von 3,9
+  (das Muhen gegen den Hof dahinter); der Ausgleich nach Formel hätte alles auf RMS 0,019
+  gedrückt, also unhörbar. Mit `presser` vor dem Ausgang kommen 0,068 bei Spitze 0,71
+  heraus. Dasselbe bei Fröschen (Quaken in Schüben) und Schnarchen (Grunzen).
+- **Bei sporadischen Kulissen hängt das gemessene RMS am Fenster.** Glitzer maß über 40 s
+  0,035 und über 32 s 0,147 – dort lieber vorsichtig ansetzen und die Spitze als Maß nehmen.
+
+## Wassertropfen: zurück zur Synthese (2.1)
+
+Aus Aufnahmen geschnitten blieben die Tropfen abgehackt und blechern, egal wie lang das
+Segment war. Ein Tropfen ist genau das, was Beatboxer nachmachen: ein kurzer Ton, dessen
+Tonhöhe beim Eintauchen steil nach oben schnellt. Als Klangnetz gebaut lässt er sich
+gleichmäßig halten – drei feste Tropfraten (1,05 · 1,55 · 2,35 s über `takt`, also mit
+Tempo) ergeben einen **stetigen Strom** statt einzelner Ereignisse. Gemessen: Streuung der
+Halbsekunden-Pegel 0,30 statt vorher deutlich mehr.
+
+Damit sind 34 Kulissen in sieben Kategorien im Spiel.

@@ -118,3 +118,21 @@ Menschenstimmen) sowie die Tukane (die Tropen-Kulisse wurde zu Möwen).
 Die vier **Synth**-Kulissen brauchen keine Aufnahmen: Klangflächen sind der Fall,
 für den die Synthese gebaut ist – sie schweben endlos gegeneinander, weil ihre
 Steuerkurven nicht zueinander passen.
+
+## Seit Version 2.1
+
+| Datei | Aufnahme | Lizenz | Urheber |
+|---|---|---|---|
+| `frosch1.mp3` | [Gray Treefrogs (loop)](https://freesound.org/s/825229/) | CC BY 4.0 | NickTayloe |
+| `frosch2.mp3` | [frogs](https://freesound.org/s/633207/) | CC0 | suoguolh |
+| `huhn2.mp3` | [Chickens in the coop, morning](https://freesound.org/s/536693/) | CC0 | fthgurdy |
+
+Entfernt: `schaf1.mp3` und `huhn1.mp3` (der Bauernhof besteht auf Wunsch nur noch aus
+Hühnern und Kühen – im Hühnerhof steckte außerdem ein Hahn), sowie `tropfH1.mp3` und
+`tropfH2.mp3` – die Wassertropfen entstehen seit 2.1 wieder im Klangnetz.
+
+**Warum die Tropfen zurück zur Synthese gehen:** Aus Aufnahmen geschnitten blieben sie
+abgehackt und blechern, egal wie lang das Segment war. Ein Tropfen ist das, was
+Beatboxer nachmachen – ein kurzer Ton, dessen Tonhöhe beim Eintauchen nach oben
+schnellt. Als Klangnetz gebaut lässt er sich gleichmäßig halten, und drei Tropfraten
+(1,05 · 1,55 · 2,35 s) ergeben einen stetigen Strom statt einzelner Ereignisse.
