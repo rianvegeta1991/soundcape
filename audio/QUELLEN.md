@@ -163,3 +163,15 @@ Der Bauernhof filtert die Hühner jetzt bei 520 Hz statt 1100 Hz: die Spitze
 des Gackerns liegt bei 850 Hz und lag damit vorher im Durchlassbereich.
 Die Kirchturmglocke läuft ohne Nachhall und in einem Bandfenster von 420 bis
 1600 Hz – ihr Ton liegt bei 849 Hz, die nächsten Teiltöne 19 dB darunter.
+
+## Version 1.14
+
+| Datei | Aufnahme | Lizenz | Urheber |
+|---|---|---|---|
+| `taube1.mp3` | [20070527.cooing](https://freesound.org/s/36048/) | CC BY 3.0 | dobroide |
+
+Entfernt: `huhn3.mp3`. Die Hühner sind ganz raus – auch die hahnenfreie Aufnahme
+klang zu hoch, weil die Spitze des Gackerns bei 850 Hz liegt und ein Filter, der
+sie wegnimmt, das Gackern gleich mitnimmt. Taubengurren löst das an der Wurzel:
+über die vollen 125 Sekunden der Aufnahme liegt der Sekundenpegel zwischen 0,07
+und 0,12, und nur 16 % der Energie sitzen über 1,2 kHz.

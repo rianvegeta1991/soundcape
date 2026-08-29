@@ -12,7 +12,7 @@
 
   <rect width="512" height="512" rx="112" fill="url(#bg)"/>
 
-  <!-- Schild -->
+  <!-- Schild: waagerecht 104..408, senkrecht 78..438 -->
   <path d="M256 78
            C200 96 148 104 104 104
            C104 170 108 250 130 312
@@ -22,8 +22,19 @@
            C364 104 312 96 256 78 Z"
         fill="url(#schild)"/>
 
-  <!-- Klangwelle in der Mitte -->
-  <path d="M146 258h28l20-44 24 98 24-130 24 144 22-90 22 22h56"
+  <!-- Klangwelle, mittig im Schild.
+       Vorher lagen die Ausschläge links und rechts lief ein langer flacher
+       Strich aus – das zog das Motiv sichtbar nach links, obwohl es rechnerisch
+       zentriert war. Jetzt ist die Kurve spiegelsymmetrisch um x=256: gleich
+       lange Ausläufer, der höchste Ausschlag genau in der Mitte.
+       Waagerecht 146..366 (Mitte 256), senkrecht 198..330 (Mitte 264).
+       Die Mitte liegt bewusst 6 unter der geometrischen Schildmitte: das
+       Schild laeuft nach unten spitz zu, bei Mitte 252 stand die Welle
+       sichtbar zu hoch. -->
+  <path d="M146 280
+           h20 l16 -30 l16 54 l16 -74 l18 100
+           l24 -132 l24 132 l18 -100
+           l16 74 l16 -54 l16 30 h20"
         fill="none" stroke="#0c1424" stroke-width="23"
         stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

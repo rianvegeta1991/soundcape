@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '2.3';
+  var APP_VERSION = '1.14';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -98,7 +98,7 @@
       ikon: '<path d="M4 26c6 0 9-3 13-3s5 3 5 6" />' +
             '<path d="M22 29c4-1 8-4 10-9 1.4 4 3.4 6 4 10-4.6 1.6-9.6 1.4-14-1z" stroke-linejoin="round"/>' +
             '<path d="M8 14c1.6-3 4-4.6 7-4.6"/>' },
-    { id: 'bauernhof', kat: 'tiere', name: 'Bauernhof', unter: 'Hühner und Kühe, dumpf', rgb: '214,186,120',
+    { id: 'bauernhof', kat: 'tiere', name: 'Bauernhof', unter: 'Tauben und Kühe, dumpf', rgb: '214,186,120',
       // Kuhkopf mit Hörnern
       ikon: '<path d="M7 11c0-3 3-4 6-3M33 11c0-3-3-4-6-3"/>' +
             '<path d="M13 8c-3 3-4 8-4 12 0 6 5 11 11 11s11-5 11-11c0-4-1-9-4-12"/>' +

@@ -146,12 +146,13 @@ const Klang = (function () {
      * gleichmäßig zwischen 0,028 und 0,057; danach blendet die Aufnahme aus. */
     frosch2: { datei: 'audio/frosch2.mp3', segmente: [[1.0, 28.0]] },
 
-    /* --- Bauernhof: Hühner ohne Hahn.
-     * Die alte Aufnahme (huhn2, "Chickens in the coop, morning") hatte
-     * Hahnenschreie: im Band 1,2–3 kHz standen bei den Sekunden 11, 12, 27,
-     * 42 und 44 Spitzen von 0,07 bis 0,11 gegen einen Grundwert von 0,005.
-     * huhn3 ist dort durchgehend flach (0,003 bis 0,037) – kein Hahn. */
-    huhn3: { datei: 'audio/huhn3.mp3', segmente: [[7.0, 10.8]] },
+    /* --- Bauernhof: Taubengurren statt Hühnern.
+     * Die Hühner sind ganz raus – auch die Aufnahme ohne Hahn klang zu hoch,
+     * ihre Spitze lag bei 850 Hz. Gurren ist von Natur aus tief und
+     * gleichmäßig: über die vollen 125 Sekunden liegt der Sekundenpegel
+     * zwischen 0,07 und 0,12, und nur 16 % der Energie sitzen über 1,2 kHz
+     * (bei den Hühnern war es ein Vielfaches). --- */
+    taube1: { datei: 'audio/taube1.mp3', segmente: [[2.0, 36.0]] },
     kuh1: { datei: 'audio/kuh1.mp3', segmente: [
       [0.0, 4.5], [4.5, 4.5], [9.5, 4.5], [14.5, 4.5], [19.5, 4.5], [23.5, 4.0]] },
 
@@ -244,7 +245,7 @@ const Klang = (function () {
     donner: ['donnN1', 'donnN2'],
     bach: ['bach1', 'bach2'],
     schnarchen: ['schnarchL'],
-    bauernhof: ['huhn3', 'kuh1'],
+    bauernhof: ['taube1', 'kuh1'],
     froesche: ['frosch2'],
     kamin: ['kamin1', 'kamin2', 'feuerknack'],
     schale: ['schale1', 'schale2'],
@@ -1192,33 +1193,30 @@ const Klang = (function () {
      * Der Hühnerhof trägt als Schleife, Kühe und Schafe rufen gelegentlich
      * dazwischen – so klingt es nach Hof und nicht nach Streichelzoo. */
     bauernhof: function (b) {
-      /* Nur Hennen und Kühe – und beides dumpf.
-       * Der Hahn steckte in der Aufnahme selbst, nicht im Klangweg: huhn2
-       * hatte im Band 1,2–3 kHz Spitzen von 0,07 bis 0,11 gegen einen
-       * Grundwert von 0,005, also mehrere Hahnenschreie. Wegzufiltern war das
-       * nicht, ohne das Gackern mitzunehmen. Deshalb eine andere Aufnahme.
+      /* Tauben und Kühe – beides tief und ruhig.
+       *
+       * Die Hühner sind ganz raus. Erst hatte die Aufnahme Hahnenschreie
+       * (huhn2: im Band 1,2–3 kHz Spitzen von 0,07 bis 0,11 gegen einen
+       * Grundwert von 0,005), dann klang auch die hahnenfreie Aufnahme noch
+       * zu hoch – die Spitze des Gackerns liegt bei 850 Hz, und wer die
+       * wegfiltert, filtert das Gackern weg. Gurren löst das Problem an der
+       * Wurzel: es ist von Natur aus tief.
        *
        * Beide Schichten laufen durch eine gemeinsame Bremse: das Muhen war
        * sonst um ein Vielfaches lauter als der Hof dahinter (gemessen: Spitze
        * 3,9 bei RMS 0,10), und der Ausgleich hätte alles unhörbar gemacht. */
       var bremse = b.presser(-24, 6);
       b.raus(bremse, 1.0, 0);
-      /* Der Tiefpass stand bei 1100 Hz – und genau darunter, bei 850 Hz, liegt
-       * die Spitze des Gackerns (gemessen per Goertzel: 850 Hz auf 0 dB,
-       * 500 Hz -8, 600 Hz -12). Er ließ also gerade das durch, was zu hoch
-       * klang. Jetzt zwei Tiefpässe in Reihe bei 520 Hz: 24 dB je Oktave,
-       * damit rutscht die Spitze auf die tieferen Anteile bei 500–600 Hz.
-       *
-       * Achtung: kette() gibt das LETZTE Glied zurueck. Der Eingang der Kette
+      /* Achtung: kette() gibt das LETZTE Glied zurueck. Der Eingang der Kette
        * muss separat gehalten werden, sonst haengt die Schleife am Hochpass
        * und die Tiefpaesse sind wirkungslos. */
-      var tief = b.tief(520, 0.6);
-      var sanft = b.kette(tief, b.tief(520, 0.6), b.hoch(120, 0.6));
+      var tief = b.tief(900, 0.6);
+      var sanft = b.kette(tief, b.tief(900, 0.6), b.hoch(110, 0.6));
       sanft.connect(bremse);
-      var hof = b.schleife({ probe: 'huhn3', rate: 1.0, pegel: 0, pan: 0,
-                             tempoAnteil: 0.25, blende: 2.5, an: tief });
+      var hof = b.schleife({ probe: 'taube1', rate: 1.0, pegel: 0, pan: 0,
+                             tempoAnteil: 0.2, blende: 4, an: tief });
       if (!hof) return;
-      b.atem(hof, 4.5, 0.35, 0.4);
+      b.atem(hof, 1.3, 0.08, 0.35);      // kaum Schwankung: ruhiges Gurren
       // Auch die Kühe dumpf: zwei Tiefpässe nehmen dem Muhen das Blöken
       var muh = b.tief(600, 0.6);
       b.kette(muh, b.tief(600, 0.6)).connect(bremse);
@@ -1322,16 +1320,28 @@ const Klang = (function () {
     om: function (b) {
       var bremse = b.presser(-26, 6);
       b.raus(bremse, 1.0, 0);
-      var raum = b.hall(0.34, 0.45, 2400);
+      var raum = b.hall(0.34, 0.45, 1200);
       var nass = b.v(0.3);
       raum.aus.connect(nass); nass.connect(bremse);
+      /* Nur der Grundton. Die Aufnahme ist eine einzelne Stimme, aber ihre
+       * Obertöne sind so kräftig, dass man mehrere Tonhöhen hört – gemessen:
+       * 117 Hz (-2,6 dB), 233 Hz (-5,0), 350 Hz (-7,9) und 466 Hz (0,0).
+       * Der vierte Teilton war also der lauteste von allen.
+       *
+       * Drei Tiefpässe bei 165 Hz (36 dB je Oktave) drücken 233 Hz um 14 dB,
+       * 350 Hz um 20 und 466 Hz um 27 – der Grundton bei 117 Hz bleibt stehen
+       * und ist danach die einzige hörbare Tonhöhe. Der Hall ist dunkler
+       * gestellt, damit er die Obertöne nicht wieder hereinholt. */
+      var t1 = b.tief(165, 0.6);
+      var nurGrund = b.kette(t1, b.tief(165, 0.6), b.tief(165, 0.6), b.hoch(70, 0.6));
+      nurGrund.connect(bremse);
+      nurGrund.connect(raum.ein);
       /* tempoAnteil klein: bei einer gesungenen Note verschiebt die
        * Abspielrate die Tonhöhe, und ein OM soll auf allen Stufen ein OM
        * bleiben. Die Stufen ändern hier also fast nichts – das ist Absicht. */
       var stimme = b.schleife({ probe: 'om1', rate: 1.0, pegel: 0, pan: 0,
-                                tempoAnteil: 0.08, blende: 3.5, an: bremse });
+                                tempoAnteil: 0.08, blende: 3.5, an: t1 });
       if (!stimme) return;
-      stimme.connect(raum.ein);
       b.atem(stimme, 1.0, 0.03, 0.15);   // praktisch keine Bewegung
     },
 
@@ -1561,10 +1571,10 @@ const Klang = (function () {
     bach: 1.76, moewen: 1.08,
     feuer: 0.89,
     wind: 2.09, donner: 0.78, wipfel: 2.02,
-    grillen: 2.60, vogelDe: 1.45, vogelAfrika: 2.33,
-    wal: 1.14, katze: 1.46, bauernhof: 0.65, kamin: 1.14, froesche: 1.80,
+    grillen: 2.60, vogelDe: 1.75, vogelAfrika: 2.33,
+    wal: 1.14, katze: 1.46, bauernhof: 0.56, kamin: 1.14, froesche: 1.80,
     schnarchen: 0.98, zug: 1.20, strasse: 1.75,
-    schale: 0.94, glocke: 1.03, om: 0.52,
+    schale: 0.94, glocke: 1.03, om: 0.46,
     synthWarm: 8.20, synthTief: 3.14, synthGlitzer: 0.70, synthSchweb: 7.96,
     weiss: 0.66, rosa: 0.28, braun: 0.95
   };

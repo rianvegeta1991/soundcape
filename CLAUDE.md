@@ -68,8 +68,19 @@ Position und Tonhöhe. Die Dateien selbst bleiben unverändert – gelesen wird 
 | `manifest.webmanifest`, `icon*.png/svg` | PWA-Beiwerk |
 | `serve.ps1` | lokaler Server (PowerShell-`HttpListener`, kein Node) |
 
-Versionsnummer: `APP_VERSION` in `app.js`. Bei Dateiänderungen die `CACHE`-Version in `sw.js`
-hochzählen (`soundcape-vN`).
+## Version
+
+`APP_VERSION` in `app.js`. **Die minor-Zahl zählt als ganze Zahl weiter, nicht als
+Nachkommastelle:** auf 1.14 folgt 1.15, dann 1.16 – wie im Schwesterprojekt
+`rule-detection`. Bei jedem veröffentlichten Update um eins erhöhen; die major-Zahl
+nur bei einem großen Umbau.
+
+Am 30.08.2026 neu gesetzt auf **1.14**. Vorher lief die Zählung als Dezimalzahl
+(zuletzt 2.3) – die alten Nummern stehen so in der Git-Historie und in den
+Kommentaren; das ist kein Fehler, sondern die frühere Zählweise.
+
+Bei Dateiänderungen zusätzlich die `CACHE`-Version in `sw.js` hochzählen
+(`soundcape-vN`), sonst holt die installierte PWA die alten Dateien aus dem Cache.
 
 ## Aufbau der Klangmaschine (`sound.js`)
 
@@ -399,3 +410,30 @@ blechern), dann synthetisch (der Ton stimmte nicht) – nach mehreren Anläufen
 war die richtige Antwort, die Kulisse zu streichen statt weiter daran zu
 schrauben. Ein synthetischer Tropfen bleibt eine offene Aufgabe, kein Fehler
 im Code: es gibt nichts mehr zu reparieren.
+
+## Version 1.14: was dabei gelernt wurde
+
+**Obertöne können lauter sein als der Grundton.** Das OM klang nach drei Tonhöhen,
+obwohl es eine einzelne Stimme ist: gemessen lagen 117 Hz bei -2,6 dB, 233 Hz bei
+-5,0, 350 Hz bei -7,9 – und **466 Hz bei 0,0**, der vierte Teilton war der lauteste
+von allen. Drei Tiefpässe bei 165 Hz (36 dB je Oktave) machen den Grundton wieder
+zum einzigen hörbaren Ton; danach liegt der nächste Teilton 18 dB darunter.
+Der Hall musste dabei mit dunkler gestellt werden, sonst holt er die Obertöne zurück.
+
+**Manchmal ist die falsche Quelle das Problem, nicht der Filter.** Die Hühner waren
+drei Runden lang zu hoch: erst mit Hahn, dann ohne Hahn aber mit einer Gackerspitze
+bei 850 Hz. Ein Filter dagegen nimmt das Gackern gleich mit – es *ist* das Gackern.
+Taubengurren ist von Natur aus tief und gleichmäßig und braucht kaum Filterung.
+**Wenn dieselbe Beschwerde dreimal kommt, liegt es nicht am Parameter.**
+
+**Optisch mittig ist nicht rechnerisch mittig.** Die Welle im Logo war exakt auf
+x=256 zentriert und sah trotzdem nach links gerückt aus: die Ausschläge lagen links,
+rechts lief ein langer flacher Strich aus. Jetzt ist die Kurve spiegelsymmetrisch um
+die Mitte. Senkrecht sitzt sie 6 Einheiten unter der geometrischen Schildmitte, weil
+das Schild nach unten spitz zuläuft.
+
+Die PNG-Icons werden **nicht** aus dem SVG gerendert (kein Werkzeug dafür auf dem
+Rechner), sondern in PowerShell mit `System.Drawing` nachgezeichnet – Schild als
+sechs Bezierkurven, Welle als Polylinie mit runden Kappen. **Bei Logoänderungen
+beide Stellen nachziehen**, sonst zeigt die installierte PWA das alte Motiv.
+Das maskable Icon bekommt das Motiv auf 74 % skaliert und ohne runde Ecken.
