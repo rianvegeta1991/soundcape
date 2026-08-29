@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '2.1';
+  var APP_VERSION = '2.2';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -101,7 +101,7 @@
       ikon: '<path d="M4 26c6 0 9-3 13-3s5 3 5 6" />' +
             '<path d="M22 29c4-1 8-4 10-9 1.4 4 3.4 6 4 10-4.6 1.6-9.6 1.4-14-1z" stroke-linejoin="round"/>' +
             '<path d="M8 14c1.6-3 4-4.6 7-4.6"/>' },
-    { id: 'bauernhof', kat: 'tiere', name: 'Bauernhof', unter: 'Kühe, Schafe, Hühner', rgb: '214,186,120',
+    { id: 'bauernhof', kat: 'tiere', name: 'Bauernhof', unter: 'Hühner und Kühe, dumpf', rgb: '214,186,120',
       // Kuhkopf mit Hörnern
       ikon: '<path d="M7 11c0-3 3-4 6-3M33 11c0-3-3-4-6-3"/>' +
             '<path d="M13 8c-3 3-4 8-4 12 0 6 5 11 11 11s11-5 11-11c0-4-1-9-4-12"/>' +
@@ -113,7 +113,7 @@
             '<path d="M16 21h.1M24 21h.1M20 25v1.6M20 26.6c-1.4 1.4-3.4 1.2-4.4-.4M20 26.6c1.4 1.4 3.4 1.2 4.4-.4"/>' },
 
     /* --- Menschenwelt --- */
-    { id: 'froesche', kat: 'tiere', name: 'Frösche', unter: 'Abend am Teich', rgb: '134,196,116',
+    { id: 'froesche', kat: 'tiere', name: 'Frösche', unter: 'Tiefes Quaken am Teich', rgb: '134,196,116',
       // Frosch von vorn: Kopf mit Augen und angewinkelten Beinen
       ikon: '<circle cx="14" cy="12" r="3.5"/><circle cx="26" cy="12" r="3.5"/>' +
             '<path d="M8 20c0-5 5.4-8 12-8s12 3 12 8c0 5.5-5.4 9-12 9s-12-3.5-12-9z"/>' +
@@ -134,9 +134,14 @@
       ikon: '<path d="M9 18c0 6.5 5 11 11 11s11-4.5 11-11z"/>' +
             '<path d="M5 18h30M27 8l-4 7"/><circle cx="28.5" cy="6.5" r="2.5"/>' +
             '<path d="M6 24c-1.6 1.6-1.6 4.4 0 6M34 24c1.6 1.6 1.6 4.4 0 6"/>' },
-    { id: 'glocke', kat: 'welt', name: 'Kirchturmglocke', unter: 'Einzelne Schläge, fern', rgb: '196,178,156',
+    { id: 'glocke', kat: 'welt', name: 'Kirchturmglocke', unter: 'Gleichmäßiges Läuten, fern', rgb: '196,178,156',
       ikon: '<path d="M20 6c-5 0-8 4-8 9 0 6-2 10-3 12h22c-1-2-3-6-3-12 0-5-3-9-8-9z" stroke-linejoin="round"/>' +
             '<path d="M20 3v3M17 31c0 1.8 1.3 3 3 3s3-1.2 3-3"/>' },
+    { id: 'om', kat: 'welt', name: 'OM', unter: 'Gesungen, gleichbleibend', rgb: '228,184,140',
+      // Om-artiger Kreis mit ruhenden Wellen
+      ikon: '<circle cx="20" cy="20" r="14"/>' +
+            '<path d="M9 20c3.7 0 3.7-4 7.3-4s3.7 4 7.4 4 3.7-4 7.3-4"/>' +
+            '<path d="M20 6v3M20 31v3"/>' },
 
     /* --- Synth --- */
     { id: 'synthWarm', kat: 'synth', name: 'Warmes Pad', unter: 'Weiche Akkordfläche', rgb: '236,166,120',
@@ -152,11 +157,6 @@
     { id: 'synthSchweb', kat: 'synth', name: 'Schwebung', unter: 'Zwei Töne, die wandern', rgb: '132,206,196',
       ikon: '<path d="M4 15c5.5 0 5.5-7 11-7s5.5 7 11 7 5.5-7 10-7"/>' +
             '<path d="M4 26c5 0 5 7 10 7s5-7 10-7 5 7 12 7"/>' },
-    { id: 'synthOm', kat: 'synth', name: 'OM', unter: 'Ein langer, stehender Ton', rgb: '228,184,140',
-      // Om-artiger Kreis mit ruhenden Wellen
-      ikon: '<circle cx="20" cy="20" r="14"/>' +
-            '<path d="M9 20c3.7 0 3.7-4 7.3-4s3.7 4 7.4 4 3.7-4 7.3-4"/>' +
-            '<path d="M20 6v3M20 31v3"/>' },
 
     /* --- Rauschen --- */
     { id: 'weiss', kat: 'rauschen', name: 'White Noise', unter: 'Volles Spektrum', rgb: '226,232,242',
@@ -213,14 +213,25 @@
         if (x === 'gewitter') return 'donner';
         if (x === 'feuerstark') return 'feuer';
         if (x === 'vogelTropen') return 'moewen';   // Tropenvögel wurden zu Möwen
+        if (x === 'synthOm') return 'om';           // OM wird gesungen statt erzeugt
         return x;
       }
       if (g.favoriten && g.favoriten.length) {
+        /* Auch in den Favoriten umbenennen – und zwar in allen vier Feldern.
+         * Nur das Pult zu ziehen reichte nicht: an/vol/tempo behielten den
+         * alten Schlüssel, und beim Laden fiel die Kulisse durch die
+         * NACH_ID-Prüfung heraus. Aus einem Favoriten mit OM wäre also ein
+         * Favorit ohne OM geworden. */
+        var umKeys = function (o) {
+          var neu = {};
+          for (var k in o) { var z = umbenennen(k); if (NACH_ID[z]) neu[z] = o[k]; }
+          return neu;
+        };
         st.favoriten = g.favoriten.slice(0, MAX_FAVORITEN).map(function (f) {
           return {
             name: String(f.name || 'Ohne Namen').slice(0, 40),
             pult: (f.pult || []).map(umbenennen).filter(function (x) { return !!NACH_ID[x]; }),
-            an: f.an || {}, vol: f.vol || {}, tempo: f.tempo || {}
+            an: umKeys(f.an || {}), vol: umKeys(f.vol || {}), tempo: umKeys(f.tempo || {})
           };
         });
       }

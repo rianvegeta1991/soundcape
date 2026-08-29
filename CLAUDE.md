@@ -276,3 +276,91 @@ Tempo) ergeben einen **stetigen Strom** statt einzelner Ereignisse. Gemessen: St
 Halbsekunden-Pegel 0,30 statt vorher deutlich mehr.
 
 Damit sind 34 Kulissen in sieben Kategorien im Spiel.
+
+## Gleichbleibender Takt: `gleich` in `rufe` (seit v2.2)
+
+Für die Kirchturmglocke gebaut. `rufe({..., gleich: true})` schaltet **jeden Zufall ab**:
+immer Segment 0, `rate[0]` als feste Geschwindigkeit, Lautstärke 1, keine Stereostreuung –
+und der Abstand wird **von Anschlag zu Anschlag** gemessen (`pause[0]`) statt vom Ende des
+vorigen. Nur dadurch bleibt der Takt gleich, egal wie lang das Segment ist.
+
+Gemessen: acht Anschläge in 40 s, Abstände exakt 5,20 s, Spitzenpegel alle exakt gleich.
+
+Zwei Dinge, die dabei zusammengehören:
+- Die Glocke braucht **genau ein Segment** in `PROBEN`. Vorher standen dort fünf Segmente
+  à 5 s, die sich überlappten – jeder Schlag klang anders, weil ein anderer erwischt wurde.
+  Gewählt ist der Anschlag bei 25,03 s: danach kommt bis 42,4 s nichts, der Nachklang
+  bleibt also ungestört.
+- **`weich` muss hier 0 sein.** Mit `weich: 0.06` wurde die Attacke über 0,28 s
+  aufgezogen – die Anschlagserkennung fand daraufhin gar keinen Anschlag mehr, und eine
+  Glocke ohne Anschlag ist keine Glocke. Ohne `weich` bleibt es bei 30 ms.
+
+## Wann ein Filter nicht reicht
+
+Ein einzelner Biquad fällt mit 12 dB je Oktave – bei der doppelten Grenzfrequenz sind das
+erst -13 dB. Bei den Fröschen lagen 45 % der Energie bei 1,2–3 kHz gegen 31 % im
+Durchlassbereich; nach einem Tiefpass bei 950 Hz standen immer noch 72 % über 1 kHz, das
+hohe Quaken war also weiter da. **Zwei Tiefpässe in Reihe** machen 24 dB je Oktave daraus.
+
+Beim Bauernhof reichte ein Filter, weil die Aufnahme von sich aus tief ist – deshalb
+lohnt es, das Verhältnis vorher zu messen, statt einen Filterwert zu raten.
+
+## Was sich nicht filtern lässt
+
+Der Hahn im Bauernhof steckte in der Aufnahme, nicht im Klangweg: `huhn2` hatte im Band
+1,2–3 kHz Spitzen von 0,07 bis 0,11 gegen einen Grundwert von 0,005. Ein Filter, der das
+wegnimmt, nimmt das Gackern mit. **Die Lösung war eine andere Aufnahme** (`huhn3`, dort
+ist das Band durchgehend flach). Genauso bei den Laubfröschen: 82 % ihrer Energie lagen
+über 1,2 kHz, ihre Sekundenpegel sprangen um den Faktor 50 – die Datei ist raus, statt
+sie zurechtzubiegen.
+
+**Erst die Aufnahme prüfen, dann filtern.** Ein Bandprofil je Sekunde zeigt in Sekunden,
+was stundenlanges Herumschrauben am Klangweg nicht löst.
+
+## OM: die Ausnahme von der Ausnahme (v2.2)
+
+Das OM war synthetisch messbar makellos – Streuung der Halbsekundenpegel 0,01 – und klang
+trotzdem falsch, nämlich nach Orgel. Eine menschliche Stimme lebt von Formantbewegung,
+Rauheit und Atem. Jetzt läuft eine gesungene Aufnahme (`om1`, nur der stehende Teil,
+Sekunde 0,6 bis 11,6) als Schleife.
+
+Die Kulisse heißt deshalb `om` und steht in **Menschenwelt**, nicht mehr in Synth.
+Alte Stände werden über `umbenennen()` von `synthOm` auf `om` gezogen.
+`tempoAnteil` ist mit 0,08 fast null: bei einer gesungenen Note verschiebt die
+Abspielrate die Tonhöhe, und ein OM soll auf jeder Stufe ein OM bleiben.
+
+## Beim Messen gefundene Altlasten (v2.2)
+
+Zwei Fehler, die beim Durchmessen aller 34 Kulissen auffielen und nichts mit dem
+Auftrag zu tun hatten:
+
+- **Donner übersteuerte** (Spitze 1,01 bei Ausgleich 1,22 – alles über 1,0 verzerrt).
+  Über drei Aufbauten gemessen lag die Spitze bei 0,46 / 0,55 / 0,80; der Ausgleich
+  steht jetzt auf 0,78. Bei sporadischen Kulissen zählt der schlechteste Durchlauf,
+  nicht der mittlere.
+- **Grillen waren 13 dB zu leise** (RMS 0,019 gegen ein Ziel von 0,09) – genau der
+  Fehler, der oben unter „Pegel" schon einmal dokumentiert ist. Jetzt 2,60.
+
+**Deshalb nach jeder Runde alle Kulissen durchmessen, nicht nur die geänderten.**
+
+## Vorsicht bei der Messmethode selbst
+
+Bandenergie über einen Biquad-Bandpass zu messen, führt in die Irre: die Flanken
+haben nur 12 dB je Oktave, und wenn die Energie stark unterhalb liegt, misst das
+obere Band vor allem Leckage. Kontrolltest: weißes Rauschen durch zwei Tiefpässe bei
+850 Hz zeigte im Band 1–2 kHz immer noch einen Anteil von 0,23.
+
+Wo es genau sein muss, **Goertzel** nehmen (einzelne Frequenzen über Hann-gefensterte
+4096er-Blöcke). Erst damit war zu sehen, dass die Filterkette bei den Fröschen die
+3200-Hz-Komponente um 40 dB gegenüber dem Grundton absenkt – der Bandpass-Messung
+zufolge hatte sich fast nichts getan.
+
+Nebenbei zeigte dieselbe Messung, warum nicht weiter zu filtern ist: **die Froschstimme
+selbst sitzt bei 1250 Hz.** Ein tieferer Tiefpass löscht den Frosch, nicht das Quaken.
+
+## Migration: alle vier Felder eines Favoriten
+
+`umbenennen()` lief in `laden()` nur über `pult`. Die Felder `an`, `vol` und `tempo`
+eines Favoriten behielten den alten Schlüssel und fielen beim Laden durch die
+`NACH_ID`-Prüfung – aus einem Favoriten mit OM wäre ein Favorit ohne OM geworden.
+**Bei jeder künftigen Umbenennung alle vier Felder mitziehen** (`umKeys`).

@@ -139,12 +139,19 @@ const Klang = (function () {
     /* --- Leichtes Schnarchen als Schleife: ein- und ausatmen im Stück --- */
     schnarchL: { datei: 'audio/schnarchL.mp3', segmente: [[2.0, 30.0]] },
 
-    /* --- Frösche am Teich --- */
-    frosch1: { datei: 'audio/frosch1.mp3', segmente: [[2.0, 36.0]] },
-    frosch2: { datei: 'audio/frosch2.mp3', segmente: [[2.0, 36.0]] },
+    /* --- Frösche am Teich: nur die tiefe Aufnahme.
+     * frosch1 (Laubfrösche) ist raus – gemessen lagen 82 % ihrer Energie über
+     * 1,2 kHz und die Sekundenpegel sprangen um den Faktor 50. Das war das
+     * hohe, unregelmäßige Quaken. In frosch2 liegen die Sekunden 1 bis 29
+     * gleichmäßig zwischen 0,028 und 0,057; danach blendet die Aufnahme aus. */
+    frosch2: { datei: 'audio/frosch2.mp3', segmente: [[1.0, 28.0]] },
 
-    /* --- Bauernhof --- */
-    huhn2: { datei: 'audio/huhn2.mp3', segmente: [[4.0, 42.0]] },
+    /* --- Bauernhof: Hühner ohne Hahn.
+     * Die alte Aufnahme (huhn2, "Chickens in the coop, morning") hatte
+     * Hahnenschreie: im Band 1,2–3 kHz standen bei den Sekunden 11, 12, 27,
+     * 42 und 44 Spitzen von 0,07 bis 0,11 gegen einen Grundwert von 0,005.
+     * huhn3 ist dort durchgehend flach (0,003 bis 0,037) – kein Hahn. */
+    huhn3: { datei: 'audio/huhn3.mp3', segmente: [[7.0, 10.8]] },
     kuh1: { datei: 'audio/kuh1.mp3', segmente: [
       [0.0, 4.5], [4.5, 4.5], [9.5, 4.5], [14.5, 4.5], [19.5, 4.5], [23.5, 4.0]] },
 
@@ -155,8 +162,16 @@ const Klang = (function () {
     /* --- Klangschale und Kirchglocke --- */
     schale1: { datei: 'audio/schale1.mp3', segmente: [[4.0, 46.0]] },
     schale2: { datei: 'audio/schale2.mp3', segmente: [[0.5, 22.0]] },
-    glocke1: { datei: 'audio/glocke1.mp3', segmente: [
-      [17.15, 5.0], [19.75, 5.0], [22.35, 5.0], [24.95, 5.0], [46.10, 5.0]] },
+    /* Genau EIN Anschlag, und zwar der bei 25,03 s: danach kommt bis 42,4 s
+     * nichts mehr, der Nachklang bleibt also ungestört. Mehrere Segmente
+     * hatten zur Folge, dass jeder Schlag anders klang – die Glocke soll aber
+     * immer gleich läuten. */
+    glocke1: { datei: 'audio/glocke1.mp3', segmente: [[24.99, 4.6]] },
+
+    /* --- OM, von einem Menschen gesungen.
+     * Die Sekunden 0,6 bis 11,6 stehen still (0,084 bis 0,123), danach klingt
+     * der Gesang aus. Nur dieser Teil läuft als Schleife. --- */
+    om1: { datei: 'audio/om1.mp3', segmente: [[0.6, 11.0]] },
 
     /* --- Wassertropfen: nur der Tropfen, ohne Insekten und Hintergrund --- */
     // Die Segmente reichen bewusst über den Aufschlag hinaus: so bleibt das
@@ -232,11 +247,12 @@ const Klang = (function () {
     bach: ['bach1', 'bach2'],
     // tropfen braucht seit 2.1 keine Aufnahme mehr - der Tropfen wird erzeugt
     schnarchen: ['schnarchL'],
-    bauernhof: ['huhn2', 'kuh1'],
-    froesche: ['frosch1', 'frosch2'],
+    bauernhof: ['huhn3', 'kuh1'],
+    froesche: ['frosch2'],
     kamin: ['kamin1', 'kamin2', 'feuerknack'],
     schale: ['schale1', 'schale2'],
     glocke: ['glocke1'],
+    om: ['om1'],
     wipfel: ['blatt1'],
     wind: ['windN1', 'windN2'],
     fluss: ['flussN1', 'flussN2'],
@@ -636,14 +652,23 @@ const Klang = (function () {
         var rate = o.rate || [0.94, 1.06];
         var breite = o.breite === undefined ? 0.7 : o.breite;
         var naechste = ctx.currentTime + 0.4 + Math.random() * (o.start || 2);
+
+        /* "gleich" schaltet allen Zufall ab: immer dasselbe Segment, dieselbe
+         * Geschwindigkeit, dieselbe Lautstärke, dieselbe Position – und der
+         * Abstand wird von Anschlag zu Anschlag gemessen statt vom Ende des
+         * vorigen. Nur so bleibt der Takt gleich, unabhängig davon, wie lang
+         * das Segment ist. Gebraucht für die Kirchturmglocke. */
+        var gleich = !!o.gleich;
+        if (gleich) naechste = ctx.currentTime + 0.4;
         var offen = [];
 
         function planen() {
           var horizont = ctx.currentTime + 120;
           var wache = 0;
           while (naechste < horizont && wache++ < 400) {
-            var seg = probe.segmente[Math.floor(Math.random() * probe.segmente.length)];
-            var r = rate[0] + Math.random() * (rate[1] - rate[0]);
+            var seg = gleich ? probe.segmente[0]
+                             : probe.segmente[Math.floor(Math.random() * probe.segmente.length)];
+            var r = gleich ? rate[0] : rate[0] + Math.random() * (rate[1] - rate[0]);
             var dauer = seg[1] / r;
             var t = naechste;
 
@@ -651,7 +676,7 @@ const Klang = (function () {
             q.buffer = puffer;
             q.playbackRate.value = r;
             var g = ctx.createGain();
-            var lautstaerke = 0.65 + Math.random() * 0.35;
+            var lautstaerke = gleich ? 1 : 0.65 + Math.random() * 0.35;
             /* Ein- und Ausblendung. Bei kurzen Rufen reichen Millisekunden,
              * bei Atemzügen und Tropfen nicht: dort hörte man das Einsetzen
              * und das Abschneiden. "weich" verlängert die Blende anteilig an
@@ -670,7 +695,7 @@ const Klang = (function () {
               g.gain.linearRampToValueAtTime(0, t + dauer);
             }
             q.connect(g);
-            if (stereo && breite) {
+            if (stereo && breite && !gleich) {
               var p = ctx.createStereoPanner();
               p.pan.value = (Math.random() * 2 - 1) * breite;
               g.connect(p); p.connect(summe);
@@ -684,7 +709,9 @@ const Klang = (function () {
               var i = offen.indexOf(this);
               if (i >= 0) offen.splice(i, 1);
             };
-            naechste = t + dauer + pause[0] + Math.random() * (pause[1] - pause[0]);
+            // gleichbleibender Takt: Abstand von Anschlag zu Anschlag
+            naechste = gleich ? t + pause[0]
+                              : t + dauer + pause[0] + Math.random() * (pause[1] - pause[0]);
           }
         }
         planen();
@@ -1214,43 +1241,55 @@ const Klang = (function () {
      * Der Hühnerhof trägt als Schleife, Kühe und Schafe rufen gelegentlich
      * dazwischen – so klingt es nach Hof und nicht nach Streichelzoo. */
     bauernhof: function (b) {
-      // Nur Hennen und Kühe: die Schafe sind raus, und ein Tiefpass nimmt dem
-      // Hühnerhof die schrillen Spitzen, in denen der Hahn sitzt.
-      // Beide Schichten laufen durch eine gemeinsame Bremse: das Muhen war
-      // sonst um ein Vielfaches lauter als der Hof dahinter (gemessen: Spitze
-      // 3,9 bei RMS 0,10), und der Ausgleich hätte alles unhörbar leise gemacht.
+      /* Nur Hennen und Kühe – und beides dumpf.
+       * Der Hahn steckte in der Aufnahme selbst, nicht im Klangweg: huhn2
+       * hatte im Band 1,2–3 kHz Spitzen von 0,07 bis 0,11 gegen einen
+       * Grundwert von 0,005, also mehrere Hahnenschreie. Wegzufiltern war das
+       * nicht, ohne das Gackern mitzunehmen. Deshalb eine andere Aufnahme.
+       *
+       * Beide Schichten laufen durch eine gemeinsame Bremse: das Muhen war
+       * sonst um ein Vielfaches lauter als der Hof dahinter (gemessen: Spitze
+       * 3,9 bei RMS 0,10), und der Ausgleich hätte alles unhörbar gemacht. */
       var bremse = b.presser(-24, 6);
       b.raus(bremse, 1.0, 0);
-      // Achtung: kette() gibt das LETZTE Glied zurueck. Der Eingang der Kette ist
-      // der Tiefpass - der muss separat gehalten werden, sonst haengt die Schleife
-      // am Hochpass und der Tiefpass ist wirkungslos.
-      var tief = b.tief(2600, 0.7);
-      var sanft = b.kette(tief, b.hoch(180, 0.6));
+      // Achtung: kette() gibt das LETZTE Glied zurueck. Der Eingang der Kette
+      // ist der Tiefpass – der muss separat gehalten werden, sonst haengt die
+      // Schleife am Hochpass und der Tiefpass ist wirkungslos.
+      var tief = b.tief(1100, 0.7);       // dumpf: nur der Körper des Gackerns
+      var sanft = b.kette(tief, b.hoch(160, 0.6));
       sanft.connect(bremse);
-      var hof = b.schleife({ probe: 'huhn2', rate: 1.0, pegel: 0, pan: 0,
-                             tempoAnteil: 0.25, blende: 3, an: tief });
+      var hof = b.schleife({ probe: 'huhn3', rate: 1.0, pegel: 0, pan: 0,
+                             tempoAnteil: 0.25, blende: 2.5, an: tief });
       if (!hof) return;
-      b.atem(hof, 1.5, 0.18, 0.4);
+      b.atem(hof, 1.5, 0.12, 0.4);
+      // Auch die Kühe dumpf: der Tiefpass nimmt dem Muhen das Blöken
+      var muh = b.tief(900, 0.7);
+      muh.connect(bremse);
       b.rufe({ probe: 'kuh1', pegel: 0.5, pause: [7, 22], rate: [0.95, 1.05],
-               breite: 0.6, start: 4, weich: 0.15, roh: true, ziel: bremse });
+               breite: 0.6, start: 4, weich: 0.15, roh: true, ziel: muh });
     },
 
-    /* ---- Frösche am Teich (Aufnahmen) ----
-     * Zwei Aufnahmen mit verschiedener Tonlage: die tiefere Lage klingt nach
-     * größeren Tieren weiter hinten. */
+    /* ---- Frösche am Teich (Aufnahme) ----
+     * Nur die tiefe Lage, eine Schleife, eine Geschwindigkeit.
+     * Vorher lagen zwei Aufnahmen mit verschiedener Rate übereinander; die
+     * obere (Laubfrösche) brachte das hohe Quaken mit – 82 % ihrer Energie
+     * lagen über 1,2 kHz, und ihre Sekundenpegel sprangen um den Faktor 50.
+     * Ein Tiefpass nimmt der verbliebenen Aufnahme die restlichen Höhen. */
     froesche: function (b) {
-      // Quaken kommt in Schüben: ohne Bremse standen Spitzen von 1,15 gegen
-      // einen Mittelwert von 0,09, und der Ausgleich haette den Teich
-      // insgesamt zu leise gemacht.
-      var bremse = b.presser(-22, 5);
+      var bremse = b.presser(-24, 6);
       b.raus(bremse, 1.0, 0);
-      var a = b.schleife({ probe: 'frosch1', rate: 1.0, pegel: 0, pan: -0.25,
-                           tempoAnteil: 0.3, blende: 3, an: bremse });
-      var c = b.schleife({ probe: 'frosch2', rate: 0.88, pegel: 0, pan: 0.28,
-                           tempoAnteil: 0.3, blende: 3, an: bremse });
-      if (!a || !c) return;
-      b.atem(a, 1.1, 0.15, 0.4);
-      b.atem(c, 0.7, 0.12, 0.3);
+      /* Zwei Tiefpässe in Reihe, nicht einer. Ein einzelner Biquad fällt mit
+       * 12 dB je Oktave – bei 2 kHz sind das erst -13 dB, und in frosch2
+       * sitzen dort 45 % der Energie gegen 31 % im Durchlassbereich. Gemessen
+       * blieben mit einem Filter 72 % über 1 kHz stehen, das hohe Quaken war
+       * also noch da. Zwei Filter machen 24 dB je Oktave daraus. */
+      var t1 = b.tief(850, 0.6);
+      var kanal = b.kette(t1, b.tief(850, 0.6), b.hoch(140, 0.6));
+      kanal.connect(bremse);
+      var teich = b.schleife({ probe: 'frosch2', rate: 1.0, pegel: 0, pan: 0,
+                               tempoAnteil: 0.25, blende: 4, an: t1 });
+      if (!teich) return;
+      b.atem(teich, 2.6, 0.08, 0.3);   // kaum Schwankung: gleichförmig
     },
 
     /* ---- Kaminfeuer (Aufnahmen) ----
@@ -1288,24 +1327,53 @@ const Klang = (function () {
       c.connect(raum.ein);
     },
 
-    /* ---- Kirchturmglocke in der Ferne (Aufnahme) ----
-     * Einzelne Schläge mit langen Pausen, tiefpassgefiltert für die Ferne. */
+    /* ---- Kirchturmglocke (Aufnahme) ----
+     * Absolut gleichbleibend: ein einziger Anschlag, in festem Abstand
+     * wiederholt. Dafür ist "gleich" da – es schaltet in rufe() jeden Zufall
+     * ab (Segment, Geschwindigkeit, Lautstärke, Stereoposition) und misst den
+     * Abstand von Anschlag zu Anschlag statt vom Ende des vorigen.
+     * Vorher lagen fünf Segmente à 5 s vor, die sich überlappten und zufällig
+     * gewählt wurden: dadurch klang jeder Schlag anders und der Takt wackelte. */
     glocke: function (b) {
       var weite = b.hall(0.34, 0.55, 1800);
-      b.raus(weite.aus, 0.55, 0);
-      // Gleichmäßiger Takt statt zufälliger Abstände: eine Kirchturmglocke
-      // schlägt gemächlich, aber beständig.
-      var s = b.rufe({ probe: 'glocke1', pegel: 0.9, pause: [3.4, 3.8], rate: [0.99, 1.01],
-                       breite: 0.3, start: 3, roh: true, weich: 0.12 });
+      b.raus(weite.aus, 0.5, 0);
+      var s = b.rufe({ probe: 'glocke1', pegel: 0.85, pause: [5.2, 5.2],
+                       rate: [1, 1], breite: 0, start: 1, roh: true,
+                       weich: 0, gleich: true });
       if (!s) return;
       var fern = b.kette(s, b.tief(2400, 0.7));
       b.raus(fern, 1.0, 0);
       fern.connect(weite.ein);
     },
 
+    /* ---- OM (Aufnahme) ----
+     * Gesungen, nicht erzeugt. Die synthetische Fassung war messbar
+     * gleichmäßig (Streuung 0,01), klang aber nach Orgel statt nach Stimme –
+     * eine menschliche Stimme lebt von Dingen, die sich nicht nachbilden
+     * lassen: Formantbewegung, Rauheit, Atem.
+     *
+     * Aus der Aufnahme läuft nur der stehende Teil (Sekunde 0,6 bis 11,6, dort
+     * liegt der Pegel zwischen 0,084 und 0,123); danach klingt der Gesang aus.
+     * Die Bremse hält den Rest still, damit wirklich nichts schwankt. */
+    om: function (b) {
+      var bremse = b.presser(-26, 6);
+      b.raus(bremse, 1.0, 0);
+      var raum = b.hall(0.34, 0.45, 2400);
+      var nass = b.v(0.3);
+      raum.aus.connect(nass); nass.connect(bremse);
+      /* tempoAnteil klein: bei einer gesungenen Note verschiebt die
+       * Abspielrate die Tonhöhe, und ein OM soll auf allen Stufen ein OM
+       * bleiben. Die Stufen ändern hier also fast nichts – das ist Absicht. */
+      var stimme = b.schleife({ probe: 'om1', rate: 1.0, pegel: 0, pan: 0,
+                                tempoAnteil: 0.08, blende: 3.5, an: bremse });
+      if (!stimme) return;
+      stimme.connect(raum.ein);
+      b.atem(stimme, 1.0, 0.03, 0.15);   // praktisch keine Bewegung
+    },
+
     /* ================= Synth ================= */
 
-    /* Vier ruhige Klangflächen. Hier ist die Synthese im Element: keine
+    /* Drei ruhige Klangflächen. Hier ist die Synthese im Element: keine
      * Aufnahme, keine Wiederholung, und die Töne schweben endlos gegeneinander,
      * weil ihre Steuerkurven nicht zueinander passen. */
 
@@ -1374,31 +1442,6 @@ const Klang = (function () {
       }
     },
 
-    /* ---- OM: ein langer, gleichmäßiger Vokalklang ----
-     * Aufgebaut wie eine Stimme: Grundton mit Obertönen, geformt von drei
-     * Formantfiltern, die den Vokal ausmachen. Der Ton steht und atmet nur
-     * ganz leicht – kein Anfang, kein Ende. */
-    synthOm: function (b) {
-      var raum = b.hall(0.38, 0.5, 2200);
-      b.raus(raum.aus, 0.3, 0);
-      var grund = 110;
-      var summe = b.v(1);
-      [[1, 1.0], [2, 0.5], [3, 0.28], [4, 0.16], [5, 0.09], [6, 0.05]].forEach(function (t) {
-        var o = b.sinus(0, 'sine');
-        o.frequency.value = 0;
-        b.mod(o.frequency, b.steuer(grund * t[0], grund * t[0] * 0.0015, 0.25));
-        var g = b.v(t[1]);
-        o.connect(g); g.connect(summe);
-      });
-      // Formanten: zwischen offenem 'o' und geschlossenem 'm'
-      var f1 = b.flt('peaking', 420, 3); f1.gain.value = 11;
-      var f2 = b.flt('peaking', 800, 4); f2.gain.value = 7;
-      var f3 = b.flt('peaking', 2400, 5); f3.gain.value = -6;
-      var stimme = b.kette(summe, f1, f2, f3, b.tief(2800, 0.7));
-      var aus = b.raus(stimme, 0, 0);
-      b.atem(aus, 0.05, 0.006, 0.18);   // kaum Bewegung: der Ton steht
-      aus.connect(raum.ein);
-    },
 
     /* ---- Schwebung: zwei fast gleiche Töne, die langsam gegeneinander laufen ---- */
     synthSchweb: function (b) {
@@ -1532,12 +1575,12 @@ const Klang = (function () {
     regen: 0.82, niesel: 1.08, strand: 1.22, fluss: 1.73, unterwasser: 1.10, blasen: 1.25,
     bach: 1.76, tropfen: 0.55, moewen: 1.08,
     feuer: 0.89,
-    wind: 2.09, donner: 1.22, wipfel: 2.02,
-    grillen: 0.99, vogelDe: 1.45, vogelAfrika: 2.33,
-    wal: 1.14, katze: 1.46, bauernhof: 1.25, kamin: 1.14, froesche: 0.95,
+    wind: 2.09, donner: 0.78, wipfel: 2.02,
+    grillen: 2.60, vogelDe: 1.45, vogelAfrika: 2.33,
+    wal: 1.14, katze: 1.46, bauernhof: 0.76, kamin: 1.14, froesche: 1.80,
     schnarchen: 0.98, zug: 1.20, strasse: 1.75,
-    schale: 0.94, glocke: 0.90,
-    synthWarm: 9.18, synthTief: 3.14, synthGlitzer: 3.00, synthSchweb: 7.96, synthOm: 1.81,
+    schale: 0.94, glocke: 1.15, om: 0.52,
+    synthWarm: 9.18, synthTief: 3.14, synthGlitzer: 3.00, synthSchweb: 7.96,
     weiss: 0.66, rosa: 0.28, braun: 0.95
   };
 

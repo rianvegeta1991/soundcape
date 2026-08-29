@@ -136,3 +136,20 @@ abgehackt und blechern, egal wie lang das Segment war. Ein Tropfen ist das, was
 Beatboxer nachmachen – ein kurzer Ton, dessen Tonhöhe beim Eintauchen nach oben
 schnellt. Als Klangnetz gebaut lässt er sich gleichmäßig halten, und drei Tropfraten
 (1,05 · 1,55 · 2,35 s) ergeben einen stetigen Strom statt einzelner Ereignisse.
+
+## Seit Version 2.2
+
+| Datei | Aufnahme | Lizenz | Urheber |
+|---|---|---|---|
+| `om1.mp3` | [OM AUM MANTRA MALE CHANT Bb](https://freesound.org/s/522687/) | CC BY 4.0 | CarlosCarty |
+| `huhn3.mp3` | [Chickens & Hens](https://freesound.org/s/197103/) | CC0 | musicradiocreative |
+
+Entfernt: `huhn2.mp3` (darin steckten Hahnenschreie – im Band 1,2–3 kHz standen
+bei den Sekunden 11, 12, 27, 42 und 44 Spitzen von 0,07 bis 0,11 gegen einen
+Grundwert von 0,005) und `frosch1.mp3` (Laubfrösche: 82 % der Energie über
+1,2 kHz, die Sekundenpegel sprangen um den Faktor 50 – das war das hohe,
+unregelmäßige Quaken).
+
+**Das OM kommt jetzt aus einer Aufnahme.** Synthetisch war es messbar
+gleichmäßig, klang aber nach Orgel: eine menschliche Stimme lebt von
+Formantbewegung, Rauheit und Atem, und die lassen sich nicht nachbauen.
