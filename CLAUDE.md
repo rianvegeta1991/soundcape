@@ -364,3 +364,38 @@ selbst sitzt bei 1250 Hz.** Ein tieferer Tiefpass löscht den Frosch, nicht das 
 eines Favoriten behielten den alten Schlüssel und fielen beim Laden durch die
 `NACH_ID`-Prüfung – aus einem Favoriten mit OM wäre ein Favorit ohne OM geworden.
 **Bei jeder künftigen Umbenennung alle vier Felder mitziehen** (`umKeys`).
+
+## Was in v2.3 gelernt wurde
+
+**Einen Filter setzt man nicht nach Gefühl, sondern nach dem Spektrum.**
+Beim Bauernhof stand der Tiefpass bei 1100 Hz und die Spitze des Gackerns bei
+850 Hz – der Filter ließ also genau das durch, was zu hoch klang. Erst die
+Goertzel-Messung der Aufnahme (850 Hz auf 0 dB, 500 Hz -8, 600 Hz -12) zeigte,
+wo die Grenze hin muss: 520 Hz, zweifach. **Vor jedem Filterwert das Spektrum
+der Aufnahme messen.**
+
+**Hall klingt bei perkussiven Kulissen wie zusätzliche Anschläge.**
+`hall(zeit, fb, …)` sind drei rückgekoppelte Verzögerungen bei `zeit`,
+`zeit*1.37` und `zeit*1.83`. Bei der Glocke waren das 0,34 / 0,47 / 0,62 s mit
+55 % Rückkopplung – gehört wurden daraus mehrere Schläge statt einem. Bei
+Flächen ist der Hall richtig, bei Einzelschlägen stört er. Die Glocke läuft
+jetzt ganz ohne.
+
+**Bei Schleifen muss das Segment kürzer sein als der Takt.** Sonst überlagern
+sich zwei Anschläge. Glocke: Segment 2,85 s, Takt 3,0 s.
+
+**Glitzern braucht `knister`, nicht Sinustöne mit Hüllkurve.** Vier langsam
+an- und abschwellende Sinustöne sind ein Pad, kein Funkeln. `knister` tort
+Rauschen durch einen sehr schmalen Bandpass (Q 30): der Filter klingt nach
+jedem Impuls kurz nach, das ergibt ein Tönchen mit hartem Einsatz und
+schnellem Abfall. Die Bandbreite des Tors bestimmt die Rate.
+
+**Ein Pad mit vier Akkordtönen ist Musik, kein Hintergrund.** Wer stundenlang
+zuhört, hört die Harmonie. `synthWarm` hat jetzt eine einzige Tonhöhe, in drei
+minimal verstimmten Schichten – das gibt Wärme, ohne ein Intervall zu bilden.
+
+**Die Wassertropfen sind entfernt.** Erst aus Aufnahmen (abgehackt und
+blechern), dann synthetisch (der Ton stimmte nicht) – nach mehreren Anläufen
+war die richtige Antwort, die Kulisse zu streichen statt weiter daran zu
+schrauben. Ein synthetischer Tropfen bleibt eine offene Aufgabe, kein Fehler
+im Code: es gibt nichts mehr zu reparieren.

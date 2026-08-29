@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '2.2';
+  var APP_VERSION = '2.3';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -45,9 +45,6 @@
             '<path d="M4 23c5 0 5 4 10 4s5-4 10-4 5 4 8 4"/>' +
             '<circle cx="13" cy="33" r="2.4"/><circle cx="25" cy="34.5" r="3"/>' +
             '<circle cx="31" cy="8" r="2"/>' },
-    { id: 'tropfen', kat: 'wasser', name: 'Wassertropfen', unter: 'Einzelne Tropfen', rgb: '128,196,240',
-      ikon: '<path d="M20 4s7 9 7 13.5a7 7 0 1 1-14 0C13 13 20 4 20 4z" stroke-linejoin="round"/>' +
-            '<path d="M9 30c3.4 2.2 18.6 2.2 22 0M13 35c2.4 1.5 11.6 1.5 14 0"/>' },
     { id: 'unterwasser', kat: 'wasser', name: 'Unter Wasser', unter: 'Dumpf, mit Strömung', rgb: '74,146,214',
       ikon: '<path d="M4 9c3.2 0 3.2-2.4 6.4-2.4S13.6 9 16.8 9s3.2-2.4 6.4-2.4S26.4 9 29.6 9 33 6.6 36 6.6"/>' +
             '<circle cx="13" cy="27" r="4.5"/><circle cx="24.5" cy="19.5" r="3"/><circle cx="27" cy="30" r="2"/>' },

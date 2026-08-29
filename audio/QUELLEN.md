@@ -153,3 +153,13 @@ unregelmäßige Quaken).
 **Das OM kommt jetzt aus einer Aufnahme.** Synthetisch war es messbar
 gleichmäßig, klang aber nach Orgel: eine menschliche Stimme lebt von
 Formantbewegung, Rauheit und Atem, und die lassen sich nicht nachbauen.
+
+## Version 2.3
+
+Keine neuen Aufnahmen. Entfernt wurde die Kulisse **Wassertropfen** – die
+zugehörigen Dateien waren schon in 2.1 gelöscht, seither war sie synthetisch.
+
+Der Bauernhof filtert die Hühner jetzt bei 520 Hz statt 1100 Hz: die Spitze
+des Gackerns liegt bei 850 Hz und lag damit vorher im Durchlassbereich.
+Die Kirchturmglocke läuft ohne Nachhall und in einem Bandfenster von 420 bis
+1600 Hz – ihr Ton liegt bei 849 Hz, die nächsten Teiltöne 19 dB darunter.

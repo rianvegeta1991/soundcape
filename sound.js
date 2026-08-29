@@ -165,17 +165,15 @@ const Klang = (function () {
     /* Genau EIN Anschlag, und zwar der bei 25,03 s: danach kommt bis 42,4 s
      * nichts mehr, der Nachklang bleibt also ungestört. Mehrere Segmente
      * hatten zur Folge, dass jeder Schlag anders klang – die Glocke soll aber
-     * immer gleich läuten. */
-    glocke1: { datei: 'audio/glocke1.mp3', segmente: [[24.99, 4.6]] },
+     * immer gleich läuten.
+     * 2,85 s lang, also kürzer als der Takt von 3 s: so ist jeder Schlag
+     * ausgeklungen, bevor der nächste kommt. */
+    glocke1: { datei: 'audio/glocke1.mp3', segmente: [[24.99, 2.85]] },
 
     /* --- OM, von einem Menschen gesungen.
      * Die Sekunden 0,6 bis 11,6 stehen still (0,084 bis 0,123), danach klingt
      * der Gesang aus. Nur dieser Teil läuft als Schleife. --- */
     om1: { datei: 'audio/om1.mp3', segmente: [[0.6, 11.0]] },
-
-    /* --- Wassertropfen: nur der Tropfen, ohne Insekten und Hintergrund --- */
-    // Die Segmente reichen bewusst über den Aufschlag hinaus: so bleibt das
-    // Ausklingen im Wasser hörbar, statt abgeschnitten zu werden.
 
     /* --- Walgesang --- */
     walN1: { datei: 'audio/walN1.mp3', segmente: [[2.0, 52.0]] },
@@ -245,7 +243,6 @@ const Klang = (function () {
     wal: ['walN1'],
     donner: ['donnN1', 'donnN2'],
     bach: ['bach1', 'bach2'],
-    // tropfen braucht seit 2.1 keine Aufnahme mehr - der Tropfen wird erzeugt
     schnarchen: ['schnarchL'],
     bauernhof: ['huhn3', 'kuh1'],
     froesche: ['frosch2'],
@@ -1174,52 +1171,6 @@ const Klang = (function () {
       b.atem(c, 2.3, 0.35, 0.35);
     },
 
-    /* ---- Wassertropfen (Aufnahmen) ----
-     * Einzelne Tropfen mit viel Raum dazwischen – das Fallen zählt, nicht der
-     * Untergrund. Ein langer Hall gibt jedem Tropfen seine Höhle. */
-    tropfen: function (b) {
-      // Ohne Hall und ohne Höhle: nur der Tropfen selbst. Die Spitzenbremse
-      // bleibt, weil einzelne Tropfen sehr laut gegen die Stille stehen.
-      /* Sanft geregelt: mit hohem Verhältnis und tiefer Schwelle klang der
-       * Nachklang der Tropfen blechern, weil die Regelung ihn nachpumpte. */
-      var hall = b.hall(0.21, 0.42, 4200);
-      b.raus(hall.aus, 0.3, 0);
-      /* Die Tropfen entstehen hier, statt aus einer Aufnahme zu kommen.
-       * Ein Wassertropfen ist genau das, was Beatboxer nachmachen: ein kurzer
-       * Ton, dessen Tonhöhe beim Eintauchen schnell nach oben schnellt, mit
-       * weichem Ausklang. Als Klangnetz gebaut lässt sich das gleichmäßig
-       * halten – aus Aufnahmen geschnitten blieb es abgehackt und blechern. */
-      var takte = [1.05, 1.55, 2.35];        // drei ruhige, leicht versetzte Tropfraten
-      var lagen = [
-        { f: 620, ziel: 1500, pegel: 0.55, pan: -0.3, ton: 0.34 },
-        { f: 430, ziel: 1050, pegel: 0.42, pan: 0.28, ton: 0.42 },
-        { f: 820, ziel: 2050, pegel: 0.30, pan: 0.05, ton: 0.28 }
-      ];
-      for (var i = 0; i < lagen.length; i++) {
-        var l = lagen[i];
-        var o = b.sinus(l.f, 'sine');
-        // Der Tropfen: die Tonhöhe steigt beim Eintauchen steil an
-        var huelle = b.takt(1 / takte[i], 0.14, 0.55);   // takt() rechnet das Tempo mit
-        o.frequency.value = l.f;
-        b.mod(o.frequency, huelle, l.ziel - l.f);
-
-        var tor = b.v(0);
-        o.connect(tor);
-        b.mod(tor.gain, huelle, l.pegel);
-        // etwas Körper: eine Oktave darunter, leiser
-        var tief = b.sinus(l.f * 0.5, 'sine');
-        var tTor = b.v(0);
-        tief.connect(tTor);
-        b.mod(tTor.gain, huelle, l.pegel * 0.35);
-
-        var misch = b.v(1);
-        tor.connect(misch); tTor.connect(misch);
-        var weich = b.kette(misch, b.tief(3200, 0.8));
-        b.raus(weich, 1.0, l.pan);
-        weich.connect(hall.ein);
-      }
-    },
-
     /* ---- Katzenschnurren (Aufnahme) ----
      * Schnurren läuft durchgehend, deshalb als Schleife. Zwei Aufnahmen mit
      * leicht verschiedener Geschwindigkeit driften auseinander – dadurch
@@ -1252,19 +1203,25 @@ const Klang = (function () {
        * 3,9 bei RMS 0,10), und der Ausgleich hätte alles unhörbar gemacht. */
       var bremse = b.presser(-24, 6);
       b.raus(bremse, 1.0, 0);
-      // Achtung: kette() gibt das LETZTE Glied zurueck. Der Eingang der Kette
-      // ist der Tiefpass – der muss separat gehalten werden, sonst haengt die
-      // Schleife am Hochpass und der Tiefpass ist wirkungslos.
-      var tief = b.tief(1100, 0.7);       // dumpf: nur der Körper des Gackerns
-      var sanft = b.kette(tief, b.hoch(160, 0.6));
+      /* Der Tiefpass stand bei 1100 Hz – und genau darunter, bei 850 Hz, liegt
+       * die Spitze des Gackerns (gemessen per Goertzel: 850 Hz auf 0 dB,
+       * 500 Hz -8, 600 Hz -12). Er ließ also gerade das durch, was zu hoch
+       * klang. Jetzt zwei Tiefpässe in Reihe bei 520 Hz: 24 dB je Oktave,
+       * damit rutscht die Spitze auf die tieferen Anteile bei 500–600 Hz.
+       *
+       * Achtung: kette() gibt das LETZTE Glied zurueck. Der Eingang der Kette
+       * muss separat gehalten werden, sonst haengt die Schleife am Hochpass
+       * und die Tiefpaesse sind wirkungslos. */
+      var tief = b.tief(520, 0.6);
+      var sanft = b.kette(tief, b.tief(520, 0.6), b.hoch(120, 0.6));
       sanft.connect(bremse);
       var hof = b.schleife({ probe: 'huhn3', rate: 1.0, pegel: 0, pan: 0,
                              tempoAnteil: 0.25, blende: 2.5, an: tief });
       if (!hof) return;
-      b.atem(hof, 1.5, 0.12, 0.4);
-      // Auch die Kühe dumpf: der Tiefpass nimmt dem Muhen das Blöken
-      var muh = b.tief(900, 0.7);
-      muh.connect(bremse);
+      b.atem(hof, 4.5, 0.35, 0.4);
+      // Auch die Kühe dumpf: zwei Tiefpässe nehmen dem Muhen das Blöken
+      var muh = b.tief(600, 0.6);
+      b.kette(muh, b.tief(600, 0.6)).connect(bremse);
       b.rufe({ probe: 'kuh1', pegel: 0.5, pause: [7, 22], rate: [0.95, 1.05],
                breite: 0.6, start: 4, weich: 0.15, roh: true, ziel: muh });
     },
@@ -1328,22 +1285,29 @@ const Klang = (function () {
     },
 
     /* ---- Kirchturmglocke (Aufnahme) ----
-     * Absolut gleichbleibend: ein einziger Anschlag, in festem Abstand
-     * wiederholt. Dafür ist "gleich" da – es schaltet in rufe() jeden Zufall
-     * ab (Segment, Geschwindigkeit, Lautstärke, Stereoposition) und misst den
-     * Abstand von Anschlag zu Anschlag statt vom Ende des vorigen.
-     * Vorher lagen fünf Segmente à 5 s vor, die sich überlappten und zufällig
-     * gewählt wurden: dadurch klang jeder Schlag anders und der Takt wackelte. */
+     * Ein Anschlag, der abklingt, alle 3 Sekunden – sonst nichts.
+     *
+     * Der Nachhall ist raus. Er war der Grund, warum man mehr als einen
+     * Anschlag hörte: hall(0.34, 0.55) schickt das Signal über drei
+     * rückgekoppelte Verzögerungen bei 0,34 / 0,47 / 0,62 s mit 55 %
+     * Rückkopplung – bei einem Glockenschlag sind das hörbar eigene Schläge.
+     *
+     * Der Ton der Aufnahme liegt bei 849 Hz; die nächsten Teiltöne (408 Hz,
+     * 90 Hz) liegen 19 dB darunter. Ein Bandfenster von 420 bis 1600 Hz
+     * räumt sie weg, damit wirklich nur die eine Tonhöhe bleibt.
+     *
+     * "gleich" schaltet in rufe() jeden Zufall ab (Segment, Geschwindigkeit,
+     * Lautstärke, Stereoposition) und misst den Abstand von Anschlag zu
+     * Anschlag statt vom Ende des vorigen. */
     glocke: function (b) {
-      var weite = b.hall(0.34, 0.55, 1800);
-      b.raus(weite.aus, 0.5, 0);
-      var s = b.rufe({ probe: 'glocke1', pegel: 0.85, pause: [5.2, 5.2],
+      var s = b.rufe({ probe: 'glocke1', pegel: 1.0, pause: [3.0, 3.0],
                        rate: [1, 1], breite: 0, start: 1, roh: true,
                        weich: 0, gleich: true });
       if (!s) return;
-      var fern = b.kette(s, b.tief(2400, 0.7));
-      b.raus(fern, 1.0, 0);
-      fern.connect(weite.ein);
+      var hoch = b.hoch(420, 0.7);
+      var rein = b.kette(hoch, b.tief(1600, 0.7));
+      s.connect(hoch);
+      b.raus(rein, 1.0, 0);
     },
 
     /* ---- OM (Aufnahme) ----
@@ -1377,20 +1341,26 @@ const Klang = (function () {
      * Aufnahme, keine Wiederholung, und die Töne schweben endlos gegeneinander,
      * weil ihre Steuerkurven nicht zueinander passen. */
 
-    /* ---- Warmes Pad: Grundton, Quinte und Oktave ---- */
+    /* ---- Warmes Pad ----
+     * Ein einziger Ton. Vorher lagen vier Töne eines Akkords übereinander
+     * (110, 165, 220, 275); als ruhige Fläche gedacht, gehört ist es aber
+     * Harmonie – und die will man nicht dauerhaft im Hintergrund haben.
+     * Übrig bleibt der Grundton, in drei Schichten leicht gegeneinander
+     * verstimmt: das gibt die Wärme, ohne eine zweite Tonhöhe zu erzeugen. */
     synthWarm: function (b) {
       var raum = b.hall(0.33, 0.55, 3000);
       b.raus(raum.aus, 0.5, 0);
-      // A-Dur-artig: 110, 165 (Quinte), 220 (Oktave), 275 (Terz darüber)
-      [[110, -0.4, 0.9, 0.5], [165, 0.35, 0.65, 0.7],
-       [220, -0.15, 0.5, 0.9], [275, 0.2, 0.28, 1.2]].forEach(function (s) {
+      var ton = 110;
+      // dieselbe Note, nur minimal verstimmt und verschieden platziert
+      [[1.000, -0.4, 0.9, 0.5], [1.003, 0.35, 0.65, 0.7],
+       [0.997, -0.15, 0.5, 0.9]].forEach(function (s) {
         var o = b.sinus(0, 'sine');
         o.frequency.value = 0;
         // ganz leichtes Schweben um den Ton herum
-        b.mod(o.frequency, b.steuer(s[0], s[0] * 0.004, 0.6));
+        b.mod(o.frequency, b.steuer(ton * s[0], ton * 0.004, 0.6));
         var farbe = b.kette(o, b.tief(1200, 0.7));
         var g = b.raus(farbe, 0, s[1]);
-        b.atem(g, s[2] * 0.012, s[2] * 0.006, s[3]);
+        b.atem(g, s[2] * 0.016, s[2] * 0.008, s[3]);
         g.connect(raum.ein);          // NACH dem Pegel: sonst speist der volle Ton den Hall
       });
     },
@@ -1413,35 +1383,50 @@ const Klang = (function () {
       b.atem(b.raus(luft, 0.12, 0), 0.12, 0.05, 0.35);
     },
 
-    /* ---- Glitzern: sparsame hohe Töne mit langem Nachklang ---- */
+    /* ---- Glitzern ----
+     * Viele kurze Anschläge statt weniger langer Töne. Vorher lagen vier
+     * Sinustöne da und schwollen über Sekunden an und ab – das war ein Pad,
+     * kein Funkeln, und ein einzelner hoher Ton stand lange im Raum.
+     *
+     * Der Unterschied steckt allein in der Hüllkurve: derselbe Sinus, aber
+     * durch ein Tor mit Exponent 4 statt einer langsamen Schwellkurve. Das
+     * ergibt kurze Spitzen mit schnellem Abfall; den Nachklang macht der
+     * lange, helle Hall. Sechs Töne einer Pentatonik mit unrunden Raten,
+     * damit sie nicht in einen gemeinsamen Takt fallen.
+     *
+     * Zwei Sackgassen, die hier schon gemessen wurden – beide stehen als
+     * Fallstricke in CLAUDE.md und sind mir trotzdem passiert:
+     *   - "funken" als Tor: auf Bandbreiten um 900 Hz kalibriert, bei den
+     *     5–11 Hz der Funkenrate öffnet es nie. Gemessen RMS 0.
+     *   - Rauschen durch einen Bandpass mit Q 90: lässt rund 2 % der Energie
+     *     durch, das Ergebnis war wieder unhörbar (RMS unter 0,0005).
+     * Ein Oszillator hat dieses Problem nicht: seine Amplitude steht. */
     synthGlitzer: function (b) {
-      /* Deutlich zurückgenommen: eine Oktave tiefer, ein Tiefpass gegen die
-       * spitzen Höhen und weichere Anschläge. Vorher stachen einzelne Töne
-       * scharf heraus.
-       *
-       * Die Schwelle war außerdem so hoch (0,62 bei Exponent 4), dass die Töne
-       * mal gar nicht und mal alle zugleich aufblühten: gemessen schwankte der
-       * Pegel zwischen RMS 0,011 und 0,147, je nachdem, wie die Zufallstempi
-       * gerade fielen. Jetzt schwellen sie flach und regelmäßig an. */
-      var raum = b.hall(0.42, 0.6, 4200);
-      b.raus(raum.aus, 0.5, 0);
-      // Achtung: kette() gibt das LETZTE Glied zurueck – der Eingang muss
-      // separat gehalten werden, sonst haengt alles am Hochpass.
-      var tief = b.tief(2400, 0.6);
-      var daempfer = b.kette(tief, b.hoch(280, 0.5));
-      b.raus(daempfer, 1.0, 0);
-      var toene = [440, 523, 659, 784, 880, 1046];   // Pentatonik
-      for (var i = 0; i < 4; i++) {
-        var f = toene[Math.floor(Math.random() * toene.length)];
-        var o = b.sinus(f, 'sine');
+      var raum = b.hall(0.5, 0.62, 5200);
+      b.raus(raum.aus, 0.75, 0);
+      var bremse = b.presser(-26, 5);
+      b.raus(bremse, 1.0, 0);
+      // Pentatonik über zwei Oktaven, oben leiser: sonst sticht die Spitze
+      var toene = [[659, 0.5, -0.45], [784, 0.45, 0.3], [880, 0.4, -0.2],
+                   [1046, 0.34, 0.42], [1319, 0.26, -0.35], [1568, 0.2, 0.15]];
+      toene.forEach(function (t, i) {
+        var rate = 15 + i * 3.1;        // Anschlaege je Sekunde, unrund gegeneinander
+        var o = b.sinus(t[0], 'sine');
         var tor = b.v(0);
         o.connect(tor);
-        b.mod(tor.gain, b.selten(0.3 + Math.random() * 0.3, 0.45, 3.0), 0.24);
-        tor.connect(tief);
-        tor.connect(raum.ein);
-      }
+        /* Die Kuerze kommt aus der Bandbreite, nicht aus dem Exponenten.
+         * Mit Schwelle 0,74 oeffnete das Tor nur 3 bis 38 Mal je Minute; mit
+         * Exponent 5 waren fast alle Oeffnungen so leise, dass nur die
+         * hoechsten Spitzen uebrig blieben - gemessen schwankte der Pegel
+         * dadurch um den Faktor 3 zwischen zwei Aufbauten. Eine schnellere
+         * Steuerkurve (hoehere Bandbreite) macht die Oeffnungen kurz, ohne
+         * die Amplituden auseinanderzuziehen. */
+        b.mod(tor.gain, b.torLang(rate, 0.45, 2), t[1]);
+        var p = b.raus(tor, 1.0, t[2]);
+        p.connect(bremse);
+        p.connect(raum.ein);
+      });
     },
-
 
     /* ---- Schwebung: zwei fast gleiche Töne, die langsam gegeneinander laufen ---- */
     synthSchweb: function (b) {
@@ -1573,14 +1558,14 @@ const Klang = (function () {
    * nicht geschätzt – nach jeder Klangänderung neu messen. */
   var AUSGLEICH = {
     regen: 0.82, niesel: 1.08, strand: 1.22, fluss: 1.73, unterwasser: 1.10, blasen: 1.25,
-    bach: 1.76, tropfen: 0.55, moewen: 1.08,
+    bach: 1.76, moewen: 1.08,
     feuer: 0.89,
     wind: 2.09, donner: 0.78, wipfel: 2.02,
     grillen: 2.60, vogelDe: 1.45, vogelAfrika: 2.33,
-    wal: 1.14, katze: 1.46, bauernhof: 0.76, kamin: 1.14, froesche: 1.80,
+    wal: 1.14, katze: 1.46, bauernhof: 0.65, kamin: 1.14, froesche: 1.80,
     schnarchen: 0.98, zug: 1.20, strasse: 1.75,
-    schale: 0.94, glocke: 1.15, om: 0.52,
-    synthWarm: 9.18, synthTief: 3.14, synthGlitzer: 3.00, synthSchweb: 7.96,
+    schale: 0.94, glocke: 1.03, om: 0.52,
+    synthWarm: 8.20, synthTief: 3.14, synthGlitzer: 0.70, synthSchweb: 7.96,
     weiss: 0.66, rosa: 0.28, braun: 0.95
   };
 
