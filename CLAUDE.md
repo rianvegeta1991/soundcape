@@ -437,3 +437,66 @@ Rechner), sondern in PowerShell mit `System.Drawing` nachgezeichnet – Schild a
 sechs Bezierkurven, Welle als Polylinie mit runden Kappen. **Bei Logoänderungen
 beide Stellen nachziehen**, sonst zeigt die installierte PWA das alte Motiv.
 Das maskable Icon bekommt das Motiv auf 74 % skaliert und ohne runde Ecken.
+
+## Der hängende Ton – und was daran wirklich schuld war (1.15)
+
+Gemeldet als „ein Ton bleibt hängen, die App muss neu gestartet werden".
+Zwei Ursachen, beide gemessen:
+
+**1. Ein Leck im Klangnetz.** In `rufe` und `schleife` bekommt jede geplante
+Quelle einen eigenen Gain (und ggf. einen Panner). Beim Ende trennte sich nur
+die Quelle selbst – Gain und Panner blieben für immer am Summenknoten hängen.
+Die Blasen-Kulisse legt je zwei Minuten über 1500 solcher Knoten an; nach einer
+Stunde sind das Zehntausende. Die Audio-Engine arbeitet jeden davon in jedem
+Block ab, irgendwann kommt sie nicht mehr nach.
+
+Behoben: `onended` hängt jetzt Gain und Panner mit ab, und `abbau()` räumt sie
+für die noch nicht abgespielten Quellen mit weg (dort ist `onended`
+abgeschaltet, deshalb liegen sie als `q.__g` / `q.__p` am Knoten).
+**Wer künftig einen Knoten je Ereignis anlegt, muss ihn auch wieder abhängen.**
+
+**2. Zwei Kulissen waren schlicht zu teuer.** Gemessen an erzeugten
+Web-Audio-Knoten je Aufbau:
+
+| Kulisse | Knoten | 40 s rendern |
+|---|---|---|
+| blasen | 2266 | 7,2 s (5,5× Echtzeit) |
+| grillen | 964 | 4,2 s (9,4× Echtzeit) |
+| vogelDe | 307 | 0,9 s (46× Echtzeit) |
+| regen | 56 | 0,9 s (46× Echtzeit) |
+
+Auf einem Handy, grob drei- bis fünfmal langsamer, liegt „blasen" damit nahe
+an der Echtzeitgrenze – eine zweite Kulisse dazu, und es reicht nicht mehr.
+
+## Schleifenkulissen (seit 1.15)
+
+Für genau diese Fälle: einmal rendern, dann als Schleife abspielen. Aus über
+zweitausend Knoten wird einer. In `SCHLEIFEN` steht, welche Kulisse wie lang
+gepuffert wird – zurzeit `blasen` (24 s) und `grillen` (20 s).
+
+**Der Preis ist die Wiederholung**, deshalb nur bei gleichförmigen Texturen,
+in denen kein Muster steckt, an dem sich das Ohr festhalten könnte. Alle
+anderen 31 Kulissen bleiben live erzeugt und damit endlos – bei ihnen wäre der
+Puffer reine Verschwendung: Speicher gegen eine Rechenlast, die ohnehin
+vernachlässigbar ist.
+
+**Wie die Naht verschwindet:** Es wird über die Schleifenlänge hinaus gerendert
+(`BLENDE_S` Sekunden Überhang), und dieser Überhang wird in den Anfang
+eingeblendet. Dadurch ist das letzte Sample der Schleife der direkte Vorgänger
+des ersten – die Naht ist nicht geglättet, sondern existiert nicht.
+Gemessen bei den Blasen: Sprung an der Naht 0,0017 gegen einen größten
+Signalschritt von 0,48 im Puffer.
+
+**Der Planungshorizont muss beim Rendern klein sein.** `rufe`/`schleife` planen
+im Betrieb zwei Minuten im Voraus (gegen gedrosselte Zeitgeber – **diesen Wert
+im Betrieb nicht verkleinern**). Beim Rendern von 27 Sekunden sind zwei Minuten
+Verschwendung: das Rendern dauerte dadurch viermal so lange (5,4 s statt 1,1 s).
+Dafür gibt es `opt.horizont`.
+
+**Nach dem Rendern `abbau()` rufen.** Die Kulisse setzt beim Bauen ein
+`setInterval` für den Nachschub. Im Offline-Kontext läuft das in Wanduhrzeit
+ins Leere weiter – ohne `abbau()` bliebe je gerendertem Puffer ein Intervall
+für immer stehen. Das wäre genau das Leck, das gerade behoben wurde.
+
+Der Puffercache ist nach Kulisse, Abtastrate, Tempo und Mono/Stereo getrennt.
+Ein Stufenwechsel rendert deshalb neu.

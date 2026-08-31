@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.14';
+  var APP_VERSION = '1.15';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -373,9 +373,37 @@
   }
 
   // Kulissen mit Tierstimmen brauchen ihre Aufnahmen, bevor sie gebaut werden
-  // können. Beim ersten Mal wird geladen, danach liegen sie im Speicher.
+  // koennen. Beim ersten Mal wird geladen, danach liegen sie im Speicher.
+  // Die Bauoptionen an einer Stelle: sie gehen auch in den Puffer-Schlüssel ein
+  function bauOpt(id) {
+    return { stereo: st.stereo, tempo: tempoFaktor(id) };
+  }
+
   function szeneAn(id) {
     if (szenen[id] || laedt[id] || !ctx) return;
+
+    /* Schleifenkulissen (Blasen, Grillen) werden einmal gerendert und danach
+     * als Schleife abgespielt: aus über zweitausend Web-Audio-Knoten wird
+     * einer. Das Rendern dauert einen Moment, deshalb läuft es über denselben
+     * Ladezustand wie das Holen einer Aufnahme. */
+    if (Klang.istSchleife(id) && !Klang.loopBereit(ctx, id, bauOpt(id))) {
+      laedt[id] = true;
+      pultAktualisieren();
+      Klang.loopPuffer(ctx, id, bauOpt(id)).then(function () {
+        delete laedt[id];
+        pultAktualisieren();
+        if (st.an[id] && laeuft) szeneAn(id);
+      })['catch'](function () {
+        /* Rendern misslungen: dann eben live erzeugen, das kann die Kulisse
+         * genauso. Der Eintrag wird auf 0 gesetzt, damit istSchleife() künftig
+         * falsch liefert und es nicht bei jedem Einschalten neu versucht. */
+        delete laedt[id];
+        Klang.schleifen[id] = 0;
+        pultAktualisieren();
+        if (st.an[id] && laeuft) szeneAn(id);
+      });
+      return;
+    }
 
     if (!Klang.bereit(ctx, id)) {
       laedt[id] = true;
@@ -396,7 +424,9 @@
     var g = ctx.createGain();
     g.gain.value = 0;
     g.connect(bus);
-    var b = Klang.bauen(id, g, { stereo: st.stereo, tempo: tempoFaktor(id) });
+    var fertig = Klang.istSchleife(id) ? Klang.loopBereit(ctx, id, bauOpt(id)) : null;
+    var b = fertig ? Klang.loopBauen(ctx, id, g, fertig)
+                   : Klang.bauen(id, g, bauOpt(id));
     szenen[id] = { b: b, g: g };
     rampe(g.gain, pegel(id), st.einblenden ? 8 : 0.6);
   }

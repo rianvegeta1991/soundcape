@@ -333,6 +333,14 @@ const Klang = (function () {
      * Rufen. Deshalb muss jede neue zeitabhängige Funktion T ebenfalls verrechnen. */
     var T = opt.tempo || 1;
 
+    /* Wie weit im Voraus Aufnahmen eingeplant werden. Zwei Minuten sind es im
+     * Betrieb, damit gedrosselte Zeitgeber die Wiedergabe nicht abreissen
+     * lassen - diesen Wert nicht verkleinern. Beim Rendern einer Schleife
+     * dagegen waeren zwei Minuten Verschwendung: dort werden nur die
+     * gerenderten Sekunden gebraucht, und der Rest kostet nur Rechenzeit
+     * (gemessen dauerte das Rendern der Blasen dadurch viermal so lange). */
+    var HORIZONT = opt.horizont || 120;
+
     var api = {
       ctx: ctx,
       ziel: ziel,
@@ -661,7 +669,7 @@ const Klang = (function () {
         var offen = [];
 
         function planen() {
-          var horizont = ctx.currentTime + 120;
+          var horizont = ctx.currentTime + HORIZONT;
           var wache = 0;
           while (naechste < horizont && wache++ < 400) {
             var seg = gleich ? probe.segmente[0]
@@ -693,20 +701,34 @@ const Klang = (function () {
               g.gain.linearRampToValueAtTime(0, t + dauer);
             }
             q.connect(g);
+            var p = null;
             if (stereo && breite && !gleich) {
-              var p = ctx.createStereoPanner();
+              p = ctx.createStereoPanner();
               p.pan.value = (Math.random() * 2 - 1) * breite;
               g.connect(p); p.connect(summe);
             } else {
               g.connect(summe);
             }
             q.start(t, seg[0], seg[1]);
+            // fuer abbau() merken: dort ist onended abgeschaltet
+            q.__g = g; q.__p = p;
             offen.push(q);
-            q.onended = function () {
-              try { this.disconnect(); } catch (e) { }
-              var i = offen.indexOf(this);
-              if (i >= 0) offen.splice(i, 1);
-            };
+            /* Auch Pegel und Stereoposition wieder abhängen, nicht nur die
+             * Quelle. Sonst bleibt je Ruf ein Gain (und ggf. ein Panner) für
+             * immer im Graphen hängen: gemessen legt allein die Blasen-Kulisse
+             * je zwei Minuten über 1500 tote Knoten an, nach einer Stunde sind
+             * das Zehntausende. Die Audio-Engine arbeitet jeden davon in jedem
+             * Block ab – irgendwann kommt sie nicht mehr nach und der Ton
+             * bleibt hängen. */
+            q.onended = (function (gg, pp) {
+              return function () {
+                try { this.disconnect(); } catch (e) { }
+                try { gg.disconnect(); } catch (e) { }
+                if (pp) { try { pp.disconnect(); } catch (e) { } }
+                var i = offen.indexOf(this);
+                if (i >= 0) offen.splice(i, 1);
+              };
+            })(g, p);
             // gleichbleibender Takt: Abstand von Anschlag zu Anschlag
             naechste = gleich ? t + pause[0]
                               : t + dauer + pause[0] + Math.random() * (pause[1] - pause[0]);
@@ -756,7 +778,7 @@ const Klang = (function () {
         var offen = [];
 
         function planen() {
-          var horizont = ctx.currentTime + 120;
+          var horizont = ctx.currentTime + HORIZONT;
           var wache = 0;
           while (naechste < horizont && wache++ < 200) {
             var t = naechste;
@@ -771,12 +793,17 @@ const Klang = (function () {
             g.gain.linearRampToValueAtTime(0.0001, t + dauer);
             q.connect(g); g.connect(summe);
             q.start(t, seg[0], seg[1]);
+            q.__g = g;                 // fuer abbau(), dort ist onended abgeschaltet
             offen.push(q);
-            q.onended = function () {
-              try { this.disconnect(); } catch (e) { }
-              var i = offen.indexOf(this);
-              if (i >= 0) offen.splice(i, 1);
-            };
+            // auch den Pegelknoten abhängen, sonst sammelt sich je Durchlauf einer an
+            q.onended = (function (gg) {
+              return function () {
+                try { this.disconnect(); } catch (e) { }
+                try { gg.disconnect(); } catch (e) { }
+                var i = offen.indexOf(this);
+                if (i >= 0) offen.splice(i, 1);
+              };
+            })(g);
             naechste = t + dauer - blende;   // der nächste Durchlauf überlappt
           }
         }
@@ -792,8 +819,13 @@ const Klang = (function () {
         for (var k = 0; k < geplante.length; k++) {
           var liste = geplante[k];
           for (var j = liste.length - 1; j >= 0; j--) {
-            try { liste[j].onended = null; liste[j].stop(0); } catch (e) { }
-            try { liste[j].disconnect(); } catch (e) { }
+            var q = liste[j];
+            try { q.onended = null; q.stop(0); } catch (e) { }
+            try { q.disconnect(); } catch (e) { }
+            // Pegel und Stereoposition gehoeren zur Quelle und muessen mit weg;
+            // onended ist hier abgeschaltet, also raeumt es sonst niemand auf.
+            if (q.__g) { try { q.__g.disconnect(); } catch (e) { } }
+            if (q.__p) { try { q.__p.disconnect(); } catch (e) { } }
           }
           liste.length = 0;
         }
@@ -1575,7 +1607,7 @@ const Klang = (function () {
     wal: 1.14, katze: 1.46, bauernhof: 0.56, kamin: 1.14, froesche: 1.80,
     schnarchen: 0.98, zug: 1.20, strasse: 1.75,
     schale: 0.94, glocke: 1.03, om: 0.46,
-    synthWarm: 8.20, synthTief: 3.14, synthGlitzer: 0.70, synthSchweb: 7.96,
+    synthWarm: 8.20, synthTief: 6.28, synthGlitzer: 0.70, synthSchweb: 7.96,
     weiss: 0.66, rosa: 0.28, braun: 0.95
   };
 
@@ -1587,6 +1619,111 @@ const Klang = (function () {
     return b;
   }
 
+  /* ==================================================================
+   * Schleifenkulissen
+   *
+   * Ein paar Kulissen bestehen aus sehr vielen kurzen Einzelereignissen.
+   * Gemessen legt "blasen" beim Aufbau 2266 Web-Audio-Knoten an und
+   * "grillen" 964 – die Grillensegmente sind nur gut zwei Sekunden lang,
+   * bei zwei Minuten Vorausplanung und fünf Stimmen sind das rund 260
+   * Durchläufe. Die Audio-Engine arbeitet jeden dieser Knoten in jedem
+   * Block ab: 40 Sekunden Blasen zu rechnen dauert auf einem Rechner
+   * bereits ein Siebtel der Spielzeit, auf einem Handy ist das nahe an
+   * der Grenze. Kommt eine zweite Kulisse dazu, reicht es nicht mehr und
+   * der Ton stottert oder bleibt hängen.
+   *
+   * Für solche Kulissen wird einmal ein Abschnitt gerendert und danach
+   * als Schleife abgespielt – aus tausenden Knoten wird einer.
+   *
+   * Der Preis ist die Wiederholung. Deshalb nur dort, wo sie nicht
+   * auffällt: gleichförmige Texturen ohne Muster, an dem sich das Ohr
+   * orientieren könnte. Alle anderen Kulissen bleiben live erzeugt und
+   * damit endlos.
+   *
+   * Die Naht wird unhörbar gemacht, indem über die Länge hinaus
+   * gerendert und der Überhang in den Anfang eingeblendet wird: das Ende
+   * geht dadurch in den Anfang über, statt an ihn zu stoßen.
+   */
+  var SCHLEIFEN = { blasen: 24, grillen: 20 };
+  var BLENDE_S = 3;
+  var loopCache = {};
+
+  function istSchleife(id) { return !!SCHLEIFEN[id]; }
+
+  function loopSchluessel(ctx, id, opt) {
+    return id + '@' + ctx.sampleRate + '@' + (opt && opt.tempo || 1) +
+           '@' + ((opt && opt.stereo) === false ? 'mono' : 'st');
+  }
+
+  // Liefert den fertigen Puffer, sonst null - so ist er synchron greifbar
+  function loopBereit(ctx, id, opt) {
+    return loopCache[loopSchluessel(ctx, id, opt)] || null;
+  }
+
+  function loopPuffer(ctx, id, opt) {
+    var key = loopSchluessel(ctx, id, opt);
+    if (loopCache[key]) return Promise.resolve(loopCache[key]);
+
+    var laenge = SCHLEIFEN[id];
+    var sr = ctx.sampleRate;
+    var kanaele = (opt && opt.stereo) === false ? 1 : 2;
+    if (!ctx.OfflineAudioContext && !window.OfflineAudioContext) return Promise.resolve(null);
+    var OC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+
+    return laden(ctx, id).then(function () {
+      var oc = new OC(kanaele, Math.ceil((laenge + BLENDE_S) * sr), sr);
+      return laden(oc, id).then(function () {
+        var g = oc.createGain();
+        g.connect(oc.destination);
+        // nur so weit vorausplanen, wie tatsaechlich gerendert wird
+        var ropt = { stereo: (opt && opt.stereo) !== false, tempo: (opt && opt.tempo) || 1,
+                     horizont: laenge + BLENDE_S + 2 };
+        var b = bauen(id, g, ropt);
+        return oc.startRendering().then(function (roh) {
+          /* Wichtig: die Kulisse hat beim Bauen setInterval gesetzt, um
+           * Nachschub einzuplanen. Im Offline-Kontext läuft das in
+           * Wanduhrzeit ins Leere weiter – ohne abbau() bliebe je
+           * gerenderter Kulisse ein Intervall für immer stehen. */
+          try { b.abbau(); } catch (e) { }
+
+          var n = Math.floor(laenge * sr);
+          var bl = Math.floor(BLENDE_S * sr);
+          var fertig = ctx.createBuffer(roh.numberOfChannels, n, sr);
+          for (var c = 0; c < roh.numberOfChannels; c++) {
+            var q = roh.getChannelData(c);
+            var z = fertig.getChannelData(c);
+            for (var i = 0; i < n; i++) z[i] = q[i];
+            // Der Überhang hinter der Schleifenlänge wird in den Anfang
+            // eingeblendet – damit ist die Naht keine Kante mehr.
+            for (var j = 0; j < bl; j++) {
+              var f = j / bl;                       // 0 → 1 über die Blende
+              z[j] = q[j] * f + q[n + j] * (1 - f);
+            }
+          }
+          loopCache[key] = fertig;
+          return fertig;
+        });
+      });
+    });
+  }
+
+  // Den fertigen Puffer als endlose Schleife anhängen. Rückgabe hat
+  // dieselbe Form wie bauen(), damit app.js nicht unterscheiden muss.
+  function loopBauen(ctx, id, ziel, puffer) {
+    var q = ctx.createBufferSource();
+    q.buffer = puffer;
+    q.loop = true;
+    q.connect(ziel);
+    q.start(ctx.currentTime, Math.random() * puffer.duration);
+    return {
+      abbau: function () {
+        try { q.stop(0); } catch (e) { }
+        try { q.disconnect(); } catch (e) { }
+      }
+    };
+  }
+
+
   return {
     szenen: SZENEN,
     bauen: bauen,
@@ -1596,6 +1733,13 @@ const Klang = (function () {
     laden: laden,     // Aufnahmen einer Kulisse holen (Promise)
     bereit: bereit,   // liegen sie schon im Speicher?
     braucht: BRAUCHT,
-    proben: PROBEN
+    proben: PROBEN,
+
+    // Schleifenkulissen: einmal rendern, dann als Schleife abspielen
+    istSchleife: istSchleife,
+    loopBereit: loopBereit,
+    loopPuffer: loopPuffer,
+    loopBauen: loopBauen,
+    schleifen: SCHLEIFEN
   };
 })();
