@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.15';
+  var APP_VERSION = '1.16';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -897,6 +897,59 @@
     $(id).addEventListener('click', function (e) { if (e.target === $(id)) blattZu(id); });
   }
 
+  /* ---- Als App installieren ----
+   * Chrome/Edge liefern einen echten Installationsdialog, den der Browser uns über
+   * 'beforeinstallprompt' überlässt (früh mitgeschnitten im Kopf der Seite).
+   * Safari auf dem iPhone hat so etwas nicht – dort hilft nur die Anleitung. */
+  var pwaEreignis = null;   // der aufgehobene Dialog
+  var pwaMoeglich = false;  // gab es den Dialog schon einmal? (nach Abbruch kommt er nicht wieder)
+
+  function pwaSchonApp() {
+    return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) ||
+      navigator.standalone === true;
+  }
+  function pwaIos() {
+    var ua = navigator.userAgent;
+    // iPadOS meldet sich seit 13 als Mac – am Touch erkennbar
+    var ios = /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    return ios && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+  }
+  function pwaKnopfZeigen() {
+    // Ohne Dialog nur auf iOS anbieten: anderswo wüssten wir nicht, ob es überhaupt geht
+    var zeigen = !pwaSchonApp() && (pwaEreignis || pwaMoeglich || pwaIos());
+    $('btn-pwa').classList.toggle('verstecken', !zeigen);
+  }
+  function pwaBlattAuf() {
+    var direkt = !!pwaEreignis, ios = !direkt && pwaIos();
+    $('pwa-direkt').classList.toggle('verstecken', !direkt);
+    $('pwa-ios').classList.toggle('verstecken', !ios);
+    $('pwa-allg').classList.toggle('verstecken', direkt || ios);
+    blattAuf('bl-pwa');
+  }
+  function pwaVerdrahten() {
+    pwaEreignis = window.__pwaPrompt || null;
+    pwaMoeglich = !!pwaEreignis;
+    window.addEventListener('pwa-bereit', function () {
+      pwaEreignis = window.__pwaPrompt; pwaMoeglich = true; pwaKnopfZeigen();
+    });
+    window.addEventListener('appinstalled', function () {
+      pwaEreignis = window.__pwaPrompt = null; pwaMoeglich = false;
+      blattZu('bl-pwa'); pwaKnopfZeigen();
+    });
+    $('btn-pwa').addEventListener('click', pwaBlattAuf);
+    $('pwa-fertig').addEventListener('click', function () { blattZu('bl-pwa'); });
+    $('pwa-los').addEventListener('click', function () {
+      var e = pwaEreignis;
+      if (!e) { pwaBlattAuf(); return; }
+      pwaEreignis = window.__pwaPrompt = null;  // jeder Dialog gilt nur einmal
+      blattZu('bl-pwa');
+      e.prompt();
+    });
+    blattVerdrahten('bl-pwa');
+    pwaKnopfZeigen();
+  }
+
   /* ---- Wake Lock ---- */
   function wachSetzen(an) {
     if (an && navigator.wakeLock) {
@@ -1016,6 +1069,9 @@
     $('btn-info').addEventListener('click', function () { blattAuf('bl-info'); });
     $('info-fertig').addEventListener('click', function () { blattZu('bl-info'); });
     blattVerdrahten('bl-info');
+
+    pwaVerdrahten();
+    $('info-pwa').addEventListener('click', function () { blattZu('bl-info'); pwaBlattAuf(); });
 
     function knebel(id, wert, beim) {
       var b = $(id);

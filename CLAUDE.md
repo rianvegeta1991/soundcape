@@ -16,6 +16,29 @@ Bluetooth-Box. **Deutsch ist die Quellsprache** (Code, Kommentare, Oberfläche).
   Icon, Vollbild, offline. HTTPS ist dafür Pflicht – über `serve-lan.ps1` im WLAN funktioniert
   zwar der Ton, aber weder Service Worker noch Installation (kein sicherer Kontext).
 
+## Installieren (seit v1.16)
+
+Manifest, Service Worker und Icons erfüllten die Kriterien schon lange – es fehlte nur der
+sichtbare Weg dorthin. Jetzt gibt es zwei:
+
+- **Kopf-Knopf `#btn-pwa`** (Pfeil ins Gerät), links neben dem Info-Zeichen. Er erscheint
+  **nur**, wenn eine Installation wirklich möglich ist: entweder hat der Browser uns seinen
+  Dialog über `beforeinstallprompt` überlassen, oder es ist ein iPhone/iPad.
+- **Knopf `#info-pwa`** im Info-Blatt – immer da, auch in Browsern ohne Dialog.
+
+Beide öffnen das Blatt `#bl-pwa`, das je nach Lage einen von drei Blöcken zeigt:
+`#pwa-direkt` (echter Installationsknopf), `#pwa-ios` (Anleitung über „Teilen“) oder
+`#pwa-allg` (Verweis aufs Browser-Menü). Logik: `pwaVerdrahten`/`pwaBlattAuf`/`pwaKnopfZeigen`.
+
+**Der Dialog wird im Kopf der Seite mitgeschnitten**, nicht in app.js: Chrome feuert
+`beforeinstallprompt` unter Umständen, bevor app.js seine Zuhörer setzt. Das Inline-Skript in
+`index.html` legt ihn auf `window.__pwaPrompt` und meldet sich mit einem eigenen Ereignis
+`pwa-bereit`. **Diese Reihenfolge nicht auflösen.**
+
+Ein Dialog gilt **genau einmal**: nach `prompt()` ist er verbraucht, auch wenn abgelehnt wurde.
+Deshalb merkt sich `pwaMoeglich`, dass es ihn gab – der Knopf bleibt dann stehen und zeigt von da
+an die allgemeine Anleitung, statt einfach zu verschwinden.
+
 ## Der eine wichtige Grundsatz
 
 **Alles außer den Tierstimmen wird live erzeugt** – aus Rauschen, Filtern und Steuerkurven

@@ -13,6 +13,16 @@
 <meta name="apple-mobile-web-app-title" content="Soundcape">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<script>
+/* Den Installationsdialog früh mitschneiden: Chrome feuert ihn unter Umständen,
+   bevor app.js seine Zuhörer setzt. */
+window.__pwaPrompt = null;
+window.addEventListener('beforeinstallprompt', function (e) {
+  e.preventDefault();
+  window.__pwaPrompt = e;
+  window.dispatchEvent(new Event('pwa-bereit'));
+});
+</script>
 <style>
 :root{
   --bg:#080d18;
@@ -289,6 +299,16 @@ input[type=number]{width:90px}
 .uhr-unter{text-align:center;font-size:11.5px;color:var(--dim2);margin-bottom:4px}
 .fuss-version{font-size:10.5px;color:var(--dim2);text-align:center;margin-top:14px}
 
+/* Anleitung „Zum Startbildschirm“ */
+.pwa-schritte{margin:14px 0 0;padding:0 0 0 22px;font-size:13px;line-height:1.75;color:var(--dim)}
+.pwa-schritte li{margin-bottom:6px}
+.pwa-schritte li::marker{color:rgba(var(--akzent-rgb),.9);font-weight:600}
+.pwa-ikon{
+  display:inline-grid;place-items:center;width:24px;height:24px;vertical-align:-6px;
+  border-radius:7px;background:var(--panel2);border:1px solid var(--line);margin-left:2px;
+}
+.pwa-ikon svg{width:15px;height:15px}
+
 #tonhinweis{
   position:fixed;left:50%;transform:translateX(-50%);bottom:calc(206px + var(--safe-b));z-index:30;
   background:rgba(var(--akzent-rgb),.16);border:1px solid rgba(var(--akzent-rgb),.42);
@@ -316,6 +336,11 @@ input[type=number]{width:90px}
       <p class="tagline">Geräuschkulissen ohne Ende</p>
     </div>
     <div class="kopf-tools">
+      <button class="ikon-btn verstecken" id="btn-pwa" aria-label="Soundcape als App installieren">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v10M8.4 9.6 12 13.2l3.6-3.6"/><path d="M4.5 15v3.2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V15"/>
+        </svg>
+      </button>
       <button class="ikon-btn" id="btn-info" aria-label="Über Soundcape">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.6"/>
@@ -556,11 +581,52 @@ input[type=number]{width:90px}
     </p>
     <h3>Als App installieren</h3>
     <p class="hinweis">
-      Über das Browser-Menü „Zum Startbildschirm hinzufügen“ läuft Soundcape wie eine App und
-      funktioniert danach auch ohne Internet.
+      Auf dem Startbildschirm abgelegt läuft Soundcape wie eine App – eigenes Symbol, kein
+      Browser-Rahmen, und auch ohne Internet.
     </p>
+    <button class="btn" id="info-pwa">Auf den Startbildschirm legen</button>
     <button class="btn haupt" id="info-fertig">Schließen</button>
     <div class="fuss-version" id="version2"></div>
+  </div>
+</div>
+
+<!-- App installieren -->
+<div class="blende" id="bl-pwa">
+  <div class="blatt">
+    <div class="griff"></div>
+    <h2>Auf den Startbildschirm</h2>
+    <p class="hinweis">
+      Soundcape lässt sich wie eine App ablegen: eigenes Symbol, kein Browser-Rahmen ringsum,
+      und es läuft danach auch ohne Internet.
+    </p>
+
+    <!-- Android/Chrome: echter Installationsdialog -->
+    <div id="pwa-direkt" class="verstecken">
+      <button class="btn haupt" id="pwa-los">Jetzt installieren</button>
+    </div>
+
+    <!-- iPhone/iPad: Safari hat keinen Dialog, nur den Weg über „Teilen“ -->
+    <div id="pwa-ios" class="verstecken">
+      <ol class="pwa-schritte">
+        <li>Unten in der Leiste auf <b>Teilen</b> tippen <span class="pwa-ikon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3.2v11M8.6 6.6 12 3.2l3.4 3.4"/><path d="M7 10.5H5.6v9.3h12.8v-9.3H17"/>
+          </svg></span></li>
+        <li>Nach unten wischen zu <b>„Zum Home-Bildschirm“</b></li>
+        <li>Oben rechts <b>Hinzufügen</b> bestätigen</li>
+      </ol>
+      <p class="hinweis">In Chrome oder Firefox auf dem iPhone fehlt dieser Eintrag – dort erst Safari öffnen.</p>
+    </div>
+
+    <!-- Sonstige Browser -->
+    <div id="pwa-allg" class="verstecken">
+      <p class="hinweis">
+        Öffne das Menü deines Browsers (⋮ oder ⋯) und wähle dort
+        <b>„App installieren“</b> bzw. <b>„Zum Startbildschirm hinzufügen“</b>.
+      </p>
+    </div>
+
+    <button class="btn" id="pwa-fertig">Schließen</button>
   </div>
 </div>
 
