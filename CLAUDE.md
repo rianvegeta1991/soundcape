@@ -459,7 +459,27 @@ Die PNG-Icons werden **nicht** aus dem SVG gerendert (kein Werkzeug dafür auf d
 Rechner), sondern in PowerShell mit `System.Drawing` nachgezeichnet – Schild als
 sechs Bezierkurven, Welle als Polylinie mit runden Kappen. **Bei Logoänderungen
 beide Stellen nachziehen**, sonst zeigt die installierte PWA das alte Motiv.
-Das maskable Icon bekommt das Motiv auf 74 % skaliert und ohne runde Ecken.
+Das maskable Icon bekommt das Motiv auf **92 %** skaliert und ohne runde Ecken (bis 1.16
+standen dort 74 % – das Icon wirkte auf dem Startbildschirm zu klein, und Android nimmt bei
+vorhandenem `maskable` genau dieses). 92 % fuellen den Sicherheitskreis (Radius 40 % = 205 px)
+fast aus. `apple-touch-icon.png` traegt das Motiv auf 98 % und ebenfalls ohne runde Ecken –
+iOS legt seine eigene Maske darueber.
+
+## Willkommen-Gruss (seit 1.17)
+
+Beim **ersten Start und nach mindestens 8 Stunden Pause** liegt für rund zwei Sekunden ein
+Vollbild-Gruss über allem: Schild, „Soundcape", Motto. Danach blendet er aus; ein Tipp oder
+Tastendruck kürzt ab.
+
+- Das Markup `#willkommen` steht **sichtbar** direkt unter `<body>`, und ein **Inline-Skript
+  gleich darunter** entscheidet noch während des Parsens, ob es bleibt (Zeitstempel
+  `localStorage` `soundcape-besuch`, Schwelle 8 h). Diese Reihenfolge nicht auflösen –
+  sonst blitzt die Oberfläche kurz auf, bevor der Gruss kommt.
+- Bleibt er, liegt er auf `window.__willkommen`; `willkommenAbraeumen()` in `app.js`
+  (gerufen aus `init`) räumt ihn wieder ab (`WK_DAUER`/`WK_BLENDE`).
+- Der Layer **deckt sofort voll ab** (kein Einblenden) – Bewegung haben nur Schild und Text.
+- Der Zeitstempel liegt bewusst **nicht** in `soundcape-zustand`: er wird schon gebraucht,
+  bevor `app.js` überhaupt läuft.
 
 ## Der hängende Ton – und was daran wirklich schuld war (1.15)
 

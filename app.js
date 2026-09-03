@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  var APP_VERSION = '1.16';
+  var APP_VERSION = '1.17';
   var LS = 'soundcape-zustand';
 
   /* ==================================================================
@@ -964,10 +964,36 @@
   }
 
   /* ==================================================================
+   * Willkommen-Gruss
+   * ==================================================================
+   * Der Gruss steht schon im Markup (index.html, direkt unter <body>) und ist
+   * beim Aufschlagen der Seite sichtbar. Hier wird er nur noch abgeraeumt:
+   * nach WK_DAUER von selbst, auf Tippen oder Tastendruck sofort.
+   */
+  var WK_DAUER = 2300, WK_BLENDE = 500;
+
+  function willkommenAbraeumen() {
+    var el = window.__willkommen;
+    if (!el) return;
+    var ab = null;
+    function weg() {
+      if (!el.isConnected) return;
+      clearTimeout(ab);
+      el.classList.add('fort');
+      setTimeout(function () { el.remove(); }, WK_BLENDE);
+      document.removeEventListener('keydown', weg, true);
+    }
+    ab = setTimeout(weg, WK_DAUER);
+    el.addEventListener('pointerdown', weg);
+    document.addEventListener('keydown', weg, true);
+  }
+
+  /* ==================================================================
    * Start
    * ================================================================== */
   function init() {
     laden();
+    willkommenAbraeumen();
     pultBauen();
     bibliothekBauen();
     ui();
